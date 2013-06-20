@@ -14,3 +14,4 @@ cache
 res/qrc_mixxx.cc
 .DS_Store
 *.xcodeproj
+*_xcode
