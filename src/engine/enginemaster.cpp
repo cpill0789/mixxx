@@ -382,6 +382,8 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     m_headphoneGain.setGain(chead_gain);
     mixChannels(headphoneOutput, maxChannels, m_pHead, iBufferSize, &m_headphoneGain);
 
+    // Loop Recorder: Send PFL mix to loop/sampler recorders.  Is this the right place to do this?
+    
     // Calculate the crossfader gains for left and right side of the crossfader
     float c1_gain, c2_gain;
     EngineXfader::getXfadeGains(c1_gain, c2_gain,
@@ -421,8 +423,10 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     if (vumeter != NULL)
         vumeter->process(m_pMaster, m_pMaster, iBufferSize);
 
-    //Submit master samples to the side chain to do shoutcasting, recording,
-    //etc.  (cpu intensive non-realtime tasks)
+    // Loop Recorder: Send master mix to loop/sampler recorders.  Is this the right place to do this?
+    
+    // Submit master samples to the side chain to do shoutcasting, recording,
+    // etc.  (cpu intensive non-realtime tasks)
     if (m_pSideChain != NULL) {
         m_pSideChain->writeSamples(m_pMaster, iBufferSize);
     }
