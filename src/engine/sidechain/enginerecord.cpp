@@ -31,7 +31,7 @@
  *                                                                         *
  * Notice To Future Developpers:                                           *
  * 	There is code here to write the file in a seperate thread              *
- * 	however it is unstable and has been abondoned.  Its only use           *
+ * 	however it is unstable and has been abandoned.  Its only use           *
  * 	was to support low priority recording, however I don't think its       *
  * 	worth the trouble.                                                     *
  *                                                                         *

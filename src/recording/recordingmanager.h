@@ -14,7 +14,7 @@
 
 /*
  * The RecordingManager is a central class and manages
- * the recoring feature of Mixxx.
+ * the recording feature of Mixxx.
  *
  * There is exactly one instance of this class
  *

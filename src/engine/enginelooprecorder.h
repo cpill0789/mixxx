@@ -1,14 +1,15 @@
-//
-//  enginelooprecorder.h
-//  Mixxx_xcode
-//
+//  enginelooprecorder.cpp
 //  Created by Carl Pillot on 6/22/13.
-//  Copyright (c) 2013 Carl Pillot. All rights reserved.
-//
 
-#ifndef __Mixxx_xcode__enginelooprecorder__
-#define __Mixxx_xcode__enginelooprecorder__
+#ifndef ENGINELOOPRECORDER_H
+#define ENGINELOOPRECORDER_H
 
-#include <iostream>
+#include <QDataStream>
+#include <QFile>
 
-#endif /* defined(__Mixxx_xcode__enginelooprecorder__) */
+#include <sndfile.h>
+
+#include "configobject.h"
+#include "trackinfoobject.h"
+
+#endif
