@@ -10,7 +10,7 @@
 #include "errordialoghandler.h"
 #include "playerinfo.h"
 
-const int kMetaDataLifeTimeout = 16;
+//const int kMetaDataLifeTimeout = 16;
 
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
 : m_config(_config),
@@ -32,11 +32,6 @@ void EngineLoopRecorder::updateFromPreferences() {
     //m_OGGquality = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"OGG_Quality")).toLatin1();
     //m_MP3quality = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"MP3_Quality")).toLatin1();
     m_filename = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"Path"));
-    m_baTitle = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY, "Title")).toLatin1();
-    m_baAuthor = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY, "Author")).toLatin1();
-    m_baAlbum = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY, "Album")).toLatin1();
-    m_cuefilename = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY, "CuePath")).toLatin1();
-    m_bCueIsEnabled = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY, "CueEnabled")).toInt();
 }
 
 
