@@ -102,7 +102,7 @@ void LoopRecordingManager::stopRecording()
 
 void LoopRecordingManager::setRecordingDir() {
     // TODO(CARL) get rid of absolute paths;
-    QDir recordDir("/Users/carlpillot/mixxx_temp");
+    QDir recordDir("/");
     // Note: the default ConfigKey for recordDir is set in DlgPrefRecord::DlgPrefRecord
     
     if (!recordDir.exists()) {
