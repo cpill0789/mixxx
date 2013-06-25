@@ -4,7 +4,7 @@
 #ifndef __LOOPRECORDING_DEFS_H__
 #define __LOOPRECORDING_DEFS_H__
 
-//#define RECORDING_PREF_KEY "[Recording]"
+#define RECORDING_PREF_KEY "[Looper]"
 #define ENCODING_WAVE "WAV"
 #define ENCODING_AIFF "AIFF"
 

@@ -78,8 +78,8 @@ void LoopRecordingManager::startRecording() {
     QString encodingType = "WAV";
     //Append file extension
     QString date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
-    m_recordingFile = QString("%1.%2")
-    .arg(date_time_str, encodingType.toLower());
+    m_recordingFile = QString("%1_%2.%3")
+    .arg("loop",date_time_str, encodingType.toLower());
         
     // Storing the absolutePath of the recording file without file extension
     m_recording_base_file = getRecordingDir();
@@ -101,8 +101,8 @@ void LoopRecordingManager::stopRecording()
 }
 
 void LoopRecordingManager::setRecordingDir() {
-    // TODO(CARL) get rid of absolute paths;
-    QDir recordDir("/");
+    QDir recordDir(m_pConfig->getValueString(
+                                             ConfigKey(RECORDING_PREF_KEY, "Directory")));
     // Note: the default ConfigKey for recordDir is set in DlgPrefRecord::DlgPrefRecord
     
     if (!recordDir.exists()) {

@@ -106,6 +106,9 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
         ConfigKey("[Mixer Profile]", "xFaderCalibration"), -2., 2.);
     xFaderReverse = new ControlPotmeter(
         ConfigKey("[Mixer Profile]", "xFaderReverse"), 0., 1.);
+    
+    // Add controls for loop recorder.
+    loop_recorder = new ControlPushButton(ConfigKey(group,"loopRecorder"));
 }
 
 EngineMaster::~EngineMaster()
@@ -120,7 +123,8 @@ EngineMaster::~EngineMaster()
     delete vumeter;
     delete head_clipping;
     delete m_pSideChain;
-
+    delete loop_recorder;
+    
     delete xFaderReverse;
     delete xFaderCalibration;
     delete xFaderCurve;

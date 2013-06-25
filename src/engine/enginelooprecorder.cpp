@@ -28,9 +28,6 @@ EngineLoopRecorder::~EngineLoopRecorder() {
 
 void EngineLoopRecorder::updateFromPreferences() {
     m_Encoding = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"Encoding")).toLatin1();
-    //returns a number from 1 .. 10
-    //m_OGGquality = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"OGG_Quality")).toLatin1();
-    //m_MP3quality = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"MP3_Quality")).toLatin1();
     m_filename = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"Path"));
 }
 
@@ -47,37 +44,37 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     
     // if we are ready for recording, i.e, the output file has been selected, we
     // open a new file
-    if (m_recReady->get() == RECORD_READY) {
+    if (m_recReady->get() == LOOP_RECORD_READY) {
         updateFromPreferences();	//update file location from pref
         if (openFile()) {
             qDebug("Setting record flag to: ON");
-            m_recReady->slotSet(RECORD_ON);
+            m_recReady->slotSet(LOOP_RECORD_ON);
             emit(isLoopRecording(true)); //will notify the RecordingManager
             
             // Since we just started recording, timeout and clear the metadata.
             m_iMetaDataLife = kMetaDataLifeTimeout;
             m_pCurrentTrack = TrackPointer();
             
-            if (m_bCueIsEnabled) {
-                openCueFile();
-                m_cuesamplepos = 0;
-                m_cuetrack = 0;
-            }
+            //if (m_bCueIsEnabled) {
+            //    openCueFile();
+            //    m_cuesamplepos = 0;
+            //    m_cuetrack = 0;
+            //}
         } else { // Maybe the encoder could not be initialized
             qDebug("Setting record flag to: OFF");
-            m_recReady->slotSet(RECORD_OFF);
+            m_recReady->slotSet(LOOP_RECORD_OFF);
             emit(isLoopRecording(false));
         }
     }
     
     // If recording is enabled process audio to uncompressed data.
-    if (m_recReady->get() == RECORD_ON) {
-        if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
+    if (m_recReady->get() == LOOP_RECORD_ON) {
+        //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
             if (m_sndfile != NULL) {
                 sf_write_float(m_sndfile, pBuffer, iBufferSize);
                 emit(bytesRecorded(iBufferSize));
             }
-        }
+        //}
   	}
 }
 
