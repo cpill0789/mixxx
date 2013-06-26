@@ -9,7 +9,6 @@
 #include "looprecording/looprecordingmanager.h"
 #include "looprecording/defs_looprecording.h"
 //#include "engine/looprecorder/enginelooprecorder.h"
-//#include "controlobjectthread.h"
 #include "controlpushbutton.h"
 
 
@@ -22,23 +21,20 @@ m_recordingLocation(""),
 m_isRecording(false),
 m_iNumberOfBytesRecored(0) {
     //m_pToggleRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
-    ControlObjectThread* pToogleRecording = new ControlObjectThread(ConfigKey("[Master]", "recordLoop"));
+    //ControlObjectThread* pToogleRecording = new ControlObjectThread(ConfigKey("[Master]", "recordLoop"));
     //connect(pToggleRecording, SIGNAL(valueChanged(double)),
     //        this, SLOT(slotToggleLoopRecording(double)));
     m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "status"));
     m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
-    
+    m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
     
     // Register EngineRecord with the engine sidechain.
     // TODO: connect with engine master instead.?
     // EngineSideChain* pSidechain = pEngine->getSideChain();
     //if (pSidechain) {
     //    EngineRecord* pEngineRecord = new EngineRecord(m_pConfig);
-    //    connect(pEngineRecord, SIGNAL(isRecording(bool)),
-    //            this, SLOT(slotIsRecording(bool)));
-    //    connect(pEngineRecord, SIGNAL(bytesRecorded(int)),
-    //            this, SLOT(slotBytesRecorded(int)));
-    //    pSidechain->addSideChainWorker(pEngineRecord);
+    //    connect(pEngineLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
+            //    pSidechain->addSideChainWorker(pEngineRecord);
     //}
 }
 
@@ -64,22 +60,22 @@ QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) cons
 //    }
 //}
 
-void LoopRecordingManager::slotToggleLoopRecording(double v) {
-    if (v > 0) {
-        if (isLoopRecordingActive()) {
-            stopRecording();
-        } else {
-            startRecording();
-        }
-    }
-}
+//void LoopRecordingManager::slotToggleLoopRecording(double v) {
+//    if (v > 0) {
+//        if (isLoopRecordingActive()) {
+//            stopRecording();
+//        } else {
+//            startRecording();
+//       }
+//    }
+//}
 
 void LoopRecordingManager::startRecording() {
-    qDebug() << "Loop Recording Started";
+    qDebug() << "LoopRecordingManager startRecording";
     m_isRecording = true;
     m_iNumberOfBytesRecored = 0;
-    //QString encodingType = m_pConfig->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"));
-    QString encodingType = QString("WAV");
+    QString encodingType = m_pConfig->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"));
+    //QString encodingType = QString("WAV");
     //Append file extension
     QString date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
     m_recordingFile = QString("%1_%2.%3")
@@ -87,17 +83,18 @@ void LoopRecordingManager::startRecording() {
         
     // Storing the absolutePath of the recording file without file extension
     m_recording_base_file = getRecordingDir();
-    m_recording_base_file.append("/").append(date_time_str);
+    m_recording_base_file.append("/loop_").append(date_time_str);
     //appending file extension to get the filelocation
     m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Path"), m_recordingLocation);
     //m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "CuePath"), m_recording_base_file +".cue");
     m_recReady->slotSet(LOOP_RECORD_READY);
+    qDebug() << "m_recReady: " << m_recReady->get();
 }
 
 void LoopRecordingManager::stopRecording()
 {
-    qDebug() << "Loop Recording stopped";
+    qDebug() << "LoopRecordingManager stopRecording";
     m_isRecording = false;
     m_recReady->slotSet(LOOP_RECORD_OFF);
     m_recordingFile = "";
@@ -144,16 +141,16 @@ QString& LoopRecordingManager::getRecordingDir() {
 //}
 
 //void LoopRecordingManager::slotIsLoopRecording(bool isRecordingActive) {
-//    qDebug() << "SlotIsRecording " << isRecording;
+    //qDebug() << "SlotIsRecording " << isLoopRecording;
     
     //Notify the GUI controls, see dlgrecording.cpp
-    //m_isRecording = isRecordingActive;
+//    m_isRecording = isRecordingActive;
     //emit(isRecording(isRecordingActive));
 //}
 
-bool LoopRecordingManager::isLoopRecordingActive() {
-    return m_isRecording;
-}
+//bool LoopRecordingManager::isLoopRecordingActive() {
+//    return pEngineLoopRecorder->isRecording();
+//}
 
 QString& LoopRecordingManager::getRecordingFile() {
     return m_recordingFile;

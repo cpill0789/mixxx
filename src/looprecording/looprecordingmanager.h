@@ -17,6 +17,7 @@
 class ControlPushButton;
 class ControlObject;
 class ControlObjectThread;
+class EngineLoopRecorder;
 
 class LoopRecordingManager : public QObject
 {
@@ -30,7 +31,7 @@ public:
     // called and a signal isRecording will be emitted.
     void startRecording();
     void stopRecording();
-    bool isLoopRecordingActive();
+    //bool isLoopRecordingActive();
     void setRecordingDir();
     QString& getRecordingDir();
     // Returns the currently recording file
@@ -39,16 +40,16 @@ public:
     
 signals:
     //emits the commulated number of bytes being recorded
-    void bytesRecorded(long);
-    void isRecording(bool);
+    //void bytesRecorded(long);
+    //void isRecording(bool);
     
-    //public slots:
+    public slots:
     //void slotIsLoopRecording(bool);
     //void slotBytesRecorded(int);
     
     private slots:
     //void slotSetLoopRecording(bool recording);
-    void slotToggleLoopRecording(double v);
+    //void slotToggleLoopRecording(double v);
     
 private:
     QString formatDateTimeForFilename(QDateTime dateTime) const;

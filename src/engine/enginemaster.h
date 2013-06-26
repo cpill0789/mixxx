@@ -42,6 +42,7 @@ class EngineVinylSoundEmu;
 class EngineSideChain;
 class SyncWorker;
 class LoopRecordingManager;
+class EngineLoopRecorder;
 
 class EngineMaster : public EngineObject, public AudioSource {
     Q_OBJECT
@@ -157,6 +158,7 @@ class EngineMaster : public EngineObject, public AudioSource {
         *xFaderMode, *xFaderCurve, *xFaderCalibration, *xFaderReverse;
 
     ControlPushButton *m_loopRecordButton;
+    EngineLoopRecorder *m_pEngineLoopRecorder;
     LoopRecordingManager *m_pLoopRecordingManager;
     
     ConstantGainCalculator m_headphoneGain;

@@ -34,7 +34,7 @@
 #include "engine/sidechain/enginesidechain.h"
 #include "sampleutil.h"
 #include "util/timer.h"
-//#include "looprecording/looprecordingmanager.h"
+#include "engine/looprecorder/enginelooprecorder.h"
 
 #ifdef __LADSPA__
 #include "engineladspa.h"
@@ -113,7 +113,9 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     m_loopRecordButton = new ControlPushButton(ConfigKey(group, "recordLoop"));
     m_loopRecordButton->setButtonMode(ControlPushButton::TOGGLE);
     
+    m_pEngineLoopRecorder = new EngineLoopRecorder(_config);
     m_pLoopRecordingManager = new LoopRecordingManager(_config);
+    
 }
 
 EngineMaster::~EngineMaster()
@@ -434,17 +436,18 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
         vumeter->process(m_pMaster, m_pMaster, iBufferSize);
 
     // Loop Recorder: Send master mix to loop/sampler recorders.  Is this the right place to do this?
+    
+    m_pEngineLoopRecorder->process(m_pMaster, iBufferSize);
+    
     if(m_loopRecordButton->get()) {
-        if(!m_pLoopRecordingManager->isLoopRecordingActive()) {
+        if(!m_pEngineLoopRecorder->isRecording()) {
             m_pLoopRecordingManager->startRecording();
         }
     } else {
-        if(m_pLoopRecordingManager->isLoopRecordingActive()) {
+        if(m_pEngineLoopRecorder->isRecording()) {
             m_pLoopRecordingManager->stopRecording();
         }
     }
-    
-    
     
     // Submit master samples to the side chain to do shoutcasting, recording,
     // etc.  (cpu intensive non-realtime tasks)

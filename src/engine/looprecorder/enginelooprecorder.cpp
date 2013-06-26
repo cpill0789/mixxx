@@ -9,22 +9,16 @@
 #include "controlobjectthread.h"
 #include "errordialoghandler.h"
 #include "playerinfo.h"
+#include "looprecording/defs_looprecording.h"
 
 //const int kMetaDataLifeTimeout = 16;
 
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
 : m_config(_config),
 m_sndfile(NULL) {
+    m_bIsRecording = false;
     m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "status");
     m_samplerate = new ControlObjectThread("[Master]", "samplerate");
-    
-    //TODO adapt for recording
-    // Play button
-    //m_playButton = new ControlPushButton(ConfigKey(m_group, "play"));
-    //m_playButton->setButtonMode(ControlPushButton::TOGGLE);
-    //connect(m_playButton, SIGNAL(valueChanged(double)),
-    //        this, SLOT(slotControlPlay(double)),
-    //        Qt::DirectConnection);
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
@@ -40,12 +34,15 @@ void EngineLoopRecorder::updateFromPreferences() {
 
 
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
+    
+    qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
     // if recording is disabled
-    if (m_recReady->get() == RECORD_OFF) {
-        //qDebug("Setting record flag to: OFF");
+    if (m_recReady->get() == LOOP_RECORD_OFF) {
+        qDebug("Setting record flag to: OFF");
         if (fileOpen()) {
             closeFile();    //close file and free encoder
-            emit(isLoopRecording(false));
+            m_bIsRecording = false;
+            //emit(isLoopRecording(false));
         }
     }
     
@@ -56,7 +53,8 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
         if (openFile()) {
             qDebug("Setting record flag to: ON");
             m_recReady->slotSet(LOOP_RECORD_ON);
-            emit(isLoopRecording(true)); //will notify the RecordingManager
+            m_bIsRecording = true;
+            //emit(isLoopRecording(true)); //will notify the RecordingManager
             
             // Since we just started recording, timeout and clear the metadata.
             //m_iMetaDataLife = kMetaDataLifeTimeout;
@@ -70,7 +68,8 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
         } else { // Maybe the encoder could not be initialized
             qDebug("Setting record flag to: OFF");
             m_recReady->slotSet(LOOP_RECORD_OFF);
-            emit(isLoopRecording(false));
+            m_bIsRecording = false;
+            //emit(isLoopRecording(false));
         }
     }
     
@@ -79,7 +78,7 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
         //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
             if (m_sndfile != NULL) {
                 sf_write_float(m_sndfile, pBuffer, iBufferSize);
-                emit(bytesRecorded(iBufferSize));
+                //emit(bytesRecorded(iBufferSize));
             }
         //}
   	}
@@ -147,4 +146,8 @@ void EngineLoopRecorder::closeFile() {
             m_sndfile = NULL;
         }
     //}
+}
+
+bool EngineLoopRecorder::isRecording() {
+    return m_bIsRecording;
 }

@@ -30,11 +30,12 @@ public:
     void closeFile();
     void updateFromPreferences();
     bool fileOpen();
+    bool isRecording();
     
 signals:
-    // emitted to notify RecordingManager
-    void bytesRecorded(int);
-    void isRecording(bool);
+    // emitted to notify LoopRecordingManager
+    //void bytesRecorded(int);
+    //void isLoopRecording(bool);
     
 private:
     //int getActiveTracks();
@@ -69,6 +70,7 @@ private:
     //quint64 m_cuesamplepos;
     //quint64 m_cuetrack;
     //bool m_bCueIsEnabled;
+    bool m_bIsRecording;
 };
 
 #endif
