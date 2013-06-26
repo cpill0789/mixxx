@@ -14,10 +14,17 @@
 
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
 : m_config(_config),
-m_sndfile(NULL),
-m_iMetaDataLife(0) {
-    m_recReady = new ControlObjectThread(RECORDING_PREF_KEY, "status");
+m_sndfile(NULL) {
+    m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "status");
     m_samplerate = new ControlObjectThread("[Master]", "samplerate");
+    
+    //TODO adapt for recording
+    // Play button
+    //m_playButton = new ControlPushButton(ConfigKey(m_group, "play"));
+    //m_playButton->setButtonMode(ControlPushButton::TOGGLE);
+    //connect(m_playButton, SIGNAL(valueChanged(double)),
+    //        this, SLOT(slotControlPlay(double)),
+    //        Qt::DirectConnection);
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
@@ -27,20 +34,20 @@ EngineLoopRecorder::~EngineLoopRecorder() {
 }
 
 void EngineLoopRecorder::updateFromPreferences() {
-    m_Encoding = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"Encoding")).toLatin1();
-    m_filename = m_config->getValueString(ConfigKey(RECORDING_PREF_KEY,"Path"));
+    m_Encoding = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Encoding")).toLatin1();
+    m_filename = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Path"));
 }
 
 
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
     // if recording is disabled
-    //if (m_recReady->get() == RECORD_OFF) {
-    //    //qDebug("Setting record flag to: OFF");
-    //    if (fileOpen()) {
-    //        closeFile();    //close file and free encoder
-    //        emit(isRecording(false));
-    //    }
-    //}
+    if (m_recReady->get() == RECORD_OFF) {
+        //qDebug("Setting record flag to: OFF");
+        if (fileOpen()) {
+            closeFile();    //close file and free encoder
+            emit(isLoopRecording(false));
+        }
+    }
     
     // if we are ready for recording, i.e, the output file has been selected, we
     // open a new file
@@ -52,7 +59,7 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
             emit(isLoopRecording(true)); //will notify the RecordingManager
             
             // Since we just started recording, timeout and clear the metadata.
-            m_iMetaDataLife = kMetaDataLifeTimeout;
+            //m_iMetaDataLife = kMetaDataLifeTimeout;
             m_pCurrentTrack = TrackPointer();
             
             //if (m_bCueIsEnabled) {
@@ -81,23 +88,23 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
 bool EngineLoopRecorder::fileOpen() {
     // Both encoder and file must be initalized
     
-    if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
+    //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
         return (m_sndfile != NULL);
-    }
+    //}
 }
 
 bool EngineLoopRecorder::openFile() {
     // Unfortunately, we cannot use QFile for writing WAV and AIFF audio
-    if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF){
+    //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF){
         unsigned long samplerate = m_samplerate->get();
         // set sfInfo
         m_sfInfo.samplerate = samplerate;
         m_sfInfo.channels = 2;
         
-        if (m_Encoding == ENCODING_WAVE)
+        //if (m_Encoding == ENCODING_WAVE)
             m_sfInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
-        else
-            m_sfInfo.format = SF_FORMAT_AIFF | SF_FORMAT_PCM_16;
+        //else
+        //    m_sfInfo.format = SF_FORMAT_AIFF | SF_FORMAT_PCM_16;
         
         // creates a new WAVE or AIFF file and write header information
         m_sndfile = sf_open(m_filename.toLocal8Bit(), SFM_WRITE, &m_sfInfo);
@@ -119,7 +126,7 @@ bool EngineLoopRecorder::openFile() {
                 qDebug("libsndfile: %s", sf_error_number(ret));
             
         }
-    }
+    //}
     
     // check if file is really open
     if (!fileOpen()) {
@@ -134,10 +141,10 @@ bool EngineLoopRecorder::openFile() {
 }
 
 void EngineLoopRecorder::closeFile() {
-    if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
+    //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
         if (m_sndfile != NULL) {
             sf_close(m_sndfile);
             m_sndfile = NULL;
         }
-    }
+    //}
 }

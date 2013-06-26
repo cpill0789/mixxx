@@ -12,38 +12,25 @@
 #include "controlobjectthreadmain.h"
 #include "looprecording/defs_looprecording.h"
 
-/*
- * The RecordingManager is a central class and manages
- * the recording feature of Mixxx.
- *
- * There is exactly one instance of this class
- *
- * All methods in this class are thread-safe
- *
- * Note: The RecordingManager lives in the GUI thread
- */
 
-class EngineMaster;
+//class EngineMaster;
 class ControlPushButton;
-class ControlObjectThreadMain;
+class ControlObject;
+class ControlObjectThread;
 
 class LoopRecordingManager : public QObject
 {
     Q_OBJECT
 public:
-    LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, EngineMaster* pEngine);
+    LoopRecordingManager(ConfigObject<ConfigValue>* pConfig);
     virtual ~LoopRecordingManager();
     
     
     // This will try to start recording If successfuly, slotIsRecording will be
-    // called and a signal isRecording will be emitted.  Parameter semantic: If
-    // true the method computes the filename based on date/time information this
-    // is the default behaviour If false, slotBytesRecorded just noticed that
-    // recording must be interrupted to split the file The nth filename will
-    // follow the date/time name of the first split but with a suffix
+    // called and a signal isRecording will be emitted.
     void startRecording();
     void stopRecording();
-    bool isRecordingActive();
+    bool isLoopRecordingActive();
     void setRecordingDir();
     QString& getRecordingDir();
     // Returns the currently recording file
@@ -55,19 +42,19 @@ signals:
     void bytesRecorded(long);
     void isRecording(bool);
     
-    public slots:
-    void slotIsRecording(bool);
+    //public slots:
+    //void slotIsLoopRecording(bool);
     //void slotBytesRecorded(int);
     
     private slots:
-    void slotSetRecording(bool recording);
-    void slotToggleRecording(double v);
+    //void slotSetLoopRecording(bool recording);
+    void slotToggleLoopRecording(double v);
     
 private:
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     ControlObjectThread* m_recReady;
     ControlObject* m_recReadyCO;
-    ControlPushButton* m_pToggleRecording;
+    ControlObjectThread* pToggleRecording;
     
     ConfigObject<ConfigValue>* m_pConfig;
     QString m_recordingDir;

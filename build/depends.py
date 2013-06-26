@@ -603,6 +603,7 @@ class MixxxCore(Feature):
                    "dlgrecording.cpp",
                    "recording/recordingmanager.cpp",
                    "engine/sidechain/enginerecord.cpp",
+                   "looprecording/looprecordingmanager.cpp",
 
                    # External Library Features
                    "library/baseexternallibraryfeature.cpp",

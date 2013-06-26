@@ -25,6 +25,7 @@
 #include "engine/enginechannel.h"
 #include "soundmanagerutil.h"
 #include "recording/recordingmanager.h"
+#include "looprecording/looprecordingmanager.h"
 
 class EngineWorkerScheduler;
 class EngineBuffer;
@@ -40,6 +41,7 @@ class ControlPushButton;
 class EngineVinylSoundEmu;
 class EngineSideChain;
 class SyncWorker;
+class LoopRecordingManager;
 
 class EngineMaster : public EngineObject, public AudioSource {
     Q_OBJECT
@@ -154,7 +156,8 @@ class EngineMaster : public EngineObject, public AudioSource {
     ControlPotmeter *crossfader, *head_mix, *m_pBalance,
         *xFaderMode, *xFaderCurve, *xFaderCalibration, *xFaderReverse;
 
-    ControlPushButton *loop_recorder;
+    ControlPushButton *m_loopRecordButton;
+    LoopRecordingManager *m_pLoopRecordingManager;
     
     ConstantGainCalculator m_headphoneGain;
     OrientationVolumeGainCalculator m_masterGain;

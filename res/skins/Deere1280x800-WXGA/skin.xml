@@ -304,6 +304,7 @@
 							<!--
 							****************************************
 							 Button- Play
+                             Note: Hijacked for loop recording test.
 							****************************************
 							-->
 							<PushButton>
@@ -323,16 +324,18 @@
 								</State>
 								<Pos>10,31</Pos>
 								<Connection>
-									<ConfigKey>[Sampler1],play</ConfigKey>
+									<ConfigKey>[Master],recordLoop</ConfigKey>
 									<EmitOnDownPress>true</EmitOnDownPress>
 									<ButtonState>LeftButton</ButtonState>
 								</Connection>
+                                <!--
 								<Connection>
 									<ConfigKey>[Sampler1],start</ConfigKey>
 									<EmitOnDownPress>true</EmitOnDownPress>
 									<ButtonState>RightButton</ButtonState>
 									<ConnectValueToWidget>false</ConnectValueToWidget>
 								</Connection>
+                                 -->
 							</PushButton>
 
 							<!--

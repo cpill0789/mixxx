@@ -62,7 +62,7 @@ private:
     ControlObjectThread* m_recReady;
     ControlObjectThread* m_samplerate;
     
-    int m_iMetaDataLife;
+    //int m_iMetaDataLife;
     TrackPointer m_pCurrentTrack;
     
     //QByteArray m_cuefilename;
