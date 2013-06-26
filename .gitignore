@@ -11,7 +11,11 @@
 .#*
 .sconf_temp
 cache
+mixxx
+mixxx-test
 res/qrc_mixxx.cc
 .DS_Store
 *.xcodeproj
 *_xcode
+lib/*/*.a
+lib/*/lib/*.a
