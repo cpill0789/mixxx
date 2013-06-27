@@ -607,6 +607,7 @@ class MixxxCore(Feature):
                    "engine/sidechain/enginerecord.cpp",
                    "looprecording/looprecordingmanager.cpp",
                    "engine/looprecorder/enginelooprecorder.cpp",
+                   "engine/looprecorder/loopbuffer.cpp",
 
                    # External Library Features
                    "library/baseexternallibraryfeature.cpp",

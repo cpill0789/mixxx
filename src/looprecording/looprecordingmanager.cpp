@@ -19,8 +19,7 @@ m_recording_base_file(""),
 m_recordingFile(""),
 m_recordingLocation(""),
 m_isRecording(false),
-m_iNumberOfBytesRecored(0),
-m_pLoopRecordBuffer(new CSAMPLE[LOOP_BUFFER_LENGTH]){
+m_iNumberOfBytesRecored(0){
     //m_pToggleRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     //ControlObjectThread* pToogleRecording = new ControlObjectThread(ConfigKey("[Master]", "recordLoop"));
     //connect(pToggleRecording, SIGNAL(valueChanged(double)),

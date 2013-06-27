@@ -71,7 +71,6 @@ private:
     bool m_isRecording;
     //will be a very large number
     quint64 m_iNumberOfBytesRecored;
-    CSAMPLE* m_pLoopRecordBuffer;
 };
 
 #endif // LOOPRECORDINGMANAGER_H
