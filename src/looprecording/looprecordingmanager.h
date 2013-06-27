@@ -55,6 +55,8 @@ private:
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     ControlObjectThread* m_recReady;
     ControlObject* m_recReadyCO;
+    ControlObjectThread* m_loopPlayReady;
+    ControlObject* m_loopPlayReadyCO;
     ControlObjectThread* pToggleRecording;
     
     ConfigObject<ConfigValue>* m_pConfig;
@@ -69,6 +71,7 @@ private:
     bool m_isRecording;
     //will be a very large number
     quint64 m_iNumberOfBytesRecored;
+    CSAMPLE* m_pLoopRecordBuffer;
 };
 
 #endif // LOOPRECORDINGMANAGER_H

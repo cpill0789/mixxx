@@ -19,13 +19,16 @@ m_recording_base_file(""),
 m_recordingFile(""),
 m_recordingLocation(""),
 m_isRecording(false),
-m_iNumberOfBytesRecored(0) {
+m_iNumberOfBytesRecored(0),
+m_pLoopRecordBuffer(new CSAMPLE[LOOP_BUFFER_LENGTH]){
     //m_pToggleRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     //ControlObjectThread* pToogleRecording = new ControlObjectThread(ConfigKey("[Master]", "recordLoop"));
     //connect(pToggleRecording, SIGNAL(valueChanged(double)),
     //        this, SLOT(slotToggleLoopRecording(double)));
-    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "status"));
+    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
     m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+    m_loopPlayReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
+    m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
     
     // Register EngineRecord with the engine sidechain.
@@ -43,6 +46,7 @@ LoopRecordingManager::~LoopRecordingManager()
     qDebug() << "Delete LoopRecordingManager";
     delete m_recReadyCO;
     delete m_recReady;
+    delete [] m_pLoopRecordBuffer;
 }
 
 QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) const {

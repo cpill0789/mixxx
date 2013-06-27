@@ -12,4 +12,7 @@
 #define LOOP_RECORD_READY 1.0f
 #define LOOP_RECORD_ON 2.0f
 
+// Arbitrary loop buffer length
+#define LOOP_BUFFER_LENGTH 500000
+
 #endif

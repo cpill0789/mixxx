@@ -13,11 +13,16 @@
 
 //const int kMetaDataLifeTimeout = 16;
 
+// Note: what I need to know for recording to a buffer:
+// - buffer pointer
+// - buffer size? probably handled in looprecordingmanager.cpp
+// - current writing position
+
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
 : m_config(_config),
 m_sndfile(NULL) {
     m_bIsRecording = false;
-    m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "status");
+    m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
     m_samplerate = new ControlObjectThread("[Master]", "samplerate");
 }
 
@@ -35,10 +40,10 @@ void EngineLoopRecorder::updateFromPreferences() {
 
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
     
-    qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
+    //qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
     // if recording is disabled
     if (m_recReady->get() == LOOP_RECORD_OFF) {
-        qDebug("Setting record flag to: OFF");
+        //qDebug("Setting record flag to: OFF");
         if (fileOpen()) {
             closeFile();    //close file and free encoder
             m_bIsRecording = false;
@@ -48,8 +53,14 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     
     // if we are ready for recording, i.e, the output file has been selected, we
     // open a new file
+    
+    // TODO(Carl): Record to buffer instead of to file.  Recording to file causes audible
+    // stuttering in the audio as was anticipated.  Reading to a pre-allocated buffer
+    // should eliminate this problem and enable immediate reading for playback
+    
     if (m_recReady->get() == LOOP_RECORD_READY) {
         updateFromPreferences();	//update file location from pref
+        
         if (openFile()) {
             qDebug("Setting record flag to: ON");
             m_recReady->slotSet(LOOP_RECORD_ON);
@@ -143,6 +154,7 @@ void EngineLoopRecorder::closeFile() {
     //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
         if (m_sndfile != NULL) {
             sf_close(m_sndfile);
+            // Signal that loop is available to play here.
             m_sndfile = NULL;
         }
     //}
