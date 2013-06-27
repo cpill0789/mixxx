@@ -1,4 +1,4 @@
-//  enginelooprecorder.cpp
+//  enginelooprecorder.h
 //  Created by Carl Pillot on 6/22/13.
 //  Adapted from EngineLoopRecorder.h
 
