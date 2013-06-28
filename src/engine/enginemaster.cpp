@@ -35,6 +35,7 @@
 #include "sampleutil.h"
 #include "util/timer.h"
 #include "engine/looprecorder/enginelooprecorder.h"
+#include "engine/looprecorder/loopbuffer.h"
 
 #ifdef __LADSPA__
 #include "engineladspa.h"
@@ -115,6 +116,7 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     
     m_pLoopRecordingManager = new LoopRecordingManager(_config);
     m_pEngineLoopRecorder = new EngineLoopRecorder(_config);
+    m_pLoopBuffer = new LoopBuffer(_config);
     
 }
 
@@ -132,6 +134,8 @@ EngineMaster::~EngineMaster()
     delete m_pSideChain;
     delete m_loopRecordButton;
     delete m_pLoopRecordingManager;
+    delete m_pEngineLoopRecorder;
+    delete m_pLoopBuffer;
     
     delete xFaderReverse;
     delete xFaderCalibration;

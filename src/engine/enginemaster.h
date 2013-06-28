@@ -43,6 +43,7 @@ class EngineSideChain;
 class SyncWorker;
 class LoopRecordingManager;
 class EngineLoopRecorder;
+class LoopBuffer;
 
 class EngineMaster : public EngineObject, public AudioSource {
     Q_OBJECT
@@ -160,6 +161,7 @@ class EngineMaster : public EngineObject, public AudioSource {
     ControlPushButton *m_loopRecordButton;
     EngineLoopRecorder *m_pEngineLoopRecorder;
     LoopRecordingManager *m_pLoopRecordingManager;
+    LoopBuffer *m_pLoopBuffer;
     
     ConstantGainCalculator m_headphoneGain;
     OrientationVolumeGainCalculator m_masterGain;

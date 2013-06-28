@@ -3,6 +3,9 @@
 
 #include "loopbuffer.h"
 
+#include "looprecording/defs_looprecording.h"
+#include "defs.h"
+
 LoopBuffer::LoopBuffer(ConfigObject<ConfigValue>* _config)
 : m_config(_config),
 m_pMainBuffer(new CSAMPLE[LOOP_BUFFER_LENGTH]) {
@@ -12,17 +15,16 @@ m_pMainBuffer(new CSAMPLE[LOOP_BUFFER_LENGTH]) {
 }
 
 LoopBuffer::~LoopBuffer() {
-    delete m_pMainBuffer;
+    delete[] m_pMainBuffer;
 }
 
-LoopBuffer::writeSampleBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
-    return;
+void LoopBuffer::writeSampleBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
 }
 
-LoopBuffer::getBuffer() {
+CSAMPLE* LoopBuffer::getBuffer() {
     return m_pMainBuffer;
 }
 
-LoopBuffer::resetBuffer() {
-    return;
+void LoopBuffer::resetBuffer() {
+
 }

@@ -45,7 +45,7 @@ LoopRecordingManager::~LoopRecordingManager()
     qDebug() << "Delete LoopRecordingManager";
     delete m_recReadyCO;
     delete m_recReady;
-    delete [] m_pLoopRecordBuffer;
+    //delete [] m_pLoopRecordBuffer;
 }
 
 QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) const {
