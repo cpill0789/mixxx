@@ -115,8 +115,8 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     m_loopRecordButton->setButtonMode(ControlPushButton::TOGGLE);
     
     m_pLoopRecordingManager = new LoopRecordingManager(_config);
-    m_pEngineLoopRecorder = new EngineLoopRecorder(_config);
     m_pLoopBuffer = new LoopBuffer(_config);
+    m_pEngineLoopRecorder = new EngineLoopRecorder(_config, m_pLoopBuffer);
     
 }
 

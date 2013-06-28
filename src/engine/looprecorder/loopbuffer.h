@@ -7,7 +7,7 @@
 #define LOOPBUFFER_H
 
 #include "configobject.h"
-#include "defs.h"
+#include "sampleutil.h"
 
 class ConfigKey;
 class ControlObjectThread;
@@ -21,11 +21,16 @@ public:
     void writeSampleBuffer(const CSAMPLE* pBuffer, const int iBufferSize);
     CSAMPLE* getBuffer();
     void resetBuffer();
+    bool isReady();
+    bool isRecording();
+    void open();
+    void endRecording();
     
 private:
     ConfigObject<ConfigValue>* m_config;
     CSAMPLE* m_pMainBuffer;
-    int samplesRecorder;
+    int m_iSamplesRecorded;
+    bool m_bIsRecording;
     
 };
 

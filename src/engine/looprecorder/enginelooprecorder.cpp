@@ -2,7 +2,7 @@
 //  Created by Carl Pillot on 6/22/13.
 //  Adapted from EngineLoopRecorder.cpp
 
-#include "enginelooprecorder.h"
+#include "engine/looprecorder/enginelooprecorder.h"
 
 #include "configobject.h"
 #include "controlobject.h"
@@ -10,6 +10,7 @@
 #include "errordialoghandler.h"
 #include "playerinfo.h"
 #include "looprecording/defs_looprecording.h"
+#include "engine/looprecorder/loopbuffer.h"
 
 //const int kMetaDataLifeTimeout = 16;
 
@@ -18,16 +19,17 @@
 // - buffer size? probably handled in looprecordingmanager.cpp
 // - current writing position
 
-EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
+EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config, LoopBuffer* _loopBuffer)
 : m_config(_config),
-m_sndfile(NULL) {
+m_sndfile(NULL),
+m_pLoopBuffer(_loopBuffer) {
     m_bIsRecording = false;
     m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
     m_samplerate = new ControlObjectThread("[Master]", "samplerate");
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
-    closeFile();
+    closeBufferEntry();
     delete m_recReady;
     delete m_samplerate;
 }
@@ -44,8 +46,8 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     // if recording is disabled
     if (m_recReady->get() == LOOP_RECORD_OFF) {
         //qDebug("Setting record flag to: OFF");
-        if (fileOpen()) {
-            closeFile();    //close file and free encoder
+        if (m_pLoopBuffer->isRecording()) {
+            closeBufferEntry();    //close file and free encoder
             m_bIsRecording = false;
             //emit(isLoopRecording(false));
         }
@@ -61,7 +63,7 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     if (m_recReady->get() == LOOP_RECORD_READY) {
         updateFromPreferences();	//update file location from pref
         
-        if (openFile()) {
+        if (openBufferEntry()) {
             qDebug("Setting record flag to: ON");
             m_recReady->slotSet(LOOP_RECORD_ON);
             m_bIsRecording = true;
@@ -87,24 +89,19 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     // If recording is enabled process audio to uncompressed data.
     if (m_recReady->get() == LOOP_RECORD_ON) {
         //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
-            if (m_sndfile != NULL) {
-                sf_write_float(m_sndfile, pBuffer, iBufferSize);
+            if (m_pLoopBuffer->isRecording()) {
+                m_pLoopBuffer->writeSampleBuffer(pBuffer, iBufferSize);
                 //emit(bytesRecorded(iBufferSize));
             }
         //}
   	}
 }
 
-bool EngineLoopRecorder::fileOpen() {
-    // Both encoder and file must be initalized
-    
-    //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
-        return (m_sndfile != NULL);
-    //}
+bool EngineLoopRecorder::bufferReady() {
+    return (m_pLoopBuffer->isReady());
 }
 
-bool EngineLoopRecorder::openFile() {
-    // Unfortunately, we cannot use QFile for writing WAV and AIFF audio
+bool EngineLoopRecorder::openBufferEntry() {
     //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF){
         unsigned long samplerate = m_samplerate->get();
         // set sfInfo
@@ -115,47 +112,41 @@ bool EngineLoopRecorder::openFile() {
             m_sfInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
         //else
         //    m_sfInfo.format = SF_FORMAT_AIFF | SF_FORMAT_PCM_16;
-        
+    
         // creates a new WAVE or AIFF file and write header information
-        m_sndfile = sf_open(m_filename.toLocal8Bit(), SFM_WRITE, &m_sfInfo);
-        if (m_sndfile) {
-            sf_command(m_sndfile, SFC_SET_NORM_FLOAT, NULL, SF_FALSE) ;
-            //set meta data
-            int ret;
+        //m_sndfile = sf_open(m_filename.toLocal8Bit(), SFM_WRITE, &m_sfInfo);
+        //if (m_sndfile) {
+        //    sf_command(m_sndfile, SFC_SET_NORM_FLOAT, NULL, SF_FALSE) ;
+        //    //set meta data
+        //    int ret;
+        //
+        //    ret = sf_set_string(m_sndfile, SF_STR_TITLE, m_baTitle.data());
+        //    if(ret != 0)
+        //        qDebug("libsndfile: %s", sf_error_number(ret));
             
-            ret = sf_set_string(m_sndfile, SF_STR_TITLE, m_baTitle.data());
-            if(ret != 0)
-                qDebug("libsndfile: %s", sf_error_number(ret));
+        //    ret = sf_set_string(m_sndfile, SF_STR_ARTIST, m_baAuthor.data());
+        //    if(ret != 0)
+        //        qDebug("libsndfile: %s", sf_error_number(ret));
             
-            ret = sf_set_string(m_sndfile, SF_STR_ARTIST, m_baAuthor.data());
-            if(ret != 0)
-                qDebug("libsndfile: %s", sf_error_number(ret));
+        //    ret = sf_set_string(m_sndfile, SF_STR_COMMENT, m_baAlbum.data());
+        //    if(ret != 0)
+        //        qDebug("libsndfile: %s", sf_error_number(ret));
             
-            ret = sf_set_string(m_sndfile, SF_STR_COMMENT, m_baAlbum.data());
-            if(ret != 0)
-                qDebug("libsndfile: %s", sf_error_number(ret));
-            
-        }
+        //}
     //}
     
-    // check if file is really open
-    if (!fileOpen()) {
-        ErrorDialogProperties* props = ErrorDialogHandler::instance()->newDialogProperties();
-        props->setType(DLG_WARNING);
-        props->setTitle(tr("Recording"));
-        props->setText(tr("<html>Could not create audio file for recording!<p><br>Maybe you do not have enough free disk space or file permissions.</html>"));
-        ErrorDialogHandler::instance()->requestErrorDialog(props);
-        return false;
-    }
-    return true;
+    m_pLoopBuffer->open();
+    
+    return bufferReady();
 }
 
-void EngineLoopRecorder::closeFile() {
+void EngineLoopRecorder::closeBufferEntry() {
     //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
-        if (m_sndfile != NULL) {
-            sf_close(m_sndfile);
+        if (m_pLoopBuffer->isRecording()) {
+            //sf_close(m_sndfile);
             // Signal that loop is available to play here.
-            m_sndfile = NULL;
+            //m_sndfile = NULL;
+            m_pLoopBuffer->endRecording();
         }
     //}
 }

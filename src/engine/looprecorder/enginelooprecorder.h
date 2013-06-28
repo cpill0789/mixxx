@@ -12,24 +12,25 @@
 
 class ConfigKey;
 class ControlObjectThread;
+class LoopBuffer;
 
 class EngineLoopRecorder : public QObject {
     Q_OBJECT
 public:
-    EngineLoopRecorder(ConfigObject<ConfigValue>* _config);
+    EngineLoopRecorder(ConfigObject<ConfigValue>* _config, LoopBuffer* _loopBuffer);
     virtual ~EngineLoopRecorder();
     
     void process(const CSAMPLE* pBuffer, const int iBufferSize);
     void shutdown() {}
     
     // writes uncompressed audio to file
-    void write(unsigned char *header, unsigned char *body, int headerLen, int bodyLen);
+    //void write(unsigned char *header, unsigned char *body, int headerLen, int bodyLen);
     // creates or opens an audio file
-    bool openFile();
+    bool openBufferEntry();
     // closes the audio file
-    void closeFile();
+    void closeBufferEntry();
     void updateFromPreferences();
-    bool fileOpen();
+    bool bufferReady();
     bool isRecording();
     
 signals:
@@ -65,6 +66,7 @@ private:
     
     //int m_iMetaDataLife;
     TrackPointer m_pCurrentTrack;
+    LoopBuffer* m_pLoopBuffer;
     
     //QByteArray m_cuefilename;
     //quint64 m_cuesamplepos;
