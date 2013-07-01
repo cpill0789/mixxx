@@ -8,6 +8,7 @@
 
 #include "configobject.h"
 #include "sampleutil.h"
+#include "util/fifo.h"
 
 class ConfigKey;
 class ControlObjectThread;
@@ -19,7 +20,7 @@ public:
     ~LoopBuffer();
     
     void writeSampleBuffer(const CSAMPLE* pBuffer, const int iBufferSize);
-    CSAMPLE* getBuffer();
+    //CSAMPLE* getBuffer();
     void resetBuffer();
     bool isReady();
     bool isRecording();
@@ -28,7 +29,8 @@ public:
     
 private:
     ConfigObject<ConfigValue>* m_config;
-    CSAMPLE* m_pMainBuffer;
+    FIFO<CSAMPLE> m_mainBuffer;
+    //CSAMPLE* m_pMainBuffer;
     int m_iSamplesRecorded;
     bool m_bIsRecording;
     

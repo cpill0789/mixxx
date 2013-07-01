@@ -7,25 +7,29 @@
 #include "sampleutil.h"
 
 LoopBuffer::LoopBuffer(ConfigObject<ConfigValue>* _config)
-: m_config(_config){
+: m_config(_config),
+  m_mainBuffer(LOOP_BUFFER_LENGTH) {
     m_bIsRecording = false;
     m_iSamplesRecorded = 0;
     //m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
     //m_samplerate = new ControlObjectThread("[Master]", "samplerate");
-    m_pMainBuffer = SampleUtil::alloc(LOOP_BUFFER_LENGTH);
+    m_mainBuffer = SampleUtil::alloc(LOOP_BUFFER_LENGTH);
 }
 
 LoopBuffer::~LoopBuffer() {
-    SampleUtil::free(m_pMainBuffer);
+    //SampleUtil::free(m_pMainBuffer);
 }
 
 void LoopBuffer::writeSampleBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
-    qDebug() << "LoopBuffer::writeSampleBuffer " << *pBuffer << " " << iBufferSize;
+    //qDebug() << "LoopBuffer::writeSampleBuffer " << *pBuffer << " " << iBufferSize;
+    if (iBufferSize < m_mainBuffer->writeAvailable()) {
+        m_mainBuffer->write(pBuffer,iBufferSize);
+    }
 }
 
-CSAMPLE* LoopBuffer::getBuffer() {
-    return m_pMainBuffer;
-}
+//CSAMPLE* LoopBuffer::getBuffer() {
+//    return m_pMainBuffer;
+//}
 
 void LoopBuffer::resetBuffer() {
 
