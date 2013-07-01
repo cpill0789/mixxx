@@ -37,7 +37,7 @@ bool LoopBuffer::isReady() {
 }
 
 bool LoopBuffer::isRecording() {
-    qDebug() << "LoopBuffer::isRecording";
+    //qDebug() << "LoopBuffer::isRecording";
     return m_bIsRecording;
 }
 
