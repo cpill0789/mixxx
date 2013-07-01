@@ -36,6 +36,7 @@
 #include "util/timer.h"
 #include "engine/looprecorder/enginelooprecorder.h"
 #include "engine/looprecorder/loopbuffer.h"
+#include "playermanager.h"
 
 #ifdef __LADSPA__
 #include "engineladspa.h"
@@ -401,12 +402,12 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     // Loop Recorder: Send PFL mix to loop/sampler recorders.  Is this the right place to do this?
     
     // Calculate the crossfader gains for left and right side of the crossfader
-    float c1_gain, c2_gain;
-    EngineXfader::getXfadeGains(c1_gain, c2_gain,
-                                crossfader->get(), xFaderCurve->get(),
+    double c1_gain, c2_gain;
+    EngineXfader::getXfadeGains(crossfader->get(), xFaderCurve->get(),
                                 xFaderCalibration->get(),
-                                xFaderMode->get()==MIXXX_XFADER_CONSTPWR,
-                                xFaderReverse->get()==1.0);
+                                xFaderMode->get() == MIXXX_XFADER_CONSTPWR,
+                                xFaderReverse->get() == 1.0,
+                                &c1_gain, &c2_gain);
 
     // Now set the gains for overall volume and the left, center, right gains.
     m_masterGain.setGains(m_pMasterVolume->get(), c1_gain, 1.0, c2_gain);
@@ -504,7 +505,7 @@ EngineChannel* EngineMaster::getChannel(QString group) {
 }
 
 const CSAMPLE* EngineMaster::getDeckBuffer(unsigned int i) const {
-    return getChannelBuffer(QString("[Channel%1]").arg(i+1));
+    return getChannelBuffer(PlayerManager::groupForDeck(i));
 }
 
 const CSAMPLE* EngineMaster::getChannelBuffer(QString group) const {

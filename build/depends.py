@@ -654,8 +654,6 @@ class MixxxCore(Feature):
                    "library/parserm3u.cpp",
                    "library/parsercsv.cpp",
 
-                   "bpm/bpmscheme.cpp",
-
                    "soundsourceproxy.cpp",
 
                    "widget/wwaveformviewer.cpp",
@@ -732,7 +730,6 @@ class MixxxCore(Feature):
                    "encoder/encodermp3.cpp",
                    "encoder/encodervorbis.cpp",
 
-                   "segmentation.cpp",
                    "tapfilter.cpp",
 
                    "util/pa_ringbuffer.c",
