@@ -13,7 +13,7 @@ LoopBuffer::LoopBuffer(ConfigObject<ConfigValue>* _config)
     m_iSamplesRecorded = 0;
     //m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
     //m_samplerate = new ControlObjectThread("[Master]", "samplerate");
-    m_mainBuffer = SampleUtil::alloc(LOOP_BUFFER_LENGTH);
+    //m_mainBuffer = SampleUtil::alloc(LOOP_BUFFER_LENGTH);
 }
 
 LoopBuffer::~LoopBuffer() {
@@ -21,9 +21,9 @@ LoopBuffer::~LoopBuffer() {
 }
 
 void LoopBuffer::writeSampleBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
-    //qDebug() << "LoopBuffer::writeSampleBuffer " << *pBuffer << " " << iBufferSize;
-    if (iBufferSize < m_mainBuffer->writeAvailable()) {
-        m_mainBuffer->write(pBuffer,iBufferSize);
+    qDebug() << "LoopBuffer::writeSampleBuffer " << *pBuffer << " " << iBufferSize;
+    if (iBufferSize < m_mainBuffer.writeAvailable()) {
+        //m_mainBuffer.write(pBuffer,iBufferSize);
     }
 }
 
