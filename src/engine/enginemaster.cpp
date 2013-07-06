@@ -399,7 +399,10 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     m_headphoneGain.setGain(chead_gain);
     mixChannels(headphoneOutput, maxChannels, m_pHead, iBufferSize, &m_headphoneGain);
 
-    // Loop Recorder: Send PFL mix to loop/sampler recorders.  Is this the right place to do this?
+    // Loop Recorder: Send PFL mix to loop/sampler recorders.
+    //if (LoopRecordingManager->isHeadphoneOutput){
+    //    m_pEngineLoopRecorder->process(m_pHead, iBufferSize);
+    //}
     
     // Calculate the crossfader gains for left and right side of the crossfader
     double c1_gain, c2_gain;

@@ -52,11 +52,11 @@ void EngineLoopRecorder::updateFromPreferences() {
 }
 
 void EngineLoopRecorder::writeSamples(const CSAMPLE* newBuffer, int buffer_size) {
-    ScopedTimer t("EngineSideChain:writeSamples");
+    ScopedTimer t("EngineLoopRecorder:writeSamples");
     int samples_written = m_sampleFifo.write(newBuffer, buffer_size);
     
     if (samples_written != buffer_size) {
-        Counter("EngineSideChain::writeSamples buffer overrun").increment();
+        Counter("EngineLoopRecorder::writeSamples buffer overrun").increment();
     }
     
     if (m_sampleFifo.writeAvailable() < SIDECHAIN_BUFFER_SIZE/5) {
@@ -70,12 +70,15 @@ void EngineSideChain::run() {
     // the id of this thread, for debugging purposes //XXX copypasta (should
     // factor this out somehow), -kousu 2/2009
     unsigned static id = 0;
-    QThread::currentThread()->setObjectName(QString("EngineSideChain %1").arg(++id));
+    QThread::currentThread()->setObjectName(QString("EngineLoopRecorder %1").arg(++id));
     
     while (!m_bStopThread) {
         int samples_read;
         while ((samples_read = m_sampleFifo.read(
                                                  m_pWorkBuffer, SIDECHAIN_BUFFER_SIZE))) {
+            
+            process(m_pWorkBuffer, samples_read);
+            
             //QMutexLocker locker(&m_workerLock);
             //foreach (SideChainWorker* pWorker, m_workers) {
             //    pWorker->process(m_pWorkBuffer, samples_read);
