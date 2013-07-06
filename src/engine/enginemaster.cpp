@@ -115,7 +115,7 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     m_loopRecordButton = new ControlPushButton(ConfigKey(group, "recordLoop"));
     m_loopRecordButton->setButtonMode(ControlPushButton::TOGGLE);
     
-    m_pLoopRecordingManager = new LoopRecordingManager(_config);
+    //m_pLoopRecordingManager = new LoopRecordingManager(_config);
     m_pLoopBuffer = new LoopBuffer(_config);
     m_pEngineLoopRecorder = new EngineLoopRecorder(_config, m_pLoopBuffer);
     
@@ -134,7 +134,7 @@ EngineMaster::~EngineMaster()
     delete head_clipping;
     delete m_pSideChain;
     delete m_loopRecordButton;
-    delete m_pLoopRecordingManager;
+    //delete m_pLoopRecordingManager;
     delete m_pEngineLoopRecorder;
     delete m_pLoopBuffer;
     
@@ -446,11 +446,11 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     
     if(m_loopRecordButton->get()) {
         if(!m_pEngineLoopRecorder->isRecording()) {
-            m_pLoopRecordingManager->startRecording();
+            //m_pLoopRecordingManager->startRecording();
         }
     } else {
         if(m_pEngineLoopRecorder->isRecording()) {
-            m_pLoopRecordingManager->stopRecording();
+            //m_pLoopRecordingManager->stopRecording();
         }
     }
     
