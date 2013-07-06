@@ -156,7 +156,7 @@ class EngineMaster : public EngineObject, public AudioSource {
     ControlPotmeter *crossfader, *head_mix, *m_pBalance,
         *xFaderMode, *xFaderCurve, *xFaderCalibration, *xFaderReverse;
 
-    ControlPushButton *m_loopRecordButton;
+    //ControlPushButton *m_loopRecordButton;
     EngineLoopRecorder *m_pEngineLoopRecorder;
     LoopBuffer *m_pLoopBuffer;
     

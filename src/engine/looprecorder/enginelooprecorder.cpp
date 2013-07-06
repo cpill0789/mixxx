@@ -21,22 +21,77 @@
 
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config, LoopBuffer* _loopBuffer)
 : m_config(_config),
+m_bStopThread(false),
 m_sndfile(NULL),
+m_bIsRecording(false),
 m_pLoopBuffer(_loopBuffer) {
-    m_bIsRecording = false;
+    
+    start(QThread::HighPriority);
     m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
     m_samplerate = new ControlObjectThread("[Master]", "samplerate");
+
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
+    m_waitLock.lock();
+    m_bStopThread = true;
+    m_waitForSamples.wakeAll();
+    m_waitLock.unlock();
+
+    
     closeBufferEntry();
     delete m_recReady;
     delete m_samplerate;
+    
+    //SampleUtil::free(m_pWorkBuffer);
 }
 
 void EngineLoopRecorder::updateFromPreferences() {
     m_Encoding = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Encoding")).toLatin1();
     m_filename = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Path"));
+}
+
+void EngineLoopRecorder::writeSamples(const CSAMPLE* newBuffer, int buffer_size) {
+    ScopedTimer t("EngineSideChain:writeSamples");
+    int samples_written = m_sampleFifo.write(newBuffer, buffer_size);
+    
+    if (samples_written != buffer_size) {
+        Counter("EngineSideChain::writeSamples buffer overrun").increment();
+    }
+    
+    if (m_sampleFifo.writeAvailable() < SIDECHAIN_BUFFER_SIZE/5) {
+        // Signal to the sidechain that samples are available.
+        m_waitForSamples.wakeAll();
+    }
+
+}
+
+void EngineSideChain::run() {
+    // the id of this thread, for debugging purposes //XXX copypasta (should
+    // factor this out somehow), -kousu 2/2009
+    unsigned static id = 0;
+    QThread::currentThread()->setObjectName(QString("EngineSideChain %1").arg(++id));
+    
+    while (!m_bStopThread) {
+        int samples_read;
+        while ((samples_read = m_sampleFifo.read(
+                                                 m_pWorkBuffer, SIDECHAIN_BUFFER_SIZE))) {
+            //QMutexLocker locker(&m_workerLock);
+            //foreach (SideChainWorker* pWorker, m_workers) {
+            //    pWorker->process(m_pWorkBuffer, samples_read);
+            //}
+        }
+        
+        // Check to see if we're supposed to exit/stop this thread.
+        if (m_bStopThread) {
+            return;
+        }
+        
+        // Sleep until samples are available.
+        m_waitLock.lock();
+        m_waitForSamples.wait(&m_waitLock);
+        m_waitLock.unlock();
+    }
 }
 
 

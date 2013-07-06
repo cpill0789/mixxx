@@ -112,11 +112,11 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     
     // Add controls for loop recorder.
     //loop_recorder = new ControlPushButton(ConfigKey(group,"loopRecorder"));
-    m_loopRecordButton = new ControlPushButton(ConfigKey(group, "recordLoop"));
-    m_loopRecordButton->setButtonMode(ControlPushButton::TOGGLE);
+    //m_loopRecordButton = new ControlPushButton(ConfigKey(group, "recordLoop"));
+    //m_loopRecordButton->setButtonMode(ControlPushButton::TOGGLE);
     
     //m_pLoopRecordingManager = new LoopRecordingManager(_config);
-    m_pLoopBuffer = new LoopBuffer(_config);
+    //m_pLoopBuffer = new LoopBuffer(_config);
     m_pEngineLoopRecorder = new EngineLoopRecorder(_config, m_pLoopBuffer);
     
 }
@@ -133,7 +133,7 @@ EngineMaster::~EngineMaster()
     delete vumeter;
     delete head_clipping;
     delete m_pSideChain;
-    delete m_loopRecordButton;
+    //delete m_loopRecordButton;
     //delete m_pLoopRecordingManager;
     delete m_pEngineLoopRecorder;
     delete m_pLoopBuffer;
@@ -444,15 +444,15 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     
     m_pEngineLoopRecorder->process(m_pMaster, iBufferSize);
     
-    if(m_loopRecordButton->get()) {
-        if(!m_pEngineLoopRecorder->isRecording()) {
-            //m_pLoopRecordingManager->startRecording();
-        }
-    } else {
-        if(m_pEngineLoopRecorder->isRecording()) {
-            //m_pLoopRecordingManager->stopRecording();
-        }
-    }
+    //if(m_loopRecordButton->get()) {
+    //    if(!m_pEngineLoopRecorder->isRecording()) {
+    //        m_pLoopRecordingManager->startRecording();
+    //    }
+    //} else {
+    //    if(m_pEngineLoopRecorder->isRecording()) {
+    //        m_pLoopRecordingManager->stopRecording();
+    //    }
+    //}
     
     // Submit master samples to the side chain to do shoutcasting, recording,
     // etc.  (cpu intensive non-realtime tasks)

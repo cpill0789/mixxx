@@ -5,33 +5,34 @@
 #ifndef ENGINELOOPRECORDER_H
 #define ENGINELOOPRECORDER_H
 
+#include <QtCore>
 #include <sndfile.h>
 
 #include "configobject.h"
 #include "trackinfoobject.h"
+#include "util/fifo.h"
 
 class ConfigKey;
 class ControlObjectThread;
 class LoopBuffer;
 
-class EngineLoopRecorder : public QObject {
+class EngineLoopRecorder : public QThread {
     Q_OBJECT
 public:
     EngineLoopRecorder(ConfigObject<ConfigValue>* _config, LoopBuffer* _loopBuffer);
     virtual ~EngineLoopRecorder();
     
-    void process(const CSAMPLE* pBuffer, const int iBufferSize);
-    void shutdown() {}
-    
+    writeSamples(const CSAMPLE* pBuffer, const int iBufferSize);
+        
     // writes uncompressed audio to file
     //void write(unsigned char *header, unsigned char *body, int headerLen, int bodyLen);
     // creates or opens an audio file
-    bool openBufferEntry();
+    //bool openBufferEntry();
     // closes the audio file
-    void closeBufferEntry();
-    void updateFromPreferences();
-    bool bufferReady();
-    bool isRecording();
+    //void closeBufferEntry();
+    //void updateFromPreferences();
+    //bool bufferReady();
+    //bool isRecording();
     
 signals:
     // emitted to notify LoopRecordingManager
@@ -39,6 +40,8 @@ signals:
     //void isLoopRecording(bool);
     
 private:
+    void run();
+    void process(const CSAMPLE* pBuffer, const int iBufferSize);
     //int getActiveTracks();
     
     // Check if the metadata has changed since the previous check. We also check
@@ -49,15 +52,19 @@ private:
     //void writeCueLine();
     
     ConfigObject<ConfigValue>* m_config;
+    // Indicates that the thread should exit.
+    volatile bool m_bStopThread;
     QByteArray m_Encoding;
     QString m_filename;
     QByteArray m_baTitle;
     QByteArray m_baAuthor;
     QByteArray m_baAlbum;
     
-    //QFile m_file;
-    //QFile m_cuefile;
-    //QDataStream m_datastream;
+    // Provides thread safety around the wait condition below.
+    QMutex m_waitLock;
+    // Allows sleeping until we have samples to process.
+    QWaitCondition m_waitForSamples;
+    
     SNDFILE *m_sndfile;
     SF_INFO m_sfInfo;
     
