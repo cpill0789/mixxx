@@ -41,6 +41,7 @@ class VinylControlManager;
 
 class DlgPreferences;
 class SoundManager;
+class LoopRecorderManager;
 
 #include "configobject.h"
 #include "util/cmdlineargs.h"
@@ -156,6 +157,8 @@ class MixxxApp : public QMainWindow {
 #ifdef __SHOUTCAST__
     ShoutcastManager* m_pShoutcastManager;
 #endif
+    LoopRecordingManager * m_pLoopRecordingManager;
+    
     ControllerManager *m_pControllerManager;
 
     ConfigObject<ConfigValue> *m_pConfig;

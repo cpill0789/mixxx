@@ -41,6 +41,7 @@
 #include "recording/defs_recording.h"
 #include "recording/recordingmanager.h"
 #include "shoutcast/shoutcastmanager.h"
+#include "looprecording/looprecordingmanager.h"
 #include "skin/legacyskinparser.h"
 #include "skin/skinloader.h"
 #include "soundmanager.h"
@@ -281,6 +282,9 @@ MixxxApp::MixxxApp(QApplication *pApp, const CmdlineArgs& args)
     m_pShoutcastManager = new ShoutcastManager(m_pConfig, m_pEngine);
 #endif
 
+    //TODO(carl):initialize loop recorder.
+    m_pLoopRecording = new LoopRecordingManager(m_pConfig, m_pEngine);
+              
     // Initialize player device
     // while this is created here, setupDevices needs to be called sometime
     // after the players are added to the engine (as is done currently) -- bkgood
