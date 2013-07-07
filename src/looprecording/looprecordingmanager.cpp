@@ -21,7 +21,6 @@ m_recordingLocation(""),
 m_isRecording(false),
 m_iNumberOfBytesRecored(0){
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
-    //ControlObjectThread* pToogleRecording = new ControlObjectThread(ConfigKey("[Master]", "recordLoop"));
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
     m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
@@ -56,6 +55,7 @@ QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) cons
 }
 
 void LoopRecordingManager::slotSetLoopRecording(bool recording) {
+    //qDebug() << "LoopRecordingManager slotSetLoopRecording";
     if (recording && !isLoopRecordingActive()) {
         startRecording();
     } else if (!recording && isLoopRecordingActive()) {
@@ -64,12 +64,13 @@ void LoopRecordingManager::slotSetLoopRecording(bool recording) {
 }
 
 void LoopRecordingManager::slotToggleLoopRecording(double v) {
-    if (v > 0) {
+    //qDebug() << "LoopRecordingManager slotToggleLoopRecording v: " << v;
+    if (v == 0.) {
         if (isLoopRecordingActive()) {
             stopRecording();
-        } else {
-            startRecording();
-       }
+        }
+    } else {
+        startRecording();
     }
 }
 

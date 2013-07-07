@@ -324,7 +324,7 @@
 								</State>
 								<Pos>10,31</Pos>
 								<Connection>
-									<ConfigKey>[Master],recordLoop</ConfigKey>
+									<ConfigKey>[Loop_Recording],toggle_loop_recording</ConfigKey>
 									<EmitOnDownPress>true</EmitOnDownPress>
 									<ButtonState>LeftButton</ButtonState>
 								</Connection>
