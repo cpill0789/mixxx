@@ -10,6 +10,7 @@
 #include "looprecording/defs_looprecording.h"
 #include "engine/looprecorder/enginelooprecorder.h"
 #include "controlpushbutton.h"
+#include "engine/enginemaster.h"
 
 
 LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, EngineMaster* pEngine)
@@ -34,7 +35,7 @@ m_iNumberOfBytesRecored(0){
     // TODO: connect with LoopRecorder, a bit different than sidechain code
     EngineLoopRecorder* pLoopRecorder = pEngine->getLoopRecorder();
     if (pLoopRecorder) {
-        connect(pEngineLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
+        connect(pLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
     }
 }
 
@@ -146,7 +147,7 @@ void LoopRecordingManager::slotIsLoopRecording(bool isRecordingActive) {
     
     //Notify the GUI controls, see dlgrecording.cpp
     m_isRecording = isRecordingActive;
-    emit(isRecording(isRecordingActive));
+    emit(isLoopRecording(isRecordingActive));
 }
 
 bool LoopRecordingManager::isLoopRecordingActive() {
