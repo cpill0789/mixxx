@@ -10,7 +10,7 @@
 #include "errordialoghandler.h"
 #include "playerinfo.h"
 #include "looprecording/defs_looprecording.h"
-#include "engine/looprecorder/loopbuffer.h"
+//#include "engine/looprecorder/loopbuffer.h"
 
 //const int kMetaDataLifeTimeout = 16;
 
@@ -19,12 +19,11 @@
 // - buffer size? probably handled in looprecordingmanager.cpp
 // - current writing position
 
-EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config, LoopBuffer* _loopBuffer)
+EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
 : m_config(_config),
 m_bStopThread(false),
 m_sndfile(NULL),
-m_bIsRecording(false),
-m_pLoopBuffer(_loopBuffer) {
+m_bIsRecording(false) {
     
     start(QThread::HighPriority);
     m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
@@ -39,7 +38,7 @@ EngineLoopRecorder::~EngineLoopRecorder() {
     m_waitLock.unlock();
 
     
-    closeBufferEntry();
+    //closeBufferEntry();
     delete m_recReady;
     delete m_samplerate;
     
@@ -104,11 +103,11 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     // if recording is disabled
     if (m_recReady->get() == LOOP_RECORD_OFF) {
         //qDebug("Setting record flag to: OFF");
-        if (m_pLoopBuffer->isRecording()) {
-            closeBufferEntry();    //close file and free encoder
-            m_bIsRecording = false;
+        //if (m_pLoopBuffer->isRecording()) {
+        //    closeBufferEntry();    //close file and free encoder
+        //    m_bIsRecording = false;
             //emit(isLoopRecording(false));
-        }
+        //}
     }
     
     // if we are ready for recording, i.e, the output file has been selected, we
@@ -121,7 +120,7 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     if (m_recReady->get() == LOOP_RECORD_READY) {
         updateFromPreferences();	//update file location from pref
         
-        if (openBufferEntry()) {
+        if (openLoopEntry()) {
             qDebug("Setting record flag to: ON");
             m_recReady->slotSet(LOOP_RECORD_ON);
             m_bIsRecording = true;
@@ -147,19 +146,17 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     // If recording is enabled process audio to uncompressed data.
     if (m_recReady->get() == LOOP_RECORD_ON) {
         //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
-            if (m_pLoopBuffer->isRecording()) {
-                m_pLoopBuffer->writeSampleBuffer(pBuffer, iBufferSize);
+            //if (m_pLoopBuffer->isRecording()) {
+            //    m_pLoopBuffer->writeSampleBuffer(pBuffer, iBufferSize);
                 //emit(bytesRecorded(iBufferSize));
-            }
+            //}
         //}
   	}
 }
 
-bool EngineLoopRecorder::bufferReady() {
-    return (m_pLoopBuffer->isReady());
-}
 
-bool EngineLoopRecorder::openBufferEntry() {
+
+bool EngineLoopRecorder::openLoopEntry() {
     //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF){
         unsigned long samplerate = m_samplerate->get();
         // set sfInfo
@@ -193,20 +190,9 @@ bool EngineLoopRecorder::openBufferEntry() {
         //}
     //}
     
-    m_pLoopBuffer->open();
+    //m_pLoopBuffer->open();
     
-    return bufferReady();
-}
-
-void EngineLoopRecorder::closeBufferEntry() {
-    //if (m_Encoding == ENCODING_WAVE || m_Encoding == ENCODING_AIFF) {
-        if (m_pLoopBuffer->isRecording()) {
-            //sf_close(m_sndfile);
-            // Signal that loop is available to play here.
-            //m_sndfile = NULL;
-            m_pLoopBuffer->endRecording();
-        }
-    //}
+    return true;
 }
 
 bool EngineLoopRecorder::isRecording() {

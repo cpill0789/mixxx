@@ -14,12 +14,11 @@
 
 class ConfigKey;
 class ControlObjectThread;
-class LoopBuffer;
 
 class EngineLoopRecorder : public QThread {
     Q_OBJECT
 public:
-    EngineLoopRecorder(ConfigObject<ConfigValue>* _config, LoopBuffer* _loopBuffer);
+    EngineLoopRecorder(ConfigObject<ConfigValue>* _config);
     virtual ~EngineLoopRecorder();
     
     writeSamples(const CSAMPLE* pBuffer, const int iBufferSize);
@@ -27,7 +26,7 @@ public:
     // writes uncompressed audio to file
     //void write(unsigned char *header, unsigned char *body, int headerLen, int bodyLen);
     // creates or opens an audio file
-    //bool openBufferEntry();
+    bool openLoopEntry();
     // closes the audio file
     //void closeBufferEntry();
     //void updateFromPreferences();
@@ -73,7 +72,6 @@ private:
     
     //int m_iMetaDataLife;
     TrackPointer m_pCurrentTrack;
-    LoopBuffer* m_pLoopBuffer;
     
     //QByteArray m_cuefilename;
     //quint64 m_cuesamplepos;
