@@ -13,6 +13,7 @@
 #include "util/fifo.h"
 
 class ConfigKey;
+class ControlObject;
 class ControlObjectThread;
 
 class EngineLoopRecorder : public QThread {
@@ -67,6 +68,7 @@ private:
     SNDFILE *m_sndfile;
     SF_INFO m_sfInfo;
     
+    ControlObject* m_recReadyCO;
     ControlObjectThread* m_recReady;
     ControlObjectThread* m_samplerate;
     

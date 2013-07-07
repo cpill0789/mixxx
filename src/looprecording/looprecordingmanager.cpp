@@ -24,8 +24,10 @@ m_iNumberOfBytesRecored(0){
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
-    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
-    m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+    //m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
+    //m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+    
+    m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
     
     m_loopPlayReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
     m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
@@ -91,7 +93,7 @@ void LoopRecordingManager::startRecording() {
     m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Path"), m_recordingLocation);
     m_recReady->slotSet(LOOP_RECORD_READY);
-    qDebug() << "m_recReady: " << m_recReady->get();
+    //qDebug() << "m_recReady: " << m_recReady->get();
 }
 
 void LoopRecordingManager::stopRecording()

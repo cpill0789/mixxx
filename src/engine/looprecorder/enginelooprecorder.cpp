@@ -26,10 +26,12 @@ m_pWorkBuffer(SampleUtil::alloc(LOOP_BUFFER_SIZE)),
 m_sndfile(NULL),
 m_bIsRecording(false) {
     
-    start(QThread::HighPriority);
-    m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
+    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
+    m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+    
     m_samplerate = new ControlObjectThread("[Master]", "samplerate");
-
+    
+    start(QThread::HighPriority);
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
@@ -93,7 +95,7 @@ void EngineLoopRecorder::updateFromPreferences() {
 
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
     
-    //qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
+    qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
     
     // if recording is disabled
     if (m_recReady->get() == LOOP_RECORD_OFF) {
