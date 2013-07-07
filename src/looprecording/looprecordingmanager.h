@@ -13,17 +13,16 @@
 #include "looprecording/defs_looprecording.h"
 
 
-//class EngineMaster;
+class EngineMaster;
 class ControlPushButton;
 class ControlObject;
 class ControlObjectThread;
-class EngineLoopRecorder;
 
 class LoopRecordingManager : public QObject
 {
     Q_OBJECT
 public:
-    LoopRecordingManager(ConfigObject<ConfigValue>* pConfig);
+    LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, EngineMaster* pEngine);
     virtual ~LoopRecordingManager();
     
     
@@ -31,7 +30,7 @@ public:
     // called and a signal isRecording will be emitted.
     void startRecording();
     void stopRecording();
-    //bool isLoopRecordingActive();
+    bool isLoopRecordingActive();
     void setRecordingDir();
     QString& getRecordingDir();
     // Returns the currently recording file
@@ -48,16 +47,17 @@ signals:
     //void slotBytesRecorded(int);
     
     private slots:
-    //void slotSetLoopRecording(bool recording);
-    //void slotToggleLoopRecording(double v);
+    void slotSetLoopRecording(bool recording);
+    void slotToggleLoopRecording(double v);
     
 private:
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     ControlObjectThread* m_recReady;
     ControlObject* m_recReadyCO;
+    ControlPushButton* m_pToggleLoopRecording;
+
     ControlObjectThread* m_loopPlayReady;
     ControlObject* m_loopPlayReadyCO;
-    ControlObjectThread* pToggleRecording;
     
     ConfigObject<ConfigValue>* m_pConfig;
     QString m_recordingDir;

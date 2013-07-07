@@ -40,8 +40,8 @@ class ControlPushButton;
 class EngineVinylSoundEmu;
 class EngineSideChain;
 class SyncWorker;
-class EngineLoopRecorder;
-class LoopBuffer;
+//class EngineLoopRecorder;
+//class LoopBuffer;
 
 class EngineMaster : public EngineObject, public AudioSource {
     Q_OBJECT
@@ -156,9 +156,8 @@ class EngineMaster : public EngineObject, public AudioSource {
     ControlPotmeter *crossfader, *head_mix, *m_pBalance,
         *xFaderMode, *xFaderCurve, *xFaderCalibration, *xFaderReverse;
 
-    //ControlPushButton *m_loopRecordButton;
-    EngineLoopRecorder *m_pEngineLoopRecorder;
-    LoopBuffer *m_pLoopBuffer;
+    //EngineLoopRecorder *m_pEngineLoopRecorder;
+    //LoopBuffer *m_pLoopBuffer;
     
     ConstantGainCalculator m_headphoneGain;
     OrientationVolumeGainCalculator m_masterGain;

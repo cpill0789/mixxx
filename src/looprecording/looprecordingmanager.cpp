@@ -12,7 +12,7 @@
 #include "controlpushbutton.h"
 
 
-LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig)
+LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, EngineMaster* pEngine)
 : m_pConfig(pConfig),
 m_recordingDir(""),
 m_recording_base_file(""),
@@ -20,18 +20,19 @@ m_recordingFile(""),
 m_recordingLocation(""),
 m_isRecording(false),
 m_iNumberOfBytesRecored(0){
-    //m_pToggleRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
+    m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     //ControlObjectThread* pToogleRecording = new ControlObjectThread(ConfigKey("[Master]", "recordLoop"));
-    //connect(pToggleRecording, SIGNAL(valueChanged(double)),
-    //        this, SLOT(slotToggleLoopRecording(double)));
+    connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
+            this, SLOT(slotToggleLoopRecording(double)));
     m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
     m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+    
     m_loopPlayReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
     m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
+    
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
     
-    // Register EngineRecord with the engine sidechain.
-    // TODO: connect with engine master instead.?
+    // TODO: connect with LoopRecorder, a bit different than sidechain code
     // EngineSideChain* pSidechain = pEngine->getSideChain();
     //if (pSidechain) {
     //    EngineRecord* pEngineRecord = new EngineRecord(m_pConfig);
@@ -45,7 +46,6 @@ LoopRecordingManager::~LoopRecordingManager()
     qDebug() << "Delete LoopRecordingManager";
     delete m_recReadyCO;
     delete m_recReady;
-    //delete [] m_pLoopRecordBuffer;
 }
 
 QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) const {
@@ -55,23 +55,23 @@ QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) cons
     return formatted;
 }
 
-//void LoopRecordingManager::slotSetLoopRecording(bool recording) {
-//    if (recording && !isRecordingActive()) {
-//        startRecording();
-//    } else if (!recording && isRecordingActive()) {
-//        stopRecording();
-//    }
-//}
+void LoopRecordingManager::slotSetLoopRecording(bool recording) {
+    if (recording && !isLoopRecordingActive()) {
+        startRecording();
+    } else if (!recording && isLoopRecordingActive()) {
+        stopRecording();
+    }
+}
 
-//void LoopRecordingManager::slotToggleLoopRecording(double v) {
-//    if (v > 0) {
-//        if (isLoopRecordingActive()) {
-//            stopRecording();
-//        } else {
-//            startRecording();
-//       }
-//    }
-//}
+void LoopRecordingManager::slotToggleLoopRecording(double v) {
+    if (v > 0) {
+        if (isLoopRecordingActive()) {
+            stopRecording();
+        } else {
+            startRecording();
+       }
+    }
+}
 
 void LoopRecordingManager::startRecording() {
     qDebug() << "LoopRecordingManager startRecording";
@@ -90,7 +90,6 @@ void LoopRecordingManager::startRecording() {
     //appending file extension to get the filelocation
     m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Path"), m_recordingLocation);
-    //m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "CuePath"), m_recording_base_file +".cue");
     m_recReady->slotSet(LOOP_RECORD_READY);
     qDebug() << "m_recReady: " << m_recReady->get();
 }
@@ -154,6 +153,10 @@ QString& LoopRecordingManager::getRecordingDir() {
 //bool LoopRecordingManager::isLoopRecordingActive() {
 //    return pEngineLoopRecorder->isRecording();
 //}
+
+bool LoopRecordingManager::isLoopRecordingActive() {
+    return m_isRecording;
+}
 
 QString& LoopRecordingManager::getRecordingFile() {
     return m_recordingFile;

@@ -34,8 +34,8 @@
 #include "engine/sidechain/enginesidechain.h"
 #include "sampleutil.h"
 #include "util/timer.h"
-#include "engine/looprecorder/enginelooprecorder.h"
-#include "engine/looprecorder/loopbuffer.h"
+//#include "engine/looprecorder/enginelooprecorder.h"
+//#include "engine/looprecorder/loopbuffer.h"
 #include "playermanager.h"
 
 #ifdef __LADSPA__
@@ -117,7 +117,7 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     
     //m_pLoopRecordingManager = new LoopRecordingManager(_config);
     //m_pLoopBuffer = new LoopBuffer(_config);
-    m_pEngineLoopRecorder = new EngineLoopRecorder(_config, m_pLoopBuffer);
+    //m_pEngineLoopRecorder = new EngineLoopRecorder(_config, m_pLoopBuffer);
     
 }
 
@@ -135,8 +135,8 @@ EngineMaster::~EngineMaster()
     delete m_pSideChain;
     //delete m_loopRecordButton;
     //delete m_pLoopRecordingManager;
-    delete m_pEngineLoopRecorder;
-    delete m_pLoopBuffer;
+    //delete m_pEngineLoopRecorder;
+    //delete m_pLoopBuffer;
     
     delete xFaderReverse;
     delete xFaderCalibration;
@@ -445,7 +445,7 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
 
     // Loop Recorder: Send master mix to loop/sampler recorders.  Is this the right place to do this?
     
-    m_pEngineLoopRecorder->process(m_pMaster, iBufferSize);
+    //m_pEngineLoopRecorder->process(m_pMaster, iBufferSize);
     
     //if(m_loopRecordButton->get()) {
     //    if(!m_pEngineLoopRecorder->isRecording()) {

@@ -36,12 +36,13 @@ class MixxxKeyboard;
 class PlayerManager;
 class RecordingManager;
 class ShoutcastManager;
+class LoopRecorderManager;
 class SkinLoader;
 class VinylControlManager;
 
 class DlgPreferences;
 class SoundManager;
-class LoopRecorderManager;
+class LoopRecordingManager;
 
 #include "configobject.h"
 #include "util/cmdlineargs.h"
@@ -157,7 +158,9 @@ class MixxxApp : public QMainWindow {
 #ifdef __SHOUTCAST__
     ShoutcastManager* m_pShoutcastManager;
 #endif
-    LoopRecordingManager * m_pLoopRecordingManager;
+    
+    // LoopRecordingManager
+    LoopRecordingManager* m_pLoopRecordingManager;
     
     ControllerManager *m_pControllerManager;
 

@@ -282,8 +282,8 @@ MixxxApp::MixxxApp(QApplication *pApp, const CmdlineArgs& args)
     m_pShoutcastManager = new ShoutcastManager(m_pConfig, m_pEngine);
 #endif
 
-    //TODO(carl):initialize loop recorder.
-    m_pLoopRecording = new LoopRecordingManager(m_pConfig, m_pEngine);
+    // Initialize loop recorder.
+    m_pLoopRecordingManager = new LoopRecordingManager(m_pConfig, m_pEngine);
               
     // Initialize player device
     // while this is created here, setupDevices needs to be called sometime
