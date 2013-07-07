@@ -21,7 +21,7 @@ public:
     EngineLoopRecorder(ConfigObject<ConfigValue>* _config);
     virtual ~EngineLoopRecorder();
     
-    writeSamples(const CSAMPLE* pBuffer, const int iBufferSize);
+    void writeSamples(const CSAMPLE* pBuffer, const int iBufferSize);
         
     // creates or opens an audio file
     bool openFile();
@@ -45,22 +45,25 @@ private:
     // to avoid changing the metadata during scratches.
     //bool metaDataHasChanged();
     
+    ConfigObject<ConfigValue>* m_config;
     
     // Indicates that the thread should exit.
     volatile bool m_bStopThread;
     
-    ConfigObject<ConfigValue>* m_config;
-    QByteArray m_Encoding;
-    QString m_filename;
-    QByteArray m_baTitle;
-    QByteArray m_baAuthor;
-    QByteArray m_baAlbum;
+    FIFO<CSAMPLE> m_sampleFifo;
+    CSAMPLE* m_pWorkBuffer;
     
     // Provides thread safety around the wait condition below.
     QMutex m_waitLock;
     // Allows sleeping until we have samples to process.
     QWaitCondition m_waitForSamples;
     
+    QByteArray m_Encoding;
+    QString m_filename;
+    QByteArray m_baTitle;
+    QByteArray m_baAuthor;
+    QByteArray m_baAlbum;
+        
     SNDFILE *m_sndfile;
     SF_INFO m_sfInfo;
     

@@ -10,6 +10,9 @@
 #include "errordialoghandler.h"
 #include "playerinfo.h"
 #include "looprecording/defs_looprecording.h"
+#include "util/timer.h"
+#include "util/counter.h"
+#include "sampleutil.h"
 
 #define LOOP_BUFFER_SIZE 65536
 
@@ -51,14 +54,14 @@ void EngineLoopRecorder::writeSamples(const CSAMPLE* newBuffer, int buffer_size)
         Counter("EngineLoopRecorder::writeSamples buffer overrun").increment();
     }
     
-    if (m_sampleFifo.writeAvailable() < SIDECHAIN_BUFFER_SIZE/5) {
+    if (m_sampleFifo.writeAvailable() < LOOP_BUFFER_SIZE/5) {
         // Signal to the sidechain that samples are available.
         m_waitForSamples.wakeAll();
     }
 
 }
 
-void EngineSideChain::run() {
+void EngineLoopRecorder::run() {
     // the id of this thread, for debugging purposes //XXX copypasta (should
     // factor this out somehow), -kousu 2/2009
     unsigned static id = 0;
@@ -98,7 +101,7 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
         //qDebug("Setting record flag to: OFF");
         if (fileOpen()) {
             closeFile();    //close file and free encoder
-            emit(isRecording(false));
+            emit(isLoopRecording(false));
         }
     }
     
@@ -128,7 +131,7 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     if (m_recReady->get() == LOOP_RECORD_ON) {
         if (m_sndfile != NULL) {
             sf_write_float(m_sndfile, pBuffer, iBufferSize);
-            emit(bytesRecorded(iBufferSize));
+            //emit(bytesRecorded(iBufferSize));
         }
   	}
 }
@@ -184,7 +187,7 @@ bool EngineLoopRecorder::openFile() {
 
 }
 
-void EngineRecord::closeFile() {
+void EngineLoopRecorder::closeFile() {
     if (m_sndfile != NULL) {
         sf_close(m_sndfile);
         m_sndfile = NULL;
