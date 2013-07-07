@@ -84,6 +84,10 @@ class EngineMaster : public EngineObject, public AudioSource {
     EngineSideChain* getSideChain() const {
         return m_pSideChain;
     }
+    
+    EngineLoopRecorder* getLoopRecorder() const {
+        return m_pLoopRecorder;
+    }
 
   private:
     struct ChannelInfo {
