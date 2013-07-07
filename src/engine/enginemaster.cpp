@@ -34,8 +34,7 @@
 #include "engine/sidechain/enginesidechain.h"
 #include "sampleutil.h"
 #include "util/timer.h"
-//#include "engine/looprecorder/enginelooprecorder.h"
-//#include "engine/looprecorder/loopbuffer.h"
+#include "engine/looprecorder/enginelooprecorder.h"
 #include "playermanager.h"
 
 #ifdef __LADSPA__
@@ -110,14 +109,7 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     xFaderReverse = new ControlPotmeter(
         ConfigKey("[Mixer Profile]", "xFaderReverse"), 0., 1.);
     
-    // Add controls for loop recorder.
-    //loop_recorder = new ControlPushButton(ConfigKey(group,"loopRecorder"));
-    //m_loopRecordButton = new ControlPushButton(ConfigKey(group, "recordLoop"));
-    //m_loopRecordButton->setButtonMode(ControlPushButton::TOGGLE);
-    
-    //m_pLoopRecordingManager = new LoopRecordingManager(_config);
-    //m_pLoopBuffer = new LoopBuffer(_config);
-    //m_pEngineLoopRecorder = new EngineLoopRecorder(_config, m_pLoopBuffer);
+    m_pEngineLoopRecorder = new EngineLoopRecorder(_config);
     
 }
 
@@ -133,10 +125,7 @@ EngineMaster::~EngineMaster()
     delete vumeter;
     delete head_clipping;
     delete m_pSideChain;
-    //delete m_loopRecordButton;
-    //delete m_pLoopRecordingManager;
-    //delete m_pEngineLoopRecorder;
-    //delete m_pLoopBuffer;
+    delete m_pEngineLoopRecorder;
     
     delete xFaderReverse;
     delete xFaderCalibration;
@@ -444,18 +433,7 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
         vumeter->process(m_pMaster, m_pMaster, iBufferSize);
 
     // Loop Recorder: Send master mix to loop/sampler recorders.  Is this the right place to do this?
-    
     //m_pEngineLoopRecorder->process(m_pMaster, iBufferSize);
-    
-    //if(m_loopRecordButton->get()) {
-    //    if(!m_pEngineLoopRecorder->isRecording()) {
-    //        m_pLoopRecordingManager->startRecording();
-    //    }
-    //} else {
-    //    if(m_pEngineLoopRecorder->isRecording()) {
-    //        m_pLoopRecordingManager->stopRecording();
-    //    }
-    //}
     
     // Submit master samples to the side chain to do shoutcasting, recording,
     // etc.  (cpu intensive non-realtime tasks)

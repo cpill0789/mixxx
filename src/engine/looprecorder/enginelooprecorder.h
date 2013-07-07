@@ -23,20 +23,17 @@ public:
     
     writeSamples(const CSAMPLE* pBuffer, const int iBufferSize);
         
-    // writes uncompressed audio to file
-    //void write(unsigned char *header, unsigned char *body, int headerLen, int bodyLen);
     // creates or opens an audio file
-    bool openLoopEntry();
+    bool openFile();
     // closes the audio file
-    //void closeBufferEntry();
-    //void updateFromPreferences();
-    //bool bufferReady();
-    //bool isRecording();
+    void closeFile();
+    void updateFromPreferences();
+    bool fileOpen();
     
 signals:
     // emitted to notify LoopRecordingManager
     //void bytesRecorded(int);
-    //void isLoopRecording(bool);
+    void isLoopRecording(bool);
     
 private:
     void run();
@@ -48,11 +45,11 @@ private:
     // to avoid changing the metadata during scratches.
     //bool metaDataHasChanged();
     
-    //void writeCueLine();
     
-    ConfigObject<ConfigValue>* m_config;
     // Indicates that the thread should exit.
     volatile bool m_bStopThread;
+    
+    ConfigObject<ConfigValue>* m_config;
     QByteArray m_Encoding;
     QString m_filename;
     QByteArray m_baTitle;
@@ -73,10 +70,6 @@ private:
     //int m_iMetaDataLife;
     TrackPointer m_pCurrentTrack;
     
-    //QByteArray m_cuefilename;
-    //quint64 m_cuesamplepos;
-    //quint64 m_cuetrack;
-    //bool m_bCueIsEnabled;
     bool m_bIsRecording;
 };
 
