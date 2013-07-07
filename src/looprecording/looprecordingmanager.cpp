@@ -141,17 +141,13 @@ QString& LoopRecordingManager::getRecordingDir() {
 //    emit(bytesRecorded(m_iNumberOfBytesRecored));
 //}
 
-//void LoopRecordingManager::slotIsLoopRecording(bool isRecordingActive) {
+void LoopRecordingManager::slotIsLoopRecording(bool isRecordingActive) {
     //qDebug() << "SlotIsRecording " << isLoopRecording;
     
     //Notify the GUI controls, see dlgrecording.cpp
-//    m_isRecording = isRecordingActive;
-    //emit(isRecording(isRecordingActive));
-//}
-
-//bool LoopRecordingManager::isLoopRecordingActive() {
-//    return pEngineLoopRecorder->isRecording();
-//}
+    m_isRecording = isRecordingActive;
+    emit(isRecording(isRecordingActive));
+}
 
 bool LoopRecordingManager::isLoopRecordingActive() {
     return m_isRecording;

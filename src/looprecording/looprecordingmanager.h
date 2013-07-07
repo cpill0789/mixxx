@@ -40,10 +40,10 @@ public:
 signals:
     //emits the commulated number of bytes being recorded
     //void bytesRecorded(long);
-    //void isRecording(bool);
+    void isLoopRecording(bool);
     
     public slots:
-    //void slotIsLoopRecording(bool);
+    void slotIsLoopRecording(bool);
     //void slotBytesRecorded(int);
     
     private slots:
