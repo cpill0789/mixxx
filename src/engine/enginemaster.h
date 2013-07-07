@@ -86,7 +86,7 @@ class EngineMaster : public EngineObject, public AudioSource {
     }
     
     EngineLoopRecorder* getLoopRecorder() const {
-        return m_pEngineLoopRecorder;
+        return m_pLoopRecorder;
     }
 
   private:
@@ -159,7 +159,7 @@ class EngineMaster : public EngineObject, public AudioSource {
     ControlPotmeter *crossfader, *head_mix, *m_pBalance,
         *xFaderMode, *xFaderCurve, *xFaderCalibration, *xFaderReverse;
 
-    EngineLoopRecorder *m_pEngineLoopRecorder;
+    EngineLoopRecorder *m_pLoopRecorder;
     
     ConstantGainCalculator m_headphoneGain;
     OrientationVolumeGainCalculator m_masterGain;
