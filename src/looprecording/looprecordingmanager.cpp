@@ -8,7 +8,7 @@
 
 #include "looprecording/looprecordingmanager.h"
 #include "looprecording/defs_looprecording.h"
-//#include "engine/looprecorder/enginelooprecorder.h"
+#include "engine/looprecorder/enginelooprecorder.h"
 #include "controlpushbutton.h"
 
 
@@ -32,12 +32,10 @@ m_iNumberOfBytesRecored(0){
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
     
     // TODO: connect with LoopRecorder, a bit different than sidechain code
-    // EngineSideChain* pSidechain = pEngine->getSideChain();
-    //if (pSidechain) {
-    //    EngineRecord* pEngineRecord = new EngineRecord(m_pConfig);
-    //    connect(pEngineLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
-            //    pSidechain->addSideChainWorker(pEngineRecord);
-    //}
+    EngineLoopRecorder* pLoopRecorder = pEngine->getLoopRecorder();
+    if (pLoopRecorder) {
+        connect(pEngineLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
+    }
 }
 
 LoopRecordingManager::~LoopRecordingManager()
