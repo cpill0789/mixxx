@@ -86,7 +86,7 @@ class EngineMaster : public EngineObject, public AudioSource {
     }
     
     EngineLoopRecorder* getLoopRecorder() const {
-        return m_pLoopRecorder;
+        return m_pEngineLoopRecorder;
     }
 
   private:
