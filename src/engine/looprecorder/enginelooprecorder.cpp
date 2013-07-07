@@ -38,11 +38,10 @@ EngineLoopRecorder::~EngineLoopRecorder() {
     m_waitForSamples.wakeAll();
     m_waitLock.unlock();
 
+    wait();
     
-    //closeBufferEntry();
     delete m_recReady;
     delete m_samplerate;
-    
     SampleUtil::free(m_pWorkBuffer);
 }
 
@@ -174,7 +173,7 @@ bool EngineLoopRecorder::openFile() {
         
     }
     
-    // check if file are really open
+    // check if file is really open
     if (!fileOpen()) {
         ErrorDialogProperties* props = ErrorDialogHandler::instance()->newDialogProperties();
         props->setType(DLG_WARNING);
