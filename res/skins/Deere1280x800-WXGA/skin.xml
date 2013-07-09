@@ -548,7 +548,7 @@
 								</State>
 								<Pos>242,24</Pos>
 								<Connection>
-									<ConfigKey>[Sampler1],eject</ConfigKey>
+									<ConfigKey>[Loop_Recording],clear_recorder</ConfigKey>
 									<EmitOnPressAndRelease>true</EmitOnPressAndRelease>
 									<ButtonState>LeftButton</ButtonState>
 									<ConnectValueToWidget>false</ConnectValueToWidget>
