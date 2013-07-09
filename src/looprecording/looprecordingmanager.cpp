@@ -54,6 +54,10 @@ LoopRecordingManager::~LoopRecordingManager()
     qDebug() << "~LoopRecordingManager";
     //delete m_recReadyCO;
     delete m_recReady;
+    delete m_loopPlayReadyCO;
+    delete m_loopPlayReady;
+    delete m_pToggleLoopRecording;
+    delete m_pClearRecorder;
 }
 
 QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) const {
@@ -127,7 +131,7 @@ void LoopRecordingManager::stopRecording()
 
 void LoopRecordingManager::setRecordingDir() {
     QDir recordDir(m_pConfig->getValueString(
-                                             ConfigKey("[Recording]", "Directory")));
+                                             ConfigKey("[Recording]", "Directory")).append("/temp"));
     // Note: the default ConfigKey for recordDir is set in DlgPrefRecord::DlgPrefRecord
     
     if (!recordDir.exists()) {
