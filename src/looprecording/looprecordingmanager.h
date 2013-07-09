@@ -49,13 +49,15 @@ signals:
     private slots:
     void slotSetLoopRecording(bool recording);
     void slotToggleLoopRecording(double v);
+    void slotClearRecorder(double v);
     
 private:
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     ControlObjectThread* m_recReady;
-    ControlObject* m_recReadyCO;
+    //ControlObject* m_recReadyCO;
     ControlPushButton* m_pToggleLoopRecording;
-
+    ControlPushButton* m_pClearRecorder;
+    
     ControlObjectThread* m_loopPlayReady;
     ControlObject* m_loopPlayReadyCO;
     

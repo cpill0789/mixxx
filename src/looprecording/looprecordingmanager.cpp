@@ -24,10 +24,18 @@ m_iNumberOfBytesRecored(0){
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
+    
+    m_pClearRecorder = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "clear_recorder"));
+    
+    connect(m_pClearRecorder, SIGNAL(valueChanged(double)),
+            this, SLOT(slotClearRecorder(double)));
+    
     //m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
     //m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
     
     m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
+    
+    
     
     m_loopPlayReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
     m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
@@ -43,8 +51,8 @@ m_iNumberOfBytesRecored(0){
 
 LoopRecordingManager::~LoopRecordingManager()
 {
-    qDebug() << "Delete LoopRecordingManager";
-    delete m_recReadyCO;
+    qDebug() << "~LoopRecordingManager";
+    //delete m_recReadyCO;
     delete m_recReady;
 }
 
@@ -72,6 +80,14 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
         }
     } else {
         startRecording();
+    }
+}
+
+void LoopRecordingManager::slotClearRecorder(double v) {
+    qDebug() << "LoopRecordingManage::slotClearRecorder v: " << v;
+    if (v > 0.) {
+        stopRecording();
+        m_recReady->slotSet(LOOP_RECORD_CLEAR);
     }
 }
 
