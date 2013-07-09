@@ -21,6 +21,7 @@ class EngineMaster;
 class AnalyserQueue;
 class SoundManager;
 class TrackCollection;
+class LoopRecordingManager;
 
 class PlayerManager : public QObject {
     Q_OBJECT
@@ -66,6 +67,8 @@ class PlayerManager : public QObject {
     // Binds signals between PlayerManager and Library. Does not store a pointer
     // to the Library.
     void bindToLibrary(Library* pLibrary);
+    
+    void bindToLoopRecorder(LoopRecordingManager* pLoopRecordingManager);
 
     // Returns the group for the ith sampler where i is zero indexed
     static QString groupForSampler(int i) {

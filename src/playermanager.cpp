@@ -18,6 +18,7 @@
 #include "soundmanager.h"
 #include "util/stat.h"
 #include "engine/enginedeck.h"
+#include "looprecording/looprecordingmanager.h"
 
 PlayerManager::PlayerManager(ConfigObject<ConfigValue>* pConfig,
                              SoundManager* pSoundManager,
@@ -107,6 +108,13 @@ void PlayerManager::bindToLibrary(Library* pLibrary) {
         connect(pPreviewDeck, SIGNAL(newTrackLoaded(TrackPointer)),
                 m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
     }
+}
+
+void PlayerManager::bindToLoopRecorder(LoopRecordingManager* pLoopRecordingManager) {
+    qDebug() << "PlayerManager::bindToLoopRecorder";
+    QMutexLocker locker(&m_mutex);
+    connect(pLoopRecordingManager, SIGNAL(loadToPlayer(QString, int)),
+            this, SLOT(slotLoadToSampler(QString, int)));
 }
 
 // static
@@ -363,6 +371,7 @@ void PlayerManager::slotLoadToPreviewDeck(QString location, int previewDeck) {
 }
 
 void PlayerManager::slotLoadToSampler(QString location, int sampler) {
+    qDebug() << "PlayerManager::slotLoadToSampler";
     slotLoadToPlayer(location, groupForSampler(sampler-1));
 }
 
