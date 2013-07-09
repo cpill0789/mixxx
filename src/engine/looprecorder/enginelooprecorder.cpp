@@ -208,6 +208,7 @@ void EngineLoopRecorder::clearRecorder() {
     
     QFile file(m_filename);
     
+    // Delete file
     if (file.exists()) {
         file.remove();
     }
