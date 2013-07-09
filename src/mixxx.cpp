@@ -629,6 +629,10 @@ MixxxApp::~MixxxApp()
     delete m_pShoutcastManager;
 #endif
 
+    // LoopRecordingManager depends on config, engine
+    qDebug() << "delete LoopRecordingManager " << qTime.elapsed();
+    delete m_pLoopRecordingManager;
+    
     // EngineMaster depends on Config
     qDebug() << "delete m_pEngine " << qTime.elapsed();
     delete m_pEngine;
