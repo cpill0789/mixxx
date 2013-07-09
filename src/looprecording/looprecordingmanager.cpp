@@ -88,6 +88,7 @@ void LoopRecordingManager::slotClearRecorder(double v) {
     if (v > 0.) {
         stopRecording();
         m_recReady->slotSet(LOOP_RECORD_CLEAR);
+        m_pToggleLoopRecording->set(0.);
     }
 }
 
