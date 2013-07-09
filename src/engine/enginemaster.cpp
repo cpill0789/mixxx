@@ -109,8 +109,9 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     xFaderReverse = new ControlPotmeter(
         ConfigKey("[Mixer Profile]", "xFaderReverse"), 0., 1.);
     
-    QThread* LoopRecorderThread = new QThread;
+    m_pLoopRecSource = new ControlPushButton(ConfigKey(group,"loopRecSource"));
     
+    QThread* LoopRecorderThread = new QThread;
     LoopRecorderThread->setObjectName(QString("LoopRecorder"));
     
     m_pLoopRecorder = new EngineLoopRecorder(_config);
@@ -445,6 +446,7 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
         vumeter->process(m_pMaster, m_pMaster, iBufferSize);
 
     // Loop Recorder: Send master mix to loop/sampler recorders.  Is this the right place to do this?
+    qDebug() << "Loop Rec Source: " << m_pLoopRecSource->get();
     m_pLoopRecorder->writeSamples(m_pMaster, iBufferSize);
     
     // Submit master samples to the side chain to do shoutcasting, recording,
