@@ -254,7 +254,8 @@ MixxxApp::MixxxApp(QApplication *pApp, const CmdlineArgs& args)
 #ifdef __SHOUTCAST__
     m_pShoutcastManager = NULL;
 #endif
-
+    m_pLoopRecordingManager = NULL;
+              
     // Check to see if this is the first time this version of Mixxx is run
     // after an upgrade and make any needed changes.
     Upgrade upgrader;
@@ -387,6 +388,7 @@ MixxxApp::MixxxApp(QApplication *pApp, const CmdlineArgs& args)
                              bFirstRun || bUpgraded,
                              m_pRecordingManager);
     m_pPlayerManager->bindToLibrary(m_pLibrary);
+    m_pPlayerManager->bindToLoopRecorder(m_pLoopRecordingManager);
 
     // Call inits to invoke all other construction parts
 
