@@ -528,7 +528,7 @@
 								</State>
 								<Pos>193,71</Pos>
 								<Connection>
-									<ConfigKey>[Sampler1],pfl</ConfigKey>
+									<ConfigKey>[Master],loopRecSource</ConfigKey>
 								</Connection>
 							</PushButton>
 
