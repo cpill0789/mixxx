@@ -159,7 +159,8 @@ class EngineMaster : public EngineObject, public AudioSource {
     ControlPotmeter *crossfader, *head_mix, *m_pBalance,
         *xFaderMode, *xFaderCurve, *xFaderCalibration, *xFaderReverse;
 
-    EngineLoopRecorder *m_pLoopRecorder;
+    QThread* LoopRecorderThread;
+    EngineLoopRecorder* m_pLoopRecorder;
     
     ConstantGainCalculator m_headphoneGain;
     OrientationVolumeGainCalculator m_masterGain;
