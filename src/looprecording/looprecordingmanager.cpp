@@ -73,7 +73,7 @@ void LoopRecordingManager::slotSetLoopRecording(bool recording) {
 }
 
 void LoopRecordingManager::slotToggleLoopRecording(double v) {
-    //qDebug() << "LoopRecordingManager slotToggleLoopRecording v: " << v;
+    qDebug() << "LoopRecordingManager::slotToggleLoopRecording v: " << v;
     if (v == 0.) {
         if (isLoopRecordingActive()) {
             stopRecording();
@@ -84,11 +84,12 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
 }
 
 void LoopRecordingManager::slotClearRecorder(double v) {
-    qDebug() << "LoopRecordingManage::slotClearRecorder v: " << v;
+    qDebug() << "LoopRecordingManager::slotClearRecorder v: " << v;
     if (v > 0.) {
         stopRecording();
-        m_recReady->slotSet(LOOP_RECORD_CLEAR);
         m_pToggleLoopRecording->set(0.);
+        //qDebug() << "LoopRecordingManager:: set Loop recorder clear";
+        m_recReady->slotSet(LOOP_RECORD_CLEAR);
     }
 }
 
@@ -117,6 +118,7 @@ void LoopRecordingManager::stopRecording()
 {
     qDebug() << "LoopRecordingManager::stopRecording";
     m_isRecording = false;
+    //qDebug() << "LoopRecordingManager:: set Loop recorder off";
     m_recReady->slotSet(LOOP_RECORD_OFF);
     m_recordingFile = "";
     m_recordingLocation = "";
