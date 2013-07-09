@@ -98,7 +98,7 @@ void LoopRecordingManager::startRecording() {
 
 void LoopRecordingManager::stopRecording()
 {
-    qDebug() << "LoopRecordingManager stopRecording";
+    qDebug() << "LoopRecordingManager::stopRecording";
     m_isRecording = false;
     m_recReady->slotSet(LOOP_RECORD_OFF);
     m_recordingFile = "";
