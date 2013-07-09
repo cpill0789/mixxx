@@ -14,7 +14,7 @@
 #include "util/counter.h"
 #include "sampleutil.h"
 
-#define LOOP_BUFFER_SIZE 65536
+#define LOOP_BUFFER_SIZE 1024
 
 //const int kMetaDataLifeTimeout = 16;
 
@@ -22,25 +22,13 @@ EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
 : m_config(_config),
 m_bStopThread(false),
 m_sampleFifo(LOOP_BUFFER_SIZE),
-m_pWorkBuffer(SampleUtil::alloc(LOOP_BUFFER_SIZE)),
-m_sndfile(NULL),
-m_bIsRecording(false) {
-    
-    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
-    m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
-    
-    m_samplerate = new ControlObjectThread("[Master]", "samplerate");
-    
-    start(QThread::HighPriority);
-}
+m_sndfile(NULL) { }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
     m_waitLock.lock();
     m_bStopThread = true;
     m_waitForSamples.wakeAll();
     m_waitLock.unlock();
-
-    wait();
     
     delete m_recReady;
     delete m_samplerate;
@@ -59,15 +47,20 @@ void EngineLoopRecorder::writeSamples(const CSAMPLE* newBuffer, int buffer_size)
         // Signal to the sidechain that samples are available.
         m_waitForSamples.wakeAll();
     }
-
 }
 
-void EngineLoopRecorder::run() {
-    // the id of this thread, for debugging purposes //XXX copypasta (should
-    // factor this out somehow), -kousu 2/2009
-    unsigned static id = 0;
-    QThread::currentThread()->setObjectName(QString("EngineLoopRecorder %1").arg(++id));
+void EngineLoopRecorder::startLoop() {
     
+    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
+    m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+    
+    //m_recReady = new ControlObjectThread(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
+    
+    m_samplerate = new ControlObjectThread("[Master]", "samplerate");
+    
+    m_pWorkBuffer = SampleUtil::alloc(LOOP_BUFFER_SIZE);
+    
+
     while (!m_bStopThread) {
         int samples_read;
         while ((samples_read = m_sampleFifo.read(
@@ -78,6 +71,7 @@ void EngineLoopRecorder::run() {
         
         // Check to see if we're supposed to exit/stop this thread.
         if (m_bStopThread) {
+            emit finished();
             return;
         }
         
@@ -95,7 +89,7 @@ void EngineLoopRecorder::updateFromPreferences() {
 
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
     
-    qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
+    //qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
     
     // if recording is disabled
     if (m_recReady->get() == LOOP_RECORD_OFF) {
