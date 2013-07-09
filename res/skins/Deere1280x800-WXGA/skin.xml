@@ -563,21 +563,26 @@
 							<PushButton>
 								<TooltipId>repeat</TooltipId>
 								<Style></Style>
-								<NumberStates>2</NumberStates>
+								<NumberStates>1</NumberStates>
 								<State>
 									<Number>0</Number>
-									<Pressed>btn_repeat_sampler.png</Pressed>
+									<Pressed>btn_repeat_sampler_over.png</Pressed>
 									<Unpressed>btn_repeat_sampler.png</Unpressed>
 								</State>
-								<State>
+								<!--
+                                <State>
 									<Number>1</Number>
 									<Pressed>btn_repeat_sampler_over.png</Pressed>
 									<Unpressed>btn_repeat_sampler_over.png</Unpressed>
 								</State>
+                                 -->
 								<Pos>216,24</Pos>
 								<Connection>
-									<ConfigKey>[Sampler1],repeat</ConfigKey>
-								</Connection>
+									<ConfigKey>[Loop_Recording],export_to_sampler</ConfigKey>
+                                    <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
+									<ButtonState>LeftButton</ButtonState>
+									<ConnectValueToWidget>false</ConnectValueToWidget>
+                                </Connection>
 							</PushButton>
 
 							<!--
