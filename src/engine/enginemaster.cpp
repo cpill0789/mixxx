@@ -446,8 +446,11 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
         vumeter->process(m_pMaster, m_pMaster, iBufferSize);
 
     // Loop Recorder: Send master mix to loop/sampler recorders.  Is this the right place to do this?
-    qDebug() << "Loop Rec Source: " << m_pLoopRecSource->get();
-    m_pLoopRecorder->writeSamples(m_pMaster, iBufferSize);
+    if(m_pLoopRecSource->get() > 0) {
+        m_pLoopRecorder->writeSamples(m_pHead, iBufferSize);
+    } else {
+        m_pLoopRecorder->writeSamples(m_pMaster, iBufferSize);
+    }
     
     // Submit master samples to the side chain to do shoutcasting, recording,
     // etc.  (cpu intensive non-realtime tasks)
