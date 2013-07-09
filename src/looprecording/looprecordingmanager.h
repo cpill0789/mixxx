@@ -11,12 +11,14 @@
 #include "controlobjectthread.h"
 #include "controlobjectthreadmain.h"
 #include "looprecording/defs_looprecording.h"
-
+#include "trackinfoobject.h"
 
 class EngineMaster;
 class ControlPushButton;
 class ControlObject;
 class ControlObjectThread;
+//class TrackPointer;
+//class TrackInfoObject;
 
 class LoopRecordingManager : public QObject
 {
@@ -41,6 +43,7 @@ signals:
     //emits the commulated number of bytes being recorded
     //void bytesRecorded(long);
     void isLoopRecording(bool);
+    void loadToPlayer(QString, int);
     
     public slots:
     void slotIsLoopRecording(bool);
@@ -50,13 +53,16 @@ signals:
     void slotSetLoopRecording(bool recording);
     void slotToggleLoopRecording(double v);
     void slotClearRecorder(double v);
+    void slotToggleExport(double v);
     
 private:
+    void loadTrackIntoPlayer();
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     ControlObjectThread* m_recReady;
     //ControlObject* m_recReadyCO;
     ControlPushButton* m_pToggleLoopRecording;
     ControlPushButton* m_pClearRecorder;
+    ControlPushButton* m_pExportToSampler;
     
     ControlObjectThread* m_loopPlayReady;
     ControlObject* m_loopPlayReadyCO;
@@ -73,6 +79,9 @@ private:
     bool m_isRecording;
     //will be a very large number
     quint64 m_iNumberOfBytesRecored;
+    
+    QList<QString> m_filesRecorded;
+    TrackPointer pTrackToPlay;
 };
 
 #endif // LOOPRECORDINGMANAGER_H

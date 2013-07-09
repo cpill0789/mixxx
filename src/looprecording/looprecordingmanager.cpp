@@ -11,6 +11,7 @@
 #include "engine/looprecorder/enginelooprecorder.h"
 #include "controlpushbutton.h"
 #include "engine/enginemaster.h"
+#include "trackinfoobject.h"
 
 
 LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, EngineMaster* pEngine)
@@ -20,7 +21,9 @@ m_recording_base_file(""),
 m_recordingFile(""),
 m_recordingLocation(""),
 m_isRecording(false),
-m_iNumberOfBytesRecored(0){
+m_iNumberOfBytesRecored(0),
+m_filesRecorded(),
+pTrackToPlay(NULL){
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
@@ -30,9 +33,12 @@ m_iNumberOfBytesRecored(0){
     connect(m_pClearRecorder, SIGNAL(valueChanged(double)),
             this, SLOT(slotClearRecorder(double)));
     
+    m_pExportToSampler = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_to_sampler"));
+    connect(m_pExportToSampler, SIGNAL(valueChanged(double)),
+            this, SLOT(slotToggleExport(double)));
+    
     //m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
     //m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
-    
     m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
     
     
@@ -58,6 +64,7 @@ LoopRecordingManager::~LoopRecordingManager()
     delete m_loopPlayReady;
     delete m_pToggleLoopRecording;
     delete m_pClearRecorder;
+    delete m_pExportToSampler;
 }
 
 QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) const {
@@ -94,6 +101,16 @@ void LoopRecordingManager::slotClearRecorder(double v) {
         m_pToggleLoopRecording->set(0.);
         //qDebug() << "LoopRecordingManager:: set Loop recorder clear";
         m_recReady->slotSet(LOOP_RECORD_CLEAR);
+        if(!m_filesRecorded.isEmpty()) {
+            m_filesRecorded.removeLast();
+        }
+    }
+}
+
+void LoopRecordingManager::slotToggleExport(double v) {
+    qDebug() << "LoopRecordingManager::slotToggleExport v: " << v;
+    if (v > 0.) {
+        loadTrackIntoPlayer();
     }
 }
 
@@ -124,6 +141,7 @@ void LoopRecordingManager::stopRecording()
     m_isRecording = false;
     //qDebug() << "LoopRecordingManager:: set Loop recorder off";
     m_recReady->slotSet(LOOP_RECORD_OFF);
+    m_filesRecorded << m_recordingLocation;
     m_recordingFile = "";
     m_recordingLocation = "";
     m_iNumberOfBytesRecored = 0;
@@ -185,4 +203,13 @@ QString& LoopRecordingManager::getRecordingFile() {
 
 QString& LoopRecordingManager::getRecordingLocation() {
     return m_recordingLocation;
+}
+
+void LoopRecordingManager::loadTrackIntoPlayer() {
+    qDebug() << "LoopRecordingManager::loadTrackIntoPlayer m_filesRecorded: " << m_filesRecorded;
+    if (!m_filesRecorded.isEmpty()) {
+        
+        //pTrackToPlay = TrackPointer(new TrackInfoObject(m_filesRecorded.last()), &QObject::deleteLater);
+        emit(loadToPlayer(m_filesRecorded.last(),2));
+    }
 }
