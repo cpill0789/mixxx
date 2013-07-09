@@ -4,6 +4,8 @@
 
 #include "engine/looprecorder/enginelooprecorder.h"
 
+#include <QFile>
+
 #include "configobject.h"
 #include "controlobject.h"
 #include "controlobjectthread.h"
@@ -104,6 +106,10 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
         }
     }
     
+    if (m_recReady->get() == LOOP_RECORD_CLEAR) {
+        clearRecorder();
+    }
+    
     // if we are ready for recording, i.e, the output file has been selected, we
     // open a new file
     
@@ -191,4 +197,19 @@ void EngineLoopRecorder::closeFile() {
         sf_close(m_sndfile);
         m_sndfile = NULL;
     }
+}
+
+void EngineLoopRecorder::clearRecorder() {
+    m_recReady->slotSet(LOOP_RECORD_OFF);
+    if (fileOpen()) {
+        closeFile();    //close file
+        emit(isLoopRecording(false));
+    }
+    
+    QFile file(m_filename);
+    
+    if (file.exists()) {
+        file.remove();
+    }
+    
 }

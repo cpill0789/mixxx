@@ -30,6 +30,7 @@ public:
     void closeFile();
     void updateFromPreferences();
     bool fileOpen();
+    void clearRecorder();
 
 public slots:
     void startLoop();
