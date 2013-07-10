@@ -299,6 +299,32 @@ void PlayerManager::addPreviewDeckInner() {
     m_preview_decks.append(pPreviewDeck);
 }
 
+// TODO(carl): Implement add loop recorder code.
+void PlayerManager::addLoopRecorderDeck() {
+    QMutexLocker locker(&m_mutex);
+    addPreviewDeckInner();
+//    m_pCONumPreviewDecks->set(m_preview_decks.count());
+}
+
+void PlayerManager::addLoopRecorderDeckInner() {
+//    // Do not lock m_mutex here.
+//    QString group = groupForPreviewDeck(m_preview_decks.count());
+//    
+//    // All preview decks are in the center
+//    EngineChannel::ChannelOrientation orientation = EngineChannel::CENTER;
+//    
+//    PreviewDeck* pPreviewDeck = new PreviewDeck(this, m_pConfig, m_pEngine, orientation, group);
+//    if (m_pAnalyserQueue) {
+//        connect(pPreviewDeck, SIGNAL(newTrackLoaded(TrackPointer)),
+//                m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
+//    }
+//    
+//    Q_ASSERT(!m_players.contains(group));
+//    m_players[group] = pPreviewDeck;
+//    m_preview_decks.append(pPreviewDeck);
+}
+
+
 BaseTrackPlayer* PlayerManager::getPlayer(QString group) const {
     QMutexLocker locker(&m_mutex);
     if (m_players.contains(group)) {

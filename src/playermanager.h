@@ -40,6 +40,8 @@ class PlayerManager : public QObject {
     // Add a PreviewDeck to the PlayerManager
     void addPreviewDeck();
 
+    void addLoopRecorderDeck();
+    
     // Return the number of players. Thread-safe.
     static unsigned int numDecks();
 
@@ -124,6 +126,8 @@ class PlayerManager : public QObject {
     // creates a new preview deck.
     void addPreviewDeckInner();
 
+    void addLoopRecorderDeckInner();
+    
     // Used to protect access to PlayerManager state across threads.
     mutable QMutex m_mutex;
 
