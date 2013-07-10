@@ -209,7 +209,7 @@ void LoopRecordingManager::loadTrackIntoPlayer() {
     qDebug() << "LoopRecordingManager::loadTrackIntoPlayer m_filesRecorded: " << m_filesRecorded;
     if (!m_filesRecorded.isEmpty()) {
         
-        //pTrackToPlay = TrackPointer(new TrackInfoObject(m_filesRecorded.last()), &QObject::deleteLater);
-        emit(loadToPlayer(m_filesRecorded.last(),2));
+        pTrackToPlay = TrackPointer(new TrackInfoObject(m_filesRecorded.last()), &QObject::deleteLater);
+        emit(loadToPlayer(pTrackToPlay, QString("[Sampler2]"), true));
     }
 }

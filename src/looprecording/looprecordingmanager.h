@@ -18,7 +18,7 @@ class ControlPushButton;
 class ControlObject;
 class ControlObjectThread;
 //class TrackPointer;
-//class TrackInfoObject;
+class TrackInfoObject;
 
 class LoopRecordingManager : public QObject
 {
@@ -43,7 +43,7 @@ signals:
     //emits the commulated number of bytes being recorded
     //void bytesRecorded(long);
     void isLoopRecording(bool);
-    void loadToPlayer(QString, int);
+    void loadToPlayer(TrackPointer, QString, bool);
     
     public slots:
     void slotIsLoopRecording(bool);

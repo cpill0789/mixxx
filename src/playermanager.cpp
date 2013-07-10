@@ -113,8 +113,8 @@ void PlayerManager::bindToLibrary(Library* pLibrary) {
 void PlayerManager::bindToLoopRecorder(LoopRecordingManager* pLoopRecordingManager) {
     qDebug() << "PlayerManager::bindToLoopRecorder";
     QMutexLocker locker(&m_mutex);
-    connect(pLoopRecordingManager, SIGNAL(loadToPlayer(QString, int)),
-            this, SLOT(slotLoadToSampler(QString, int)));
+    connect(pLoopRecordingManager, SIGNAL(loadToPlayer(TrackPointer, QString, bool)),
+            this, SLOT(slotLoadTrackToPlayer(TrackPointer, QString, bool)));
 }
 
 // static
