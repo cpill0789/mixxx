@@ -16,7 +16,7 @@
 #include "util/counter.h"
 #include "sampleutil.h"
 
-#define LOOP_BUFFER_SIZE 65536
+#define LOOP_BUFFER_SIZE 16384
 
 //const int kMetaDataLifeTimeout = 16;
 
