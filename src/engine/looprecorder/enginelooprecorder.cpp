@@ -33,6 +33,7 @@ EngineLoopRecorder::~EngineLoopRecorder() {
     m_waitLock.unlock();
     
     delete m_recReady;
+    delete m_recReadyCO;
     delete m_samplerate;
     SampleUtil::free(m_pWorkBuffer);
 }
