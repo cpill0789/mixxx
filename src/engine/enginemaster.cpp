@@ -139,6 +139,7 @@ EngineMaster::~EngineMaster()
     delete head_clipping;
     delete m_pSideChain;
     delete m_pLoopRecorder;
+    delete m_pLoopRecSource;
     
     delete xFaderReverse;
     delete xFaderCalibration;
