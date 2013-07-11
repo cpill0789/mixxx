@@ -88,7 +88,7 @@ void EngineLoopRecorder::startLoop() {
 void EngineLoopRecorder::updateFromPreferences() {
     m_Encoding = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Encoding")).toLatin1();
     m_filename = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Path"));
-    // TODO(carl):remove dummy strings and put something intelligent for there values.
+    // TODO(carl):remove dummy strings and put something intelligent for the values.
     m_baTitle = QByteArray("No title");
     m_baAlbum = QByteArray("No album");
     m_baAuthor = QByteArray("No artist");
