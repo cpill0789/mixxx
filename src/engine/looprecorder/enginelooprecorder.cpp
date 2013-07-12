@@ -24,13 +24,27 @@ EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
 : m_config(_config),
 m_bStopThread(false),
 m_sampleFifo(LOOP_BUFFER_SIZE),
-m_sndfile(NULL) { }
+m_pWorkBuffer(SampleUtil::alloc(LOOP_BUFFER_SIZE)),
+m_sndfile(NULL) {
+    
+    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
+    m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+    
+    //m_recReady = new ControlObjectThread(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
+    
+    m_samplerate = new ControlObjectThread("[Master]", "samplerate");
+    
+    start(QThread::HighPriority);
+}
 
 EngineLoopRecorder::~EngineLoopRecorder() {
     m_waitLock.lock();
     m_bStopThread = true;
     m_waitForSamples.wakeAll();
     m_waitLock.unlock();
+    
+    // Wait until the thread has finished.
+    wait();
     
     delete m_recReady;
     delete m_recReadyCO;
@@ -52,18 +66,10 @@ void EngineLoopRecorder::writeSamples(const CSAMPLE* newBuffer, int buffer_size)
     }
 }
 
-void EngineLoopRecorder::startLoop() {
+void EngineLoopRecorder::run() {
     
-    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
-    m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+    QThread::currentThread()->setObjectName(QString("EngineLoopRecorder"));
     
-    //m_recReady = new ControlObjectThread(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
-    
-    m_samplerate = new ControlObjectThread("[Master]", "samplerate");
-    
-    m_pWorkBuffer = SampleUtil::alloc(LOOP_BUFFER_SIZE);
-    
-
     while (!m_bStopThread) {
         int samples_read;
         while ((samples_read = m_sampleFifo.read(
@@ -74,7 +80,6 @@ void EngineLoopRecorder::startLoop() {
         
         // Check to see if we're supposed to exit/stop this thread.
         if (m_bStopThread) {
-            emit finished();
             return;
         }
         

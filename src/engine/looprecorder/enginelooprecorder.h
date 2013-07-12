@@ -16,7 +16,7 @@ class ConfigKey;
 class ControlObject;
 class ControlObjectThread;
 
-class EngineLoopRecorder : public QObject {
+class EngineLoopRecorder : public QThread {
     Q_OBJECT
 public:
     EngineLoopRecorder(ConfigObject<ConfigValue>* _config);
@@ -31,9 +31,6 @@ public:
     void updateFromPreferences();
     bool fileOpen();
     void clearRecorder();
-
-public slots:
-    void startLoop();
     
 signals:
     // emitted to notify LoopRecordingManager
@@ -42,6 +39,8 @@ signals:
     void finished();
     
 private:
+    void run();
+    
     void process(const CSAMPLE* pBuffer, const int iBufferSize);
     //int getActiveTracks();
     
