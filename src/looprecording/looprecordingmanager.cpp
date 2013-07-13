@@ -5,6 +5,7 @@
 #include <QMutex>
 #include <QDir>
 #include <QDebug>
+#include <QFile>
 
 #include "looprecording/looprecordingmanager.h"
 #include "looprecording/defs_looprecording.h"
@@ -30,10 +31,10 @@ pTrackToPlay(NULL){
     m_pClearRecorder = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "clear_recorder"));
     
     connect(m_pClearRecorder, SIGNAL(valueChanged(double)),
-            this, SLOT(slotClearRecorder(double)));
+            this, SLOT(slotToggleClear(double)));
     
-    m_pExportToSampler = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_to_sampler"));
-    connect(m_pExportToSampler, SIGNAL(valueChanged(double)),
+    m_pExportLoop = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_loop"));
+    connect(m_pExportLoop, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleExport(double)));
     
     //m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
@@ -42,7 +43,8 @@ pTrackToPlay(NULL){
     
     
     
-    m_loopPlayReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
+    m_loopPlayReadyCO = new ControlObject(
+                                ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
     m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
     
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
@@ -51,6 +53,8 @@ pTrackToPlay(NULL){
     EngineLoopRecorder* pLoopRecorder = pEngine->getLoopRecorder();
     if (pLoopRecorder) {
         connect(pLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
+        connect(pLoopRecorder, SIGNAL(clearRecorder()),this, SLOT(slotClearRecorder()));
+        connect(pLoopRecorder, SIGNAL(loadToLoopDeck()),this, SLOT(slotLoadToLoopDeck()));
     }
 }
 
@@ -63,7 +67,7 @@ LoopRecordingManager::~LoopRecordingManager()
     delete m_loopPlayReady;
     delete m_pToggleLoopRecording;
     delete m_pClearRecorder;
-    delete m_pExportToSampler;
+    delete m_pExportLoop;
 }
 
 QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) const {
@@ -89,36 +93,48 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
             stopRecording();
         }
     } else {
+        // TODO: Prevent duplicate start call.  Currently Start Recording is called twice.
         startRecording();
     }
 }
 
-void LoopRecordingManager::slotClearRecorder(double v) {
-    qDebug() << "LoopRecordingManager::slotClearRecorder v: " << v;
+void LoopRecordingManager::slotToggleClear(double v) {
+    //qDebug() << "LoopRecordingManager::slotClearRecorder v: " << v;
     if (v > 0.) {
-        stopRecording();
-        m_pToggleLoopRecording->set(0.);
-        
         m_recReady->slotSet(LOOP_RECORD_CLEAR);
-        if (!m_filesRecorded.isEmpty()) {
-            m_filesRecorded.removeLast();
-        }
+        m_pToggleLoopRecording->set(0.);
     }
 }
 
 void LoopRecordingManager::slotToggleExport(double v) {
     qDebug() << "LoopRecordingManager::slotToggleExport v: " << v;
     if (v > 0.) {
-        loadTrackIntoPlayer();
+        exportLoopToPlayer("[Sampler2]");
     }
+}
+
+void LoopRecordingManager::slotClearRecorder() {
+    
+    foreach(QString location, m_filesRecorded) {
+        qDebug() << "LoopRecordingManager::slotClearRecorder deleteing: " << location;
+        QFile file(location);
+
+        if (file.exists()) {
+            file.remove();
+        }
+    }
+    m_filesRecorded.clear();
+}
+
+void LoopRecordingManager::slotLoadToLoopDeck(){
+    loadToLoopDeck();
 }
 
 void LoopRecordingManager::startRecording() {
     qDebug() << "LoopRecordingManager startRecording";
-    m_isRecording = true;
+    
     m_iNumberOfBytesRecored = 0;
     QString encodingType = m_pConfig->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"));
-    //QString encodingType = QString("WAV");
     //Append file extension
     QString date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
     m_recordingFile = QString("%1_%2.%3")
@@ -127,19 +143,17 @@ void LoopRecordingManager::startRecording() {
     // Storing the absolutePath of the recording file without file extension
     m_recording_base_file = getRecordingDir();
     m_recording_base_file.append("/loop_").append(date_time_str);
-    //appending file extension to get the filelocation
+    // appending file extension to get the filelocation
     m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
+    m_filesRecorded << m_recordingLocation;
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Path"), m_recordingLocation);
     m_recReady->slotSet(LOOP_RECORD_READY);
-    //qDebug() << "m_recReady: " << m_recReady->get();
 }
 
 void LoopRecordingManager::stopRecording()
 {
     qDebug() << "LoopRecordingManager::stopRecording";
-    m_isRecording = false;
     m_recReady->slotSet(LOOP_RECORD_OFF);
-    m_filesRecorded << m_recordingLocation;
     m_recordingFile = "";
     m_recordingLocation = "";
     m_iNumberOfBytesRecored = 0;
@@ -202,11 +216,47 @@ QString& LoopRecordingManager::getRecordingLocation() {
     return m_recordingLocation;
 }
 
-void LoopRecordingManager::loadTrackIntoPlayer() {
-    qDebug() << "LoopRecordingManager::loadTrackIntoPlayer m_filesRecorded: " << m_filesRecorded;
+void LoopRecordingManager::exportLoopToPlayer(QString group) {
+    //qDebug() << "LoopRecordingManager::exportLoopToPlayer m_filesRecorded: " << m_filesRecorded;
+    
+    // TODO(carl) handle multi-layered loops.
+    QString dir = getRecordingDir();
+    QString encodingType = m_pConfig->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"));
+    //Append file extension
+    QString date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
+    
+    QString newFileLocation = QString("%1%2_%3.%4")
+    .arg(dir,"loop",date_time_str, encodingType.toLower());
+    
+    
+    if (saveLoop(newFileLocation)) {
+        emit(exportToPlayer(newFileLocation, group));
+    } else {
+        qDebug () << "LoopRecordingManager::exportLoopToPlayer Error Saving File: " << newFileLocation;
+    }
+}
+void LoopRecordingManager::loadToLoopDeck() {
+    //qDebug() << "LoopRecordingManager::loadToLoopDeck m_filesRecorded: " << m_filesRecorded;
     if (!m_filesRecorded.isEmpty()) {
         
         pTrackToPlay = TrackPointer(new TrackInfoObject(m_filesRecorded.last()), &QObject::deleteLater);
-        emit(loadToPlayer(pTrackToPlay, QString("[LoopRecorderDeck1]"), true));
+        emit(loadToLoopDeck(pTrackToPlay, QString("[LoopRecorderDeck1]"), true));
     }
+}
+
+bool LoopRecordingManager::saveLoop(QString newFileLocation) {
+    
+    // Right now just save the last recording created.
+    // In the future this will be more complex.
+    if (!m_filesRecorded.isEmpty()) {
+        
+        QString oldFileLocation = m_filesRecorded.last();
+        QFile file(oldFileLocation);
+        
+        if (file.exists()) {
+            return file.copy(newFileLocation);
+        }
+
+    }
+    return false;
 }

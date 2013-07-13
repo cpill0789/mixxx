@@ -40,26 +40,31 @@ public:
     QString& getRecordingLocation();
     
 signals:
-    //emits the commulated number of bytes being recorded
+    // emits the cummulative number of bytes being recorded
     //void bytesRecorded(long);
+    
     void isLoopRecording(bool);
-    void exportToPlayer(TrackPointer, QString, bool);
+    void exportToPlayer(QString, QString);
     void loadToLoopDeck(TrackPointer, QString, bool);
     
     public slots:
     void slotIsLoopRecording(bool);
+    void slotClearRecorder();
+    void slotLoadToLoopDeck();
     //void slotBytesRecorded(int);
     
     private slots:
     void slotSetLoopRecording(bool recording);
     void slotToggleLoopRecording(double v);
-    void slotClearRecorder(double v);
+    void slotToggleClear(double v);
     void slotToggleExport(double v);
     
 private:
-    void exportTrackToPlayer(QString group);
-    void loadTrackToLoopDeck();
+    void exportLoopToPlayer(QString group);
+    void loadToLoopDeck();
     QString formatDateTimeForFilename(QDateTime dateTime) const;
+    bool saveLoop(QString newFileLocation);
+    
     ControlObjectThread* m_recReady;
     //ControlObject* m_recReadyCO;
     ControlPushButton* m_pToggleLoopRecording;
