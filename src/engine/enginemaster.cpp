@@ -110,21 +110,9 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
         ConfigKey("[Mixer Profile]", "xFaderReverse"), 0., 1.);
     
     m_pLoopRecSource = new ControlPushButton(ConfigKey(group,"loopRecSource"));
-    // Code for following a worker object pattern.
-    //QThread* LoopRecorderThread = new QThread;
-    //LoopRecorderThread->setObjectName(QString("LoopRecorder"));
     
     m_pLoopRecorder = new EngineLoopRecorder(_config);
-//    m_pLoopRecorder->setObjectName(QString("LoopRecorder"));
-    
-    //connect(m_pLoopRecorder, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-//    connect(LoopRecorderThread, SIGNAL(started()), m_pLoopRecorder, SLOT(startLoop()));
-//    connect(m_pLoopRecorder, SIGNAL(finished()), LoopRecorderThread, SLOT(quit()));
-//    connect(m_pLoopRecorder, SIGNAL(finished()), m_pLoopRecorder, SLOT(deleteLater()));
-//    connect(LoopRecorderThread, SIGNAL(finished()), LoopRecorderThread, SLOT(deleteLater()));
-    
-//    m_pLoopRecorder->moveToThread(LoopRecorderThread);
-//    LoopRecorderThread->start();
+
 }
 
 EngineMaster::~EngineMaster()
