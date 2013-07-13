@@ -186,7 +186,6 @@ QString& LoopRecordingManager::getRecordingDir() {
 //}
 
 void LoopRecordingManager::slotIsLoopRecording(bool isRecordingActive) {
-    //qDebug() << "SlotIsRecording " << isLoopRecording;
     
     //Notify the GUI controls, see dlgrecording.cpp
     m_isRecording = isRecordingActive;
@@ -210,6 +209,6 @@ void LoopRecordingManager::loadTrackIntoPlayer() {
     if (!m_filesRecorded.isEmpty()) {
         
         pTrackToPlay = TrackPointer(new TrackInfoObject(m_filesRecorded.last()), &QObject::deleteLater);
-        emit(loadToPlayer(pTrackToPlay, QString("[Sampler2]"), true));
+        emit(loadToPlayer(pTrackToPlay, QString("[LoopRecorderDeck1]"), true));
     }
 }
