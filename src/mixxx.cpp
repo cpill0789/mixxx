@@ -371,6 +371,7 @@ MixxxApp::MixxxApp(QApplication *pApp, const CmdlineArgs& args)
     m_pPlayerManager->addSampler();
     m_pPlayerManager->addSampler();
     m_pPlayerManager->addPreviewDeck();
+    m_pPlayerManager->addLoopRecorderDeck();
 
 #ifdef __VINYLCONTROL__
     m_pVCManager->init();
