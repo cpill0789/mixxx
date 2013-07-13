@@ -9,6 +9,7 @@
 #include "deck.h"
 #include "sampler.h"
 #include "previewdeck.h"
+#include "looprecorderdeck.h"
 #include "analyserqueue.h"
 #include "controlobject.h"
 #include "samplerbank.h"
@@ -32,7 +33,8 @@ PlayerManager::PlayerManager(ConfigObject<ConfigValue>* pConfig,
         m_pAnalyserQueue(NULL),
         m_pCONumDecks(new ControlObject(ConfigKey("[Master]", "num_decks"), true, true)),
         m_pCONumSamplers(new ControlObject(ConfigKey("[Master]", "num_samplers"), true, true)),
-        m_pCONumPreviewDecks(new ControlObject(ConfigKey("[Master]", "num_preview_decks"), true, true)) {
+        m_pCONumPreviewDecks(new ControlObject(ConfigKey("[Master]", "num_preview_decks"), true, true)),
+        m_pCONumLoopDecks(new ControlObject(ConfigKey("[Master]", "num_loop_decks"), true, true)) {
 
     connect(m_pCONumDecks, SIGNAL(valueChanged(double)),
             this, SLOT(slotNumDecksControlChanged(double)),
@@ -43,6 +45,9 @@ PlayerManager::PlayerManager(ConfigObject<ConfigValue>* pConfig,
     connect(m_pCONumPreviewDecks, SIGNAL(valueChanged(double)),
             this, SLOT(slotNumPreviewDecksControlChanged(double)),
             Qt::DirectConnection);
+    connect(m_pCONumLoopDecks, SIGNAL(valueChanged(double)),
+            this, SLOT(slotNumLoopDecksControlChanged(double)),
+            Qt::DirectConnection);
 
     // This is parented to the PlayerManager so does not need to be deleted
     SamplerBank* pSamplerBank = new SamplerBank(this);
@@ -52,6 +57,7 @@ PlayerManager::PlayerManager(ConfigObject<ConfigValue>* pConfig,
     m_pCONumDecks->set(0);
     m_pCONumSamplers->set(0);
     m_pCONumPreviewDecks->set(0);
+    m_pCONumLoopDecks->set(0);
 
     // register the engine's outputs
     m_pSoundManager->registerOutput(AudioOutput(AudioOutput::MASTER),
@@ -67,6 +73,8 @@ PlayerManager::~PlayerManager() {
     m_players.clear();
     m_decks.clear();
     m_samplers.clear();
+    // clear previewdecks as well?
+    m_loop_decks.clear();
 
     delete m_pCONumSamplers;
     delete m_pCONumDecks;
@@ -170,6 +178,18 @@ unsigned int PlayerManager::numPreviewDecks() {
     return pNumCO ? pNumCO->get() : 0;
 }
 
+// static
+unsigned int PlayerManager::numLoopDecks() {
+    // We do this to cache the control once it is created so callers don't incur
+    // a hashtable lookup every time they call this.
+    static ControlObject* pNumCO = NULL;
+    if (pNumCO == NULL) {
+        pNumCO = ControlObject::getControl(
+                                           ConfigKey("[Master]", "num_loop_decks"));
+    }
+    return pNumCO ? pNumCO->get() : 0;
+}
+
 void PlayerManager::slotNumDecksControlChanged(double v) {
     QMutexLocker locker(&m_mutex);
     int num = (int)v;
@@ -212,6 +232,20 @@ void PlayerManager::slotNumPreviewDecksControlChanged(double v) {
 
     while (m_preview_decks.size() < num) {
         addPreviewDeckInner();
+    }
+}
+void PlayerManager::slotNumLoopDecksControlChanged(double v) {
+    QMutexLocker locker(&m_mutex);
+    int num = (int)v;
+    if (num < m_loop_decks.size()) {
+        // The request was invalid -- reset the value.
+        m_pCONumPreviewDecks->set(m_loop_decks.size());
+        qDebug() << "Ignoring request to reduce the number of preview decks to" << num;
+        return;
+    }
+    
+    while (m_loop_decks.size() < num) {
+        addLoopRecorderDeckInner();
     }
 }
 
@@ -302,26 +336,26 @@ void PlayerManager::addPreviewDeckInner() {
 // TODO(carl): Implement add loop recorder code.
 void PlayerManager::addLoopRecorderDeck() {
     QMutexLocker locker(&m_mutex);
-    addPreviewDeckInner();
-//    m_pCONumPreviewDecks->set(m_preview_decks.count());
+    addLoopRecorderDeckInner();
+//    m_pCONumLoopDecks->set(m_loop_decks.count());
 }
 
 void PlayerManager::addLoopRecorderDeckInner() {
-//    // Do not lock m_mutex here.
-//    QString group = groupForPreviewDeck(m_preview_decks.count());
-//    
-//    // All preview decks are in the center
-//    EngineChannel::ChannelOrientation orientation = EngineChannel::CENTER;
-//    
-//    PreviewDeck* pPreviewDeck = new PreviewDeck(this, m_pConfig, m_pEngine, orientation, group);
-//    if (m_pAnalyserQueue) {
-//        connect(pPreviewDeck, SIGNAL(newTrackLoaded(TrackPointer)),
-//                m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
-//    }
-//    
-//    Q_ASSERT(!m_players.contains(group));
-//    m_players[group] = pPreviewDeck;
-//    m_preview_decks.append(pPreviewDeck);
+    // Do not lock m_mutex here.
+    QString group = groupForLoopDeck(m_loop_decks.count());
+    
+    // All loop decks are in the center
+    EngineChannel::ChannelOrientation orientation = EngineChannel::CENTER;
+    
+    LoopRecorderDeck* pLoopRecorderDeck = new LoopRecorderDeck(this, m_pConfig, m_pEngine, orientation, group);
+    if (m_pAnalyserQueue) {
+        //connect(pLoopRecorderDeck, SIGNAL(newTrackLoaded(TrackPointer)),
+        //        m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
+    }
+    
+    Q_ASSERT(!m_players.contains(group));
+    m_players[group] = pLoopRecorderDeck;
+    m_loop_decks.append(pLoopRecorderDeck);
 }
 
 
@@ -362,6 +396,15 @@ Sampler* PlayerManager::getSampler(unsigned int sampler) const {
         return NULL;
     }
     return m_samplers[sampler - 1];
+}
+LoopRecorderDeck* PlayerManager::getLoopRecorderDeck(unsigned int libLoopPlayer) const {
+    QMutexLocker locker(&m_mutex);
+    if (libLoopPlayer < 1 || libLoopPlayer > numLoopDecks()) {
+        qWarning() << "Warning PlayerManager::getLoopRecorderDeck() called with invalid index: "
+        << libLoopPlayer;
+        return NULL;
+    }
+    return m_loop_decks[libLoopPlayer - 1];
 }
 
 bool PlayerManager::hasVinylInput(int inputnum) const {
