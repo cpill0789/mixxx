@@ -715,6 +715,7 @@ class MixxxCore(Feature):
                    "deck.cpp",
                    "sampler.cpp",
                    "previewdeck.cpp",
+                   "looprecorderdeck.cpp",
                    "playermanager.cpp",
                    "samplerbank.cpp",
                    "sounddevice.cpp",
