@@ -22,7 +22,6 @@ m_recordingFile(""),
 m_recordingLocation(""),
 m_isRecording(false),
 m_iNumberOfBytesRecored(0),
-m_filesRecorded(),
 pTrackToPlay(NULL){
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
@@ -48,7 +47,7 @@ pTrackToPlay(NULL){
     
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
     
-    // TODO: connect with LoopRecorder, a bit different than sidechain code
+    // Connect with EngineLoopRecorder
     EngineLoopRecorder* pLoopRecorder = pEngine->getLoopRecorder();
     if (pLoopRecorder) {
         connect(pLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
@@ -99,9 +98,9 @@ void LoopRecordingManager::slotClearRecorder(double v) {
     if (v > 0.) {
         stopRecording();
         m_pToggleLoopRecording->set(0.);
-        //qDebug() << "LoopRecordingManager:: set Loop recorder clear";
+        
         m_recReady->slotSet(LOOP_RECORD_CLEAR);
-        if(!m_filesRecorded.isEmpty()) {
+        if (!m_filesRecorded.isEmpty()) {
             m_filesRecorded.removeLast();
         }
     }
@@ -139,7 +138,6 @@ void LoopRecordingManager::stopRecording()
 {
     qDebug() << "LoopRecordingManager::stopRecording";
     m_isRecording = false;
-    //qDebug() << "LoopRecordingManager:: set Loop recorder off";
     m_recReady->slotSet(LOOP_RECORD_OFF);
     m_filesRecorded << m_recordingLocation;
     m_recordingFile = "";
