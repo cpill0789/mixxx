@@ -6,7 +6,7 @@ LoopRecorderDeck::LoopRecorderDeck(QObject* pParent,
                          EngineChannel::ChannelOrientation defaultOrientation,
                          QString group) :
         BaseTrackPlayer(pParent, pConfig, pMixingEngine, defaultOrientation,
-                group, false, true) {
+                group, true, false) {
 }
 
 LoopRecorderDeck::~LoopRecorderDeck() {
