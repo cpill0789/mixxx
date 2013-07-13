@@ -107,13 +107,19 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     if (m_recReady->get() == LOOP_RECORD_OFF) {
         //qDebug("Setting record flag to: OFF");
         if (fileOpen()) {
-            closeFile();    //close file and free encoder
+            closeFile();
             emit(isLoopRecording(false));
+            emit(loadToLoopDeck());
         }
     }
     
     if (m_recReady->get() == LOOP_RECORD_CLEAR) {
-        clearRecorder();
+        if (fileOpen()) {
+            closeFile();    //close file and free encoder
+            emit(isLoopRecording(false));
+        }
+        emit(clearRecorder());
+        m_recReady->slotSet(LOOP_RECORD_OFF);
     }
     
     // if we are ready for recording, i.e, the output file has been selected, we
@@ -203,20 +209,4 @@ void EngineLoopRecorder::closeFile() {
         sf_close(m_sndfile);
         m_sndfile = NULL;
     }
-}
-
-void EngineLoopRecorder::clearRecorder() {
-    m_recReady->slotSet(LOOP_RECORD_OFF);
-    if (fileOpen()) {
-        closeFile();    //close file
-        emit(isLoopRecording(false));
-    }
-    
-    QFile file(m_filename);
-    
-    // Delete file
-    if (file.exists()) {
-        file.remove();
-    }
-    
 }

@@ -30,13 +30,13 @@ public:
     void closeFile();
     void updateFromPreferences();
     bool fileOpen();
-    void clearRecorder();
     
 signals:
     // emitted to notify LoopRecordingManager
     //void bytesRecorded(int);
     void isLoopRecording(bool);
-    void finished();
+    void clearRecorder();
+    void loadToLoopDeck();
     
 private:
     void run();
