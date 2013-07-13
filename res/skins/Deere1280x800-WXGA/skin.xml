@@ -578,7 +578,7 @@
                                  -->
 								<Pos>216,24</Pos>
 								<Connection>
-									<ConfigKey>[Loop_Recording],export_to_sampler</ConfigKey>
+									<ConfigKey>[Loop_Recording],export_loop</ConfigKey>
                                     <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
 									<ButtonState>LeftButton</ButtonState>
 									<ConnectValueToWidget>false</ConnectValueToWidget>
