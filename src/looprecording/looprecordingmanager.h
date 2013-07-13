@@ -43,7 +43,8 @@ signals:
     //emits the commulated number of bytes being recorded
     //void bytesRecorded(long);
     void isLoopRecording(bool);
-    void loadToPlayer(TrackPointer, QString, bool);
+    void exportToPlayer(TrackPointer, QString, bool);
+    void loadToLoopDeck(TrackPointer, QString, bool);
     
     public slots:
     void slotIsLoopRecording(bool);
@@ -56,13 +57,14 @@ signals:
     void slotToggleExport(double v);
     
 private:
-    void loadTrackIntoPlayer();
+    void exportTrackToPlayer(QString group);
+    void loadTrackToLoopDeck();
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     ControlObjectThread* m_recReady;
     //ControlObject* m_recReadyCO;
     ControlPushButton* m_pToggleLoopRecording;
     ControlPushButton* m_pClearRecorder;
-    ControlPushButton* m_pExportToSampler;
+    ControlPushButton* m_pExportLoop;
     
     ControlObjectThread* m_loopPlayReady;
     ControlObject* m_loopPlayReadyCO;
