@@ -61,6 +61,8 @@ pTrackToPlay(NULL){
 LoopRecordingManager::~LoopRecordingManager()
 {
     qDebug() << "~LoopRecordingManager";
+    // TODO(carl) delete temporary loop recorder files.
+    
     //delete m_recReadyCO;
     delete m_recReady;
     delete m_loopPlayReadyCO;
