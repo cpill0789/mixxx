@@ -116,6 +116,12 @@ void PlayerManager::bindToLibrary(Library* pLibrary) {
         connect(pPreviewDeck, SIGNAL(newTrackLoaded(TrackPointer)),
                 m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
     }
+    
+    // No need to analyse loop recorder tracks, because they are only temporary.
+//    foreach(LoopRecorderDeck* pLoopDeck, m_loop_decks) {
+//        connect(pLoopDeck, SIGNAL(newTrackLoaded(TrackPointer)),
+//                m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
+//    }
 }
 
 void PlayerManager::bindToLoopRecorder(LoopRecordingManager* pLoopRecordingManager) {
@@ -333,11 +339,11 @@ void PlayerManager::addPreviewDeckInner() {
     m_preview_decks.append(pPreviewDeck);
 }
 
-// TODO(carl): Implement add loop recorder code.
+
 void PlayerManager::addLoopRecorderDeck() {
     QMutexLocker locker(&m_mutex);
     addLoopRecorderDeckInner();
-//    m_pCONumLoopDecks->set(m_loop_decks.count());
+    m_pCONumLoopDecks->set(m_loop_decks.count());
 }
 
 void PlayerManager::addLoopRecorderDeckInner() {
@@ -348,10 +354,11 @@ void PlayerManager::addLoopRecorderDeckInner() {
     EngineChannel::ChannelOrientation orientation = EngineChannel::CENTER;
     
     LoopRecorderDeck* pLoopRecorderDeck = new LoopRecorderDeck(this, m_pConfig, m_pEngine, orientation, group);
-    if (m_pAnalyserQueue) {
-        //connect(pLoopRecorderDeck, SIGNAL(newTrackLoaded(TrackPointer)),
-        //        m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
-    }
+    // No need to analyse loop track because it may be deleted.
+//    if (m_pAnalyserQueue) {
+//        connect(pLoopRecorderDeck, SIGNAL(newTrackLoaded(TrackPointer)),
+//                m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
+//    }
     
     Q_ASSERT(!m_players.contains(group));
     m_players[group] = pLoopRecorderDeck;
