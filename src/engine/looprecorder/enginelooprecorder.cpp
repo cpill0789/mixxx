@@ -21,11 +21,11 @@
 //const int kMetaDataLifeTimeout = 16;
 
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
-: m_config(_config),
-m_bStopThread(false),
-m_sampleFifo(LOOP_BUFFER_SIZE),
-m_pWorkBuffer(SampleUtil::alloc(LOOP_BUFFER_SIZE)),
-m_sndfile(NULL) {
+        : m_config(_config),
+        m_bStopThread(false),
+        m_sampleFifo(LOOP_BUFFER_SIZE),
+        m_pWorkBuffer(SampleUtil::alloc(LOOP_BUFFER_SIZE)),
+        m_sndfile(NULL) {
     
     m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
     m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
