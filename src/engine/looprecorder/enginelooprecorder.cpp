@@ -74,8 +74,50 @@ void EngineLoopRecorder::run() {
         int samples_read;
         while ((samples_read = m_sampleFifo.read(
                                                  m_pWorkBuffer, LOOP_BUFFER_SIZE))) {
-            process(m_pWorkBuffer, samples_read);
-            
+
+            float currentRecStatus = m_recReady->get();
+
+            // if recording is disabled
+            if (currentRecStatus == LOOP_RECORD_OFF) {
+                //qDebug("Setting record flag to: OFF");
+                if (fileOpen()) {
+                    closeFile();
+                    emit(isLoopRecording(false));
+                    emit(loadToLoopDeck());
+                }
+
+            } else if (currentRecStatus == LOOP_RECORD_CLEAR) {
+                if (fileOpen()) {
+                    closeFile();    //close file and free encoder
+                    emit(isLoopRecording(false));
+                }
+                emit(clearRecorder());
+                m_recReady->slotSet(LOOP_RECORD_OFF);
+
+                // if we are ready for recording, i.e, the output file has been selected, we
+                // open a new file
+            } else if (currentRecStatus == LOOP_RECORD_READY) {
+                updateFromPreferences();	//update file location from pref
+
+                if (openFile()) {
+                    qDebug("Setting loop record flag to: ON");
+                    m_recReady->slotSet(LOOP_RECORD_ON);
+                    emit(isLoopRecording(true)); //will notify the LoopRecordingManager
+
+                    // Since we just started recording, timeout and clear the metadata.
+                    //m_iMetaDataLife = kMetaDataLifeTimeout;
+                    m_pCurrentTrack = TrackPointer();
+
+                } else { // Maybe the encoder could not be initialized
+                    qDebug("Setting loop record flag to: OFF");
+                    m_recReady->slotSet(LOOP_RECORD_OFF);
+                    emit(isLoopRecording(false));
+                }
+                
+                // If recording is enabled process audio to uncompressed data.
+            } else if (currentRecStatus == LOOP_RECORD_ON) {
+                process(m_pWorkBuffer, samples_read);
+            }
         }
         
         // Check to see if we're supposed to exit/stop this thread.
@@ -93,61 +135,18 @@ void EngineLoopRecorder::run() {
 void EngineLoopRecorder::updateFromPreferences() {
     m_Encoding = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Encoding")).toLatin1();
     m_filename = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Path"));
-    // TODO(carl):remove dummy strings and put something intelligent for the values.
+    // TODO(carl):remove dummy strings and put something intelligent for these values.
     m_baTitle = QByteArray("No title");
     m_baAlbum = QByteArray("No album");
     m_baAuthor = QByteArray("No artist");
 }
 
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
-    
-    //qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
-    float currentRecStatus = m_recReady->get();
 
-    // if recording is disabled
-    if (currentRecStatus == LOOP_RECORD_OFF) {
-        //qDebug("Setting record flag to: OFF");
-        if (fileOpen()) {
-            closeFile();
-            emit(isLoopRecording(false));
-            emit(loadToLoopDeck());
-        }
-
-    } else if (currentRecStatus == LOOP_RECORD_CLEAR) {
-        if (fileOpen()) {
-            closeFile();    //close file and free encoder
-            emit(isLoopRecording(false));
-        }
-        emit(clearRecorder());
-        m_recReady->slotSet(LOOP_RECORD_OFF);
-
-    // if we are ready for recording, i.e, the output file has been selected, we
-    // open a new file
-    } else if (currentRecStatus == LOOP_RECORD_READY) {
-        updateFromPreferences();	//update file location from pref
-        
-        if (openFile()) {
-            qDebug("Setting record flag to: ON");
-            m_recReady->slotSet(LOOP_RECORD_ON);
-            emit(isLoopRecording(true)); //will notify the LoopRecordingManager
-            
-            // Since we just started recording, timeout and clear the metadata.
-            //m_iMetaDataLife = kMetaDataLifeTimeout;
-            m_pCurrentTrack = TrackPointer();
-            
-        } else { // Maybe the encoder could not be initialized
-            qDebug("Setting record flag to: OFF");
-            m_recReady->slotSet(LOOP_RECORD_OFF);
-            emit(isLoopRecording(false));
-        }
-
-    // If recording is enabled process audio to uncompressed data.
-    } else if (currentRecStatus == LOOP_RECORD_ON) {
-        if (m_sndfile != NULL) {
-            sf_write_float(m_sndfile, pBuffer, iBufferSize);
-            //emit(bytesRecorded(iBufferSize));
-        }
-  	}
+    if (m_sndfile != NULL) {
+        sf_write_float(m_sndfile, pBuffer, iBufferSize);
+        //emit(bytesRecorded(iBufferSize));
+    }
 }
 
 bool EngineLoopRecorder::fileOpen() {
