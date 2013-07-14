@@ -61,7 +61,7 @@ void EngineLoopRecorder::writeSamples(const CSAMPLE* newBuffer, int buffer_size)
     }
     
     if (m_sampleFifo.writeAvailable() < LOOP_BUFFER_SIZE/5) {
-        // Signal to the sidechain that samples are available.
+        // Signal to the loop recorder that samples are available.
         m_waitForSamples.wakeAll();
     }
 }
