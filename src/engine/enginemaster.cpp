@@ -112,11 +112,9 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     m_pLoopRecSource = new ControlPushButton(ConfigKey(group,"loopRecSource"));
     
     m_pLoopRecorder = new EngineLoopRecorder(_config);
-
 }
 
-EngineMaster::~EngineMaster()
-{
+EngineMaster::~EngineMaster() {
     qDebug() << "in ~EngineMaster()";
     delete crossfader;
     delete m_pBalance;
@@ -390,7 +388,7 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     // Mix all the enabled headphone channels together.
     m_headphoneGain.setGain(chead_gain);
     mixChannels(headphoneOutput, maxChannels, m_pHead, iBufferSize, &m_headphoneGain);
-    
+
     // Calculate the crossfader gains for left and right side of the crossfader
     double c1_gain, c2_gain;
     EngineXfader::getXfadeGains(crossfader->get(), xFaderCurve->get(),
