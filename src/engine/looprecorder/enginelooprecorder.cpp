@@ -102,30 +102,28 @@ void EngineLoopRecorder::updateFromPreferences() {
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
     
     //qDebug() << "EngineLoopRecorder::process recReady: " << m_recReady->get();
-    
+    float currentRecStatus = m_recReady->get();
+
     // if recording is disabled
-    if (m_recReady->get() == LOOP_RECORD_OFF) {
+    if (currentRecStatus == LOOP_RECORD_OFF) {
         //qDebug("Setting record flag to: OFF");
         if (fileOpen()) {
             closeFile();
             emit(isLoopRecording(false));
             emit(loadToLoopDeck());
         }
-    }
-    
-    if (m_recReady->get() == LOOP_RECORD_CLEAR) {
+
+    } else if (currentRecStatus == LOOP_RECORD_CLEAR) {
         if (fileOpen()) {
             closeFile();    //close file and free encoder
             emit(isLoopRecording(false));
         }
         emit(clearRecorder());
         m_recReady->slotSet(LOOP_RECORD_OFF);
-    }
-    
+
     // if we are ready for recording, i.e, the output file has been selected, we
     // open a new file
-    
-    if (m_recReady->get() == LOOP_RECORD_READY) {
+    } else if (currentRecStatus == LOOP_RECORD_READY) {
         updateFromPreferences();	//update file location from pref
         
         if (openFile()) {
@@ -142,10 +140,9 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
             m_recReady->slotSet(LOOP_RECORD_OFF);
             emit(isLoopRecording(false));
         }
-    }
-    
+
     // If recording is enabled process audio to uncompressed data.
-    if (m_recReady->get() == LOOP_RECORD_ON) {
+    } else if (currentRecStatus == LOOP_RECORD_ON) {
         if (m_sndfile != NULL) {
             sf_write_float(m_sndfile, pBuffer, iBufferSize);
             //emit(bytesRecorded(iBufferSize));
