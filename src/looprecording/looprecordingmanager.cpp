@@ -16,14 +16,14 @@
 
 
 LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, EngineMaster* pEngine)
-: m_pConfig(pConfig),
-m_recordingDir(""),
-m_recording_base_file(""),
-m_recordingFile(""),
-m_recordingLocation(""),
-m_isRecording(false),
-m_iNumberOfBytesRecored(0),
-pTrackToPlay(NULL){
+        : m_pConfig(pConfig),
+        m_recordingDir(""),
+        m_recording_base_file(""),
+        m_recordingFile(""),
+        m_recordingLocation(""),
+        m_isRecording(false),
+        m_iNumberOfBytesRecored(0),
+        pTrackToPlay(NULL) {
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
@@ -89,13 +89,13 @@ void LoopRecordingManager::slotSetLoopRecording(bool recording) {
 }
 
 void LoopRecordingManager::slotToggleLoopRecording(double v) {
-    qDebug() << "LoopRecordingManager::slotToggleLoopRecording v: " << v;
+    //qDebug() << "LoopRecordingManager::slotToggleLoopRecording v: " << v;
     if (v == 0.) {
         if (isLoopRecordingActive()) {
             stopRecording();
         }
     } else {
-        // TODO: Prevent duplicate start call.  Currently Start Recording is called twice.
+        // TODO: Prevent duplicate start call.  Currently startRecording is called twice.
         startRecording();
     }
 }
