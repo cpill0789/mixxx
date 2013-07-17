@@ -433,10 +433,13 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
 
     // Loop Recorder: Send master mix to loop recorder.
     if(m_pLoopRecSource->get() > 0) {
-        m_pLoopRecorder->writeSamples(m_pHead, iBufferSize);
+        SampleUtil::copyWithGain(m_pLoop, m_pHead, 1.0, iBufferSize);
     } else {
-        m_pLoopRecorder->writeSamples(m_pMaster, iBufferSize);
+        SampleUtil::copyWithGain(m_pLoop, m_pMaster, 1.0, iBufferSize);
     }
+
+    m_pLoopRecorder->writeSamples(m_pLoop, iBufferSize);
+
     
     // Submit master samples to the side chain to do shoutcasting, recording,
     // etc.  (cpu intensive non-realtime tasks)
