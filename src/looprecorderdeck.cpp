@@ -1,4 +1,4 @@
-#include "LoopRecorderDeck.h"
+#include "looprecorderdeck.h"
 
 LoopRecorderDeck::LoopRecorderDeck(QObject* pParent,
                          ConfigObject<ConfigValue> *pConfig,
