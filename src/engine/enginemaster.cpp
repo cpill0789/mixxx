@@ -109,7 +109,7 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     xFaderReverse = new ControlPotmeter(
         ConfigKey("[Mixer Profile]", "xFaderReverse"), 0., 1.);
     
-    m_pLoopRecSource = new ControlPushButton(ConfigKey(group,"loopRecSource"));
+    m_pLoopRecSource = new ControlPushButton(ConfigKey(group,"loop_recorder_source"));
     
     m_pLoopRecorder = new EngineLoopRecorder(_config);
 }
