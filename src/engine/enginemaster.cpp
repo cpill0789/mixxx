@@ -93,8 +93,10 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     // Allocate buffers
     m_pHead = SampleUtil::alloc(MAX_BUFFER_LEN);
     m_pMaster = SampleUtil::alloc(MAX_BUFFER_LEN);
+    m_pLoop = SampleUtil::alloc(MAX_BUFFER_LEN);
     SampleUtil::applyGain(m_pHead, 0, MAX_BUFFER_LEN);
     SampleUtil::applyGain(m_pMaster, 0, MAX_BUFFER_LEN);
+    SampleUtil::applyGain(m_pLoop, 0, MAX_BUFFER_LEN);
 
     // Starts a thread for recording and shoutcast
     m_pSideChain = bEnableSidechain ? new EngineSideChain(_config) : NULL;
@@ -141,6 +143,7 @@ EngineMaster::~EngineMaster() {
 
     SampleUtil::free(m_pHead);
     SampleUtil::free(m_pMaster);
+    SampleUtil::free(m_pLoop);
 
     delete m_pWorkerScheduler;
 

@@ -137,7 +137,7 @@ class EngineMaster : public EngineObject, public AudioSource {
 
     QList<ChannelInfo*> m_channels;
 
-    CSAMPLE *m_pMaster, *m_pHead;
+    CSAMPLE *m_pMaster, *m_pHead, *m_pLoop;
 
     EngineWorkerScheduler *m_pWorkerScheduler;
 
