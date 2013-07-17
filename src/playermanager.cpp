@@ -79,6 +79,7 @@ PlayerManager::~PlayerManager() {
     delete m_pCONumSamplers;
     delete m_pCONumDecks;
     delete m_pCONumPreviewDecks;
+    delete m_pCONumLoopDecks;
     if (m_pAnalyserQueue) {
         delete m_pAnalyserQueue;
     }
