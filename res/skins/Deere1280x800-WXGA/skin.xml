@@ -528,7 +528,7 @@
 								</State>
 								<Pos>193,71</Pos>
 								<Connection>
-									<ConfigKey>[Master],loopRecSource</ConfigKey>
+									<ConfigKey>[Master],loop_recorder_source</ConfigKey>
 								</Connection>
 							</PushButton>
 
