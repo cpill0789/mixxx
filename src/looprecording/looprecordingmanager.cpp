@@ -230,11 +230,13 @@ void LoopRecordingManager::exportLoopToPlayer(QString group) {
     QString newFileLocation = QString("%1%2_%3.%4")
     .arg(dir,"loop",date_time_str, encodingType.toLower());
     
-    
-    if (saveLoop(newFileLocation)) {
-        emit(exportToPlayer(newFileLocation, group));
-    } else {
-        qDebug () << "LoopRecordingManager::exportLoopToPlayer Error Saving File: " << newFileLocation;
+    if (!m_filesRecorded.isEmpty()) {
+
+        if (saveLoop(newFileLocation)) {
+            emit(exportToPlayer(newFileLocation, group));
+        } else {
+            qDebug () << "LoopRecordingManager::exportLoopToPlayer Error Saving File: " << newFileLocation;
+        }
     }
 }
 void LoopRecordingManager::loadToLoopDeck() {
@@ -258,7 +260,7 @@ bool LoopRecordingManager::saveLoop(QString newFileLocation) {
         if (file.exists()) {
             return file.copy(newFileLocation);
         }
-
     }
+
     return false;
 }
