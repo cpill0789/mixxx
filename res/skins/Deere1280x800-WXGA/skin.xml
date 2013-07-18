@@ -299,7 +299,7 @@
              **********************************************
              Button- Prelisten / Monitoring
              **********************************************
-             -->
+            
             <PushButton>
                 <TooltipId>pfl</TooltipId>
                 <Style></Style>
@@ -319,7 +319,7 @@
                     <ConfigKey>[Master],loop_recorder_source</ConfigKey>
                 </Connection>
             </PushButton>
-
+            -->
             <!--
              **********************************************
              Button- Eject
