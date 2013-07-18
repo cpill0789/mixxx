@@ -34,7 +34,6 @@ public:
     void stopRecording();
     bool isLoopRecordingActive();
     void setRecordingDir();
-    void playerManagerInit();
     QString& getRecordingDir();
     // Returns the currently recording file
     QString& getRecordingFile();
@@ -66,9 +65,6 @@ private:
     void loadToLoopDeck();
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     bool saveLoop(QString newFileLocation);
-    int getNumDecks();
-    int getNumSamplers();
-
 
     ControlObjectThread* m_recReady;
     //ControlObject* m_recReadyCO;

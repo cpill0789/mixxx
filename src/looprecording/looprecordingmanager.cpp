@@ -52,8 +52,8 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
                                 ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
     m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
 
-    m_pNumDecks = NULL;
-    m_pNumSamplers = NULL;
+    m_pNumDecks = new ControlObjectThread("[Master]","num_decks");
+    m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
 
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
 
@@ -298,18 +298,4 @@ bool LoopRecordingManager::saveLoop(QString newFileLocation) {
     }
 
     return false;
-}
-
-void LoopRecordingManager::playerManagerInit() {
-    // playerManager has been initialized, so create CO Thread Objects to track num of decks.
-    m_pNumDecks = new ControlObjectThread("[Master]","num_decks");
-    m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
-}
-
-int LoopRecordingManager::getNumDecks() {
-    return m_pNumDecks ? m_pNumDecks->get() : 0;
-}
-
-int LoopRecordingManager::getNumSamplers() {
-    return m_pNumSamplers ? m_pNumSamplers->get() : 0;
 }
