@@ -282,9 +282,6 @@ MixxxApp::MixxxApp(QApplication *pApp, const CmdlineArgs& args)
 #ifdef __SHOUTCAST__
     m_pShoutcastManager = new ShoutcastManager(m_pConfig, m_pEngine);
 #endif
-
-    // Initialize loop recording manager.
-    m_pLoopRecordingManager = new LoopRecordingManager(m_pConfig, m_pEngine);
               
     // Initialize player device
     // while this is created here, setupDevices needs to be called sometime
@@ -384,6 +381,9 @@ MixxxApp::MixxxApp(QApplication *pApp, const CmdlineArgs& args)
     pModplugPrefs->applySettings();
     delete pModplugPrefs; // not needed anymore
 #endif
+              
+    // Initialize loop recording manager.
+    m_pLoopRecordingManager = new LoopRecordingManager(m_pConfig, m_pEngine);
 
     m_pLibrary = new Library(this, m_pConfig,
                              bFirstRun || bUpgraded,
