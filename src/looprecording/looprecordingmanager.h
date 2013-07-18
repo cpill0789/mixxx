@@ -47,13 +47,13 @@ signals:
     void exportToPlayer(QString, QString);
     void loadToLoopDeck(TrackPointer, QString, bool);
     
-    public slots:
+public slots:
     void slotIsLoopRecording(bool);
     void slotClearRecorder();
     void slotLoadToLoopDeck();
     //void slotBytesRecorded(int);
     
-    private slots:
+private slots:
     void slotSetLoopRecording(bool recording);
     void slotToggleLoopRecording(double v);
     void slotToggleClear(double v);
