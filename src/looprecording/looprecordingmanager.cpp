@@ -36,19 +36,23 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
     m_pExportLoop = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_loop"));
     connect(m_pExportLoop, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleExport(double)));
-    
+
+    m_pChangeLoopSource = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "change_loop_source"));
+    connect(m_pChangeLoopSource, SIGNAL(valueChanged(double)),
+            this, SLOT(slotChangeLoopSource(double)));
+    m_pLoopSource = new ControlObjectThread(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_source"));
+
     //m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
     //m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
     m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
-    
-    
     
     m_loopPlayReadyCO = new ControlObject(
                                 ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
     m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
     
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
-    
+
+
     // Connect with EngineLoopRecorder
     EngineLoopRecorder* pLoopRecorder = pEngine->getLoopRecorder();
     if (pLoopRecorder) {
@@ -67,6 +71,8 @@ LoopRecordingManager::~LoopRecordingManager()
     delete m_recReady;
     delete m_loopPlayReadyCO;
     delete m_loopPlayReady;
+    delete m_pLoopSource;
+    delete m_pChangeLoopSource;
     delete m_pToggleLoopRecording;
     delete m_pClearRecorder;
     delete m_pExportLoop;
@@ -130,6 +136,18 @@ void LoopRecordingManager::slotClearRecorder() {
 
 void LoopRecordingManager::slotLoadToLoopDeck(){
     loadToLoopDeck();
+}
+
+void LoopRecordingManager::slotChangeLoopSource(double v){
+    if (v > 0.) {
+        float source = m_pLoopSource->get();
+
+        if (source >= 10.0) {
+            m_pLoopSource->slotSet(0.0);
+        } else {
+            m_pLoopSource->slotSet(source+1.0);
+        }
+    }
 }
 
 void LoopRecordingManager::startRecording() {

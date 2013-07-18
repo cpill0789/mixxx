@@ -58,6 +58,7 @@ signals:
     void slotToggleLoopRecording(double v);
     void slotToggleClear(double v);
     void slotToggleExport(double v);
+    void slotChangeLoopSource(double v);
     
 private:
     void exportLoopToPlayer(QString group);
@@ -70,7 +71,10 @@ private:
     ControlPushButton* m_pToggleLoopRecording;
     ControlPushButton* m_pClearRecorder;
     ControlPushButton* m_pExportLoop;
-    
+
+    ControlPushButton* m_pChangeLoopSource;
+    ControlObjectThread* m_pLoopSource;
+
     ControlObjectThread* m_loopPlayReady;
     ControlObject* m_loopPlayReadyCO;
     
