@@ -28,12 +28,13 @@ public:
     virtual ~LoopRecordingManager();
     
     
-    // This will try to start recording If successfuly, slotIsRecording will be
+    // This will try to start recording. If successful, slotIsRecording will be
     // called and a signal isRecording will be emitted.
     void startRecording();
     void stopRecording();
     bool isLoopRecordingActive();
     void setRecordingDir();
+    void playerManagerInit();
     QString& getRecordingDir();
     // Returns the currently recording file
     QString& getRecordingFile();
@@ -65,7 +66,10 @@ private:
     void loadToLoopDeck();
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     bool saveLoop(QString newFileLocation);
-    
+    int getNumDecks();
+    int getNumSamplers();
+
+
     ControlObjectThread* m_recReady;
     //ControlObject* m_recReadyCO;
     ControlPushButton* m_pToggleLoopRecording;
@@ -77,7 +81,10 @@ private:
 
     ControlObjectThread* m_loopPlayReady;
     ControlObject* m_loopPlayReadyCO;
-    
+
+    ControlObjectThread* m_pNumDecks;
+    ControlObjectThread* m_pNumSamplers;
+
     ConfigObject<ConfigValue>* m_pConfig;
     QString m_recordingDir;
     //the base file
@@ -97,7 +104,7 @@ private:
     // New filename code.
     QString date_time_str;
     QString encodingType;
-    int m_loopNumber;
+    unsigned int m_loopNumber;
 };
 
 #endif // LOOPRECORDINGMANAGER_H

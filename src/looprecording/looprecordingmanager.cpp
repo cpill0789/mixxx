@@ -51,7 +51,10 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
     m_loopPlayReadyCO = new ControlObject(
                                 ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
     m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
-    
+
+    m_pNumDecks = NULL;
+    m_pNumSamplers = NULL;
+
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
 
     date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
@@ -74,6 +77,8 @@ LoopRecordingManager::~LoopRecordingManager()
     // TODO(carl) delete temporary loop recorder files.
     
     //delete m_recReadyCO;
+    delete m_pNumDecks;
+    delete m_pNumSamplers;
     delete m_recReady;
     delete m_loopPlayReadyCO;
     delete m_loopPlayReady;
@@ -144,6 +149,7 @@ void LoopRecordingManager::slotLoadToLoopDeck(){
 }
 
 void LoopRecordingManager::slotChangeLoopSource(double v){
+    
     if (v > 0.) {
         float source = m_pLoopSource->get();
 
@@ -292,4 +298,18 @@ bool LoopRecordingManager::saveLoop(QString newFileLocation) {
     }
 
     return false;
+}
+
+void LoopRecordingManager::playerManagerInit() {
+    // playerManager has been initialized, so create CO Thread Objects to track num of decks.
+    m_pNumDecks = new ControlObjectThread("[Master]","num_decks");
+    m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
+}
+
+int LoopRecordingManager::getNumDecks() {
+    return m_pNumDecks ? m_pNumDecks->get() : 0;
+}
+
+int LoopRecordingManager::getNumSamplers() {
+    return m_pNumSamplers ? m_pNumSamplers->get() : 0;
 }
