@@ -149,14 +149,28 @@ void LoopRecordingManager::slotLoadToLoopDeck(){
 }
 
 void LoopRecordingManager::slotChangeLoopSource(double v){
-    
+    // Available sources: Master out, PFL out, microphone, passthrough1, passthrough2,
+    // All main decks, all samplers.
+    // Sources are defined in defs_looprecording.h
+
     if (v > 0.) {
+        float numDecks = m_pNumDecks->get();
+        float numSamplers = m_pNumSamplers->get();
         float source = m_pLoopSource->get();
 
-        if (source >= 10.0) {
-            m_pLoopSource->slotSet(0.0);
-        } else {
+        if (source < INPUT_PT2) {
             m_pLoopSource->slotSet(source+1.0);
+        } else if (source >= INPUT_PT2 && source < INPUT_DECK_BASE){
+            // Set to first deck
+            m_pLoopSource->slotSet(INPUT_DECK_BASE+1.0);
+        } else if (source > INPUT_DECK_BASE && source < INPUT_DECK_BASE+numDecks) {
+            m_pLoopSource->slotSet(source+1.0);
+        } else if (numSamplers > 0.0 && source >= INPUT_DECK_BASE+numDecks && source < INPUT_SAMPLER_BASE) {
+            m_pLoopSource->slotSet(INPUT_SAMPLER_BASE+1.0);
+        } else if (source > INPUT_SAMPLER_BASE && source < INPUT_SAMPLER_BASE+numSamplers) {
+            m_pLoopSource->slotSet(source+1.0);
+        } else {
+            m_pLoopSource ->slotSet(INPUT_MASTER);
         }
     }
 }
