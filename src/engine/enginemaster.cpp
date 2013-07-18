@@ -36,6 +36,7 @@
 #include "util/timer.h"
 #include "engine/looprecorder/enginelooprecorder.h"
 #include "playermanager.h"
+#include "looprecording/defs_looprecording.h"
 
 #ifdef __LADSPA__
 #include "engineladspa.h"
@@ -392,14 +393,29 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
             pChannel->process(NULL, pChannelInfo->m_pBuffer, iBufferSize);
         }
 
-        // TODO(carl) check against list of all input sources/channels.
-        // Copy individual inputs 
-        if (loop_source == 3.0f && pChannel->getGroup() == "[Microphone]") {
+
+        // Copy audio from individual inputs to loop recorder buffer.
+        QString group = pChannel->getGroup();
+        if (loop_source == INPUT_MICROPHONE && group == "[Microphone]") {
             SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-        } else if (loop_source == 4.0f && pChannel->getGroup() == "[Channel1]") {
+        } else if (loop_source == INPUT_PT1 && group == "[Passthrough1]") {
             SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-        } else if (loop_source == 5.0f && pChannel->getGroup() == "[Channel2]") {
+        } else if (loop_source == INPUT_PT2 && group == "[Passthrough2]") {
             SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+        } else if (loop_source > INPUT_DECK_BASE && loop_source < INPUT_SAMPLER_BASE) {
+            // TODO: cast to int?
+            int deckNum = loop_source-INPUT_DECK_BASE;
+            QString num = QString::number(deckNum);
+            if (group == QString("[Channel%1]").arg(num)) {
+                SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+            }
+        } else if (loop_source > INPUT_SAMPLER_BASE) {
+            // TODO: cast to int?
+            int samplerNum = loop_source-INPUT_SAMPLER_BASE;
+            QString num = QString::number(samplerNum);
+            if (group == QString("[Sampler%1]").arg(num)) {
+                SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+            }
         }
         
     }
@@ -449,9 +465,9 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
         vumeter->process(m_pMaster, m_pMaster, iBufferSize);
 
     // Loop Recorder: Send master mix to loop recorder.
-    if (loop_source == 0.0f) {
+    if (loop_source == INPUT_MASTER) {
         SampleUtil::copyWithGain(m_pLoop, m_pMaster, 1.0, iBufferSize);
-    } else if (loop_source == 1.0f) {
+    } else if (loop_source == INPUT_HEAD) {
         SampleUtil::copyWithGain(m_pLoop, m_pHead, 1.0, iBufferSize);
     }
 
