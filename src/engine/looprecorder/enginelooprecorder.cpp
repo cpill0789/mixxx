@@ -139,6 +139,8 @@ void EngineLoopRecorder::updateFromPreferences() {
     m_baTitle = QByteArray("No title");
     m_baAlbum = QByteArray("No album");
     m_baAuthor = QByteArray("No artist");
+
+    //qDebug() << "Update from preferences: " << m_filename;
 }
 
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
