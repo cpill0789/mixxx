@@ -283,7 +283,7 @@ MixxxApp::MixxxApp(QApplication *pApp, const CmdlineArgs& args)
     m_pShoutcastManager = new ShoutcastManager(m_pConfig, m_pEngine);
 #endif
 
-    // Initialize loop recorder.
+    // Initialize loop recording manager.
     m_pLoopRecordingManager = new LoopRecordingManager(m_pConfig, m_pEngine);
               
     // Initialize player device
