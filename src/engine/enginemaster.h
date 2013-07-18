@@ -160,6 +160,7 @@ class EngineMaster : public EngineObject, public AudioSource {
         *xFaderMode, *xFaderCurve, *xFaderCalibration, *xFaderReverse;
 
     ControlPushButton* m_pLoopRecSource;
+    ControlObject* m_pLoopSource;
     EngineLoopRecorder* m_pLoopRecorder;
     
     ConstantGainCalculator m_headphoneGain;

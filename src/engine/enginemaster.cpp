@@ -112,7 +112,9 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
         ConfigKey("[Mixer Profile]", "xFaderReverse"), 0., 1.);
     
     m_pLoopRecSource = new ControlPushButton(ConfigKey(group,"loop_recorder_source"));
-    
+
+    m_pLoopSource = new ControlObject(ConfigKey("[Loop_Recording]", "loop_source"));
+
     m_pLoopRecorder = new EngineLoopRecorder(_config);
 }
 
@@ -129,6 +131,7 @@ EngineMaster::~EngineMaster() {
     delete m_pSideChain;
     delete m_pLoopRecorder;
     delete m_pLoopRecSource;
+    delete m_pLoopSource;
     
     delete xFaderReverse;
     delete xFaderCalibration;
@@ -357,6 +360,9 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     // qDebug() << "head val " << cf_val << ", head " << chead_gain
     //          << ", master " << cmaster_gain;
 
+    float loop_source = m_pLoopSource->get();
+    SampleUtil::applyGain(m_pLoop, 0.0f, iBufferSize);
+
     Timer timer("EngineMaster::process channels");
     QList<ChannelInfo*>::iterator it = m_channels.begin();
     for (unsigned int channel_number = 0;
@@ -385,6 +391,17 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
         if (needsProcessing) {
             pChannel->process(NULL, pChannelInfo->m_pBuffer, iBufferSize);
         }
+
+        // TODO(carl) check against list of all input sources/channels.
+        // Copy individual inputs 
+        if (loop_source == 3.0f && pChannel->getGroup() == "[Microphone]") {
+            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+        } else if (loop_source == 4.0f && pChannel->getGroup() == "[Channel1]") {
+            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+        } else if (loop_source == 5.0f && pChannel->getGroup() == "[Channel2]") {
+            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+        }
+        
     }
     timer.elapsed(true);
 
@@ -432,10 +449,10 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
         vumeter->process(m_pMaster, m_pMaster, iBufferSize);
 
     // Loop Recorder: Send master mix to loop recorder.
-    if(m_pLoopRecSource->get() > 0) {
-        SampleUtil::copyWithGain(m_pLoop, m_pHead, 1.0, iBufferSize);
-    } else {
+    if (loop_source == 0.0f) {
         SampleUtil::copyWithGain(m_pLoop, m_pMaster, 1.0, iBufferSize);
+    } else if (loop_source == 1.0f) {
+        SampleUtil::copyWithGain(m_pLoop, m_pHead, 1.0, iBufferSize);
     }
 
     m_pLoopRecorder->writeSamples(m_pLoop, iBufferSize);
