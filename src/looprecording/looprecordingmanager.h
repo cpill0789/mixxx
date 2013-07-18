@@ -93,6 +93,11 @@ private:
     
     QList<QString> m_filesRecorded;
     TrackPointer pTrackToPlay;
+
+    // New filename code.
+    QString date_time_str;
+    QString encodingType;
+    int m_loopNumber;
 };
 
 #endif // LOOPRECORDINGMANAGER_H

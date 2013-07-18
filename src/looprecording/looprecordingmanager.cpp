@@ -23,7 +23,9 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
         m_recordingLocation(""),
         m_isRecording(false),
         m_iNumberOfBytesRecored(0),
-        pTrackToPlay(NULL) {
+        pTrackToPlay(NULL),
+        m_loopNumber(0) {
+            
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
@@ -52,7 +54,11 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
     
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
 
-
+    date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
+    // TODO(carl) make sure encoding type gets updated by preferences during execution.
+    encodingType = m_pConfig->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"));
+    setRecordingDir();
+            
     // Connect with EngineLoopRecorder
     EngineLoopRecorder* pLoopRecorder = pEngine->getLoopRecorder();
     if (pLoopRecorder) {
@@ -96,13 +102,12 @@ void LoopRecordingManager::slotSetLoopRecording(bool recording) {
 
 void LoopRecordingManager::slotToggleLoopRecording(double v) {
     //qDebug() << "LoopRecordingManager::slotToggleLoopRecording v: " << v;
-    if (v == 0.) {
+    if (v > 0.) {
         if (isLoopRecordingActive()) {
             stopRecording();
+        } else {
+            startRecording();
         }
-    } else {
-        // TODO: Prevent duplicate start call.  Currently startRecording is called twice.
-        startRecording();
     }
 }
 
@@ -151,23 +156,29 @@ void LoopRecordingManager::slotChangeLoopSource(double v){
 }
 
 void LoopRecordingManager::startRecording() {
-    qDebug() << "LoopRecordingManager startRecording";
+    //qDebug() << "LoopRecordingManager startRecording";
     
     m_iNumberOfBytesRecored = 0;
-    QString encodingType = m_pConfig->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"));
-    //Append file extension
-    QString date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
-    m_recordingFile = QString("%1_%2.%3")
-    .arg("loop",date_time_str, encodingType.toLower());
+
+    QString number_str = QString::number(m_loopNumber++);
+
+    // TODO(carl) do we really need this?
+    //m_recordingFile = QString("%1_%2.%3")
+    //.arg("loop",date_time_str, encodingType.toLower());
         
     // Storing the absolutePath of the recording file without file extension
-    m_recording_base_file = getRecordingDir();
-    m_recording_base_file.append("/loop_").append(date_time_str);
+    m_recording_base_file = QString("%1/%2_%3_%4").arg(m_recordingDir,"loop",number_str,date_time_str);
+    //m_recording_base_file.append("/loop_" + m_loopNumber + "_" + date_time_str);
     // appending file extension to get the filelocation
     m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
+
     m_filesRecorded << m_recordingLocation;
+
+    // TODO(carl) is this thread safe?
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Path"), m_recordingLocation);
     m_recReady->slotSet(LOOP_RECORD_READY);
+
+    //qDebug() << "startRecording Location: " << m_recordingLocation;
 }
 
 void LoopRecordingManager::stopRecording()
@@ -243,10 +254,10 @@ void LoopRecordingManager::exportLoopToPlayer(QString group) {
     QString dir = getRecordingDir();
     QString encodingType = m_pConfig->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"));
     //Append file extension
-    QString date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
+    QString cur_date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
     
     QString newFileLocation = QString("%1%2_%3.%4")
-    .arg(dir,"loop",date_time_str, encodingType.toLower());
+    .arg(dir,"loop",cur_date_time_str, encodingType.toLower());
     
     if (!m_filesRecorded.isEmpty()) {
 
