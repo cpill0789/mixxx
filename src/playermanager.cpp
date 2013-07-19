@@ -357,12 +357,9 @@ void PlayerManager::addLoopRecorderDeckInner() {
     // All loop decks are in the center
     EngineChannel::ChannelOrientation orientation = EngineChannel::CENTER;
     
-    LoopRecorderDeck* pLoopRecorderDeck = new LoopRecorderDeck(this, m_pConfig, m_pEngine, orientation, group);
-    // No need to analyse loop track because it may be deleted.
-//    if (m_pAnalyserQueue) {
-//        connect(pLoopRecorderDeck, SIGNAL(newTrackLoaded(TrackPointer)),
-//                m_pAnalyserQueue, SLOT(slotAnalyseTrack(TrackPointer)));
-//    }
+    LoopRecorderDeck* pLoopRecorderDeck = new LoopRecorderDeck(this, m_pConfig, m_pEngine,
+                                                               orientation, group);
+    // Note: No need to analyse loop track because it is only temporary and will be deleted.
     
     Q_ASSERT(!m_players.contains(group));
     m_players[group] = pLoopRecorderDeck;
