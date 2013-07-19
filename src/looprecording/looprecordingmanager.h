@@ -66,8 +66,7 @@ class LoopRecordingManager : public QObject
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     bool saveLoop(QString newFileLocation);
 
-    ControlObjectThread* m_recReady;
-    //ControlObject* m_recReadyCO;
+    ControlObjectThread* m_pRecReady;
     ControlPushButton* m_pToggleLoopRecording;
     ControlPushButton* m_pClearRecorder;
     ControlPushButton* m_pExportLoop;
@@ -75,8 +74,8 @@ class LoopRecordingManager : public QObject
     ControlPushButton* m_pChangeLoopSource;
     ControlObjectThread* m_pLoopSource;
 
-    ControlObjectThread* m_loopPlayReady;
-    ControlObject* m_loopPlayReadyCO;
+    ControlObjectThread* m_pLoopPlayReady;
+    ControlObject* m_pCOLoopPlayReady;
 
     ControlObjectThread* m_pNumDecks;
     ControlObjectThread* m_pNumSamplers;

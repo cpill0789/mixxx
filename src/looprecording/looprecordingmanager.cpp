@@ -30,12 +30,14 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
     
-    m_pClearRecorder = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "clear_recorder"));
+    m_pClearRecorder = new ControlPushButton(
+                            ConfigKey(LOOP_RECORDING_PREF_KEY, "clear_recorder"));
     
     connect(m_pClearRecorder, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleClear(double)));
     
-    m_pExportLoop = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_loop"));
+    m_pExportLoop = new ControlPushButton(
+                                ConfigKey(LOOP_RECORDING_PREF_KEY, "export_loop"));
     connect(m_pExportLoop, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleExport(double)));
 
@@ -44,13 +46,11 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
             this, SLOT(slotChangeLoopSource(double)));
     m_pLoopSource = new ControlObjectThread(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_source"));
 
-    //m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
-    //m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
-    m_recReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
+    m_pRecReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
     
-    m_loopPlayReadyCO = new ControlObject(
+    m_pCOLoopPlayReady = new ControlObject(
                                 ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
-    m_loopPlayReady = new ControlObjectThread(m_loopPlayReadyCO->getKey());
+    m_pLoopPlayReady = new ControlObjectThread(m_pCOLoopPlayReady->getKey());
 
     m_pNumDecks = new ControlObjectThread("[Master]","num_decks");
     m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
@@ -79,9 +79,9 @@ LoopRecordingManager::~LoopRecordingManager()
     //delete m_recReadyCO;
     delete m_pNumDecks;
     delete m_pNumSamplers;
-    delete m_recReady;
-    delete m_loopPlayReadyCO;
-    delete m_loopPlayReady;
+    delete m_pRecReady;
+    delete m_pCOLoopPlayReady;
+    delete m_pLoopPlayReady;
     delete m_pLoopSource;
     delete m_pChangeLoopSource;
     delete m_pToggleLoopRecording;
@@ -119,7 +119,7 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
 void LoopRecordingManager::slotToggleClear(double v) {
     //qDebug() << "LoopRecordingManager::slotClearRecorder v: " << v;
     if (v > 0.) {
-        m_recReady->slotSet(LOOP_RECORD_CLEAR);
+        m_pRecReady->slotSet(LOOP_RECORD_CLEAR);
         m_pToggleLoopRecording->set(0.);
     }
 }
@@ -196,7 +196,7 @@ void LoopRecordingManager::startRecording() {
 
     // TODO(carl) is this thread safe?
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Path"), m_recordingLocation);
-    m_recReady->slotSet(LOOP_RECORD_READY);
+    m_pRecReady->slotSet(LOOP_RECORD_READY);
 
     //qDebug() << "startRecording Location: " << m_recordingLocation;
 }
@@ -204,7 +204,7 @@ void LoopRecordingManager::startRecording() {
 void LoopRecordingManager::stopRecording()
 {
     qDebug() << "LoopRecordingManager::stopRecording";
-    m_recReady->slotSet(LOOP_RECORD_OFF);
+    m_pRecReady->slotSet(LOOP_RECORD_OFF);
     m_recordingFile = "";
     m_recordingLocation = "";
     m_iNumberOfBytesRecored = 0;
