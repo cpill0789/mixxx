@@ -18,7 +18,7 @@ class ControlObjectThread;
 
 class EngineLoopRecorder : public QThread {
     Q_OBJECT
-public:
+  public:
     EngineLoopRecorder(ConfigObject<ConfigValue>* _config);
     virtual ~EngineLoopRecorder();
     
@@ -31,23 +31,18 @@ public:
     void updateFromPreferences();
     bool fileOpen();
     
-signals:
+  signals:
     // emitted to notify LoopRecordingManager
     //void bytesRecorded(int);
     void isLoopRecording(bool);
     void clearRecorder();
     void loadToLoopDeck();
     
-private:
+  private:
     void run();
     
     void process(const CSAMPLE* pBuffer, const int iBufferSize);
     //int getActiveTracks();
-    
-    // Check if the metadata has changed since the previous check. We also check
-    // when was the last check performed to avoid using too much CPU and as well
-    // to avoid changing the metadata during scratches.
-    //bool metaDataHasChanged();
     
     ConfigObject<ConfigValue>* m_config;
     
@@ -75,7 +70,6 @@ private:
     ControlObjectThread* m_recReady;
     ControlObjectThread* m_samplerate;
     
-    //int m_iMetaDataLife;
     TrackPointer m_pCurrentTrack;
     
     bool m_bIsRecording;
