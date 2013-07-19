@@ -55,6 +55,15 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
     m_pNumDecks = new ControlObjectThread("[Master]","num_decks");
     m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
 
+    m_pCOExportDestination = new ControlObject(
+                                ConfigKey(LOOP_RECORDING_PREF_KEY, "export_destination"));
+    m_pCOExportDestination->set(1.0);
+
+    m_pChangeExportDestination = new ControlPushButton(
+                    ConfigKey(LOOP_RECORDING_PREF_KEY,"change_export_destination"));
+    connect(m_pChangeExportDestination, SIGNAL(valueChanged(double)),
+            this, SLOT(slotChangeExportDestination(double)));
+
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
 
     date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
@@ -75,8 +84,9 @@ LoopRecordingManager::~LoopRecordingManager()
 {
     qDebug() << "~LoopRecordingManager";
     // TODO(carl) delete temporary loop recorder files.
-    
-    //delete m_recReadyCO;
+
+    delete m_pCOExportDestination;
+    delete m_pChangeExportDestination;
     delete m_pNumDecks;
     delete m_pNumSamplers;
     delete m_pRecReady;
@@ -125,9 +135,10 @@ void LoopRecordingManager::slotToggleClear(double v) {
 }
 
 void LoopRecordingManager::slotToggleExport(double v) {
-    qDebug() << "LoopRecordingManager::slotToggleExport v: " << v;
+    //qDebug() << "LoopRecordingManager::slotToggleExport v: " << v;
     if (v > 0.) {
-        exportLoopToPlayer("[Sampler2]");
+        QString dest_str = QString::number((int)m_pCOExportDestination->get());
+        exportLoopToPlayer(QString("[Sampler%1]").arg(dest_str));
     }
 }
 
@@ -171,6 +182,20 @@ void LoopRecordingManager::slotChangeLoopSource(double v){
             m_pLoopSource->slotSet(source+1.0);
         } else {
             m_pLoopSource ->slotSet(INPUT_MASTER);
+        }
+    }
+}
+
+void LoopRecordingManager::slotChangeExportDestination(double v) {
+
+    if (v > 0.) {
+        float numSamplers = m_pNumSamplers->get();
+        float destination = m_pCOExportDestination->get();
+
+        if (destination >= numSamplers) {
+            m_pCOExportDestination->set(1.0);
+        } else {
+            m_pCOExportDestination->set(destination+1.0);
         }
     }
 }

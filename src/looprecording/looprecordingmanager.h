@@ -59,6 +59,7 @@ class LoopRecordingManager : public QObject
     void slotToggleClear(double v);
     void slotToggleExport(double v);
     void slotChangeLoopSource(double v);
+    void slotChangeExportDestination(double v);
     
   private:
     void exportLoopToPlayer(QString group);
@@ -79,6 +80,10 @@ class LoopRecordingManager : public QObject
 
     ControlObjectThread* m_pNumDecks;
     ControlObjectThread* m_pNumSamplers;
+
+    ControlPushButton* m_pChangeExportDestination;
+    ControlObject* m_pCOExportDestination;
+
 
     ConfigObject<ConfigValue>* m_pConfig;
     QString m_recordingDir;
