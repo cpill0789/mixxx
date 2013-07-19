@@ -1,5 +1,5 @@
-#ifndef __RECORDING_DEFS_H__
-#define __RECORDING_DEFS_H__
+#ifndef __DEFS_RECORDING_H__
+#define __DEFS_RECORDING_H__
 
 #define RECORDING_PREF_KEY "[Recording]"
 #define ENCODING_WAVE "WAV"
