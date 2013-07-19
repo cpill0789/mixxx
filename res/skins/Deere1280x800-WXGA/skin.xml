@@ -175,14 +175,13 @@
               **********************************************
               -->
              
-             <Number>
-                 <TooltipId>loop_selected_input</TooltipId>
-                 <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
-                     background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
-                 </Style>
-                 <Channel>1</Channel>
-                 <Pos>40,35</Pos>
-                 <Size>50,23</Size>
+            <Number>
+                <TooltipId>loop_selected_input</TooltipId>
+                <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
+                    background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
+                </Style>
+                <Pos>30,35</Pos>
+                <Size>50,23</Size>
                  <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
                  <Alignment>left</Alignment>
                  <Connection>
@@ -206,7 +205,44 @@
                      <ButtonState>LeftButton</ButtonState>
                  </Connection>
              </PushButton>
-            <!--
+
+             <!--
+             **********************************************
+             Select loop export location
+             **********************************************
+             -->
+             <PushButton>
+                 <TooltipId>change_export</TooltipId>
+                 <Style></Style>
+                 <NumberStates>1</NumberStates>
+                 <State>
+                     <Number>0</Number>
+                     <Pressed>btn_pitch_up1_overdown.png</Pressed>
+                     <Unpressed>btn_pitch_up1.png</Unpressed>
+                 </State>
+                 <Pos>100,35</Pos>
+                 <Connection>
+                     <ConfigKey>[Loop_Recording],change_export_destination</ConfigKey>
+                     <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
+                     <ButtonState>LeftButton</ButtonState>
+                 </Connection>
+             </PushButton>
+             
+             <Number>
+                 <TooltipId>loop_selected_input</TooltipId>
+                 <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
+                     background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
+                 </Style>
+                 <Pos>115,35</Pos>
+                 <Size>50,23</Size>
+                 <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
+                 <Alignment>left</Alignment>
+                 <Connection>
+                     <ConfigKey>[Loop_Recording],export_destination</ConfigKey>
+                 </Connection>
+             </Number>
+
+             <!--
              **********************************************
              Visual- Volume peak indicator
              **********************************************
