@@ -60,6 +60,8 @@ class LoopRecordingManager : public QObject
     void slotToggleExport(double v);
     void slotChangeLoopSource(double v);
     void slotChangeExportDestination(double v);
+    void slotNumDecksChanged(double v);
+    void slotNumSamplersChanged(double v);
     
   private:
     void exportLoopToPlayer(QString group);
@@ -104,7 +106,9 @@ class LoopRecordingManager : public QObject
     // New filename code.
     QString date_time_str;
     QString encodingType;
-    unsigned int m_loopNumber;
+    unsigned int m_iLoopNumber;
+    unsigned int m_iNumDecks;
+    unsigned int m_iNumSamplers;
 };
 
 #endif // LOOPRECORDINGMANAGER_H

@@ -24,8 +24,10 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
         m_isRecording(false),
         m_iNumberOfBytesRecored(0),
         pTrackToPlay(NULL),
-        m_loopNumber(0) {
-            
+        m_iLoopNumber(0),
+        m_iNumDecks(0),
+        m_iNumSamplers(0){
+
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
@@ -54,6 +56,15 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, E
 
     m_pNumDecks = new ControlObjectThread("[Master]","num_decks");
     m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
+
+    connect(m_pNumDecks, SIGNAL(valueChanged(double)),
+            this, SLOT(slotNumDecksChanged(double)));
+
+    connect(m_pNumSamplers, SIGNAL(valueChanged(double)),
+            this, SLOT(slotNumSamplersChanged(double)));
+
+    m_iNumDecks = m_pNumDecks->get();
+    m_iNumSamplers = m_pNumSamplers->get();
 
     m_pCOExportDestination = new ControlObject(
                                 ConfigKey(LOOP_RECORDING_PREF_KEY, "export_destination"));
@@ -165,8 +176,8 @@ void LoopRecordingManager::slotChangeLoopSource(double v){
     // Sources are defined in defs_looprecording.h
 
     if (v > 0.) {
-        float numDecks = m_pNumDecks->get();
-        float numSamplers = m_pNumSamplers->get();
+        //float numDecks = m_pNumDecks->get();
+        //float numSamplers = m_pNumSamplers->get();
         float source = m_pLoopSource->get();
 
         if (source < INPUT_PT2) {
@@ -174,14 +185,14 @@ void LoopRecordingManager::slotChangeLoopSource(double v){
         } else if (source >= INPUT_PT2 && source < INPUT_DECK_BASE){
             // Set to first deck
             m_pLoopSource->slotSet(INPUT_DECK_BASE+1.0);
-        } else if (source > INPUT_DECK_BASE && source < INPUT_DECK_BASE+numDecks) {
+        } else if (source > INPUT_DECK_BASE && source < INPUT_DECK_BASE+m_iNumDecks) {
             m_pLoopSource->slotSet(source+1.0);
-        } else if (numSamplers > 0.0 && source >= INPUT_DECK_BASE+numDecks && source < INPUT_SAMPLER_BASE) {
+        } else if (m_iNumSamplers > 0.0 && source >= INPUT_DECK_BASE+m_iNumDecks && source < INPUT_SAMPLER_BASE) {
             m_pLoopSource->slotSet(INPUT_SAMPLER_BASE+1.0);
-        } else if (source > INPUT_SAMPLER_BASE && source < INPUT_SAMPLER_BASE+numSamplers) {
+        } else if (source > INPUT_SAMPLER_BASE && source < INPUT_SAMPLER_BASE+m_iNumSamplers) {
             m_pLoopSource->slotSet(source+1.0);
         } else {
-            m_pLoopSource ->slotSet(INPUT_MASTER);
+            m_pLoopSource->slotSet(INPUT_MASTER);
         }
     }
 }
@@ -189,10 +200,10 @@ void LoopRecordingManager::slotChangeLoopSource(double v){
 void LoopRecordingManager::slotChangeExportDestination(double v) {
 
     if (v > 0.) {
-        float numSamplers = m_pNumSamplers->get();
+        //float numSamplers = m_pNumSamplers->get();
         float destination = m_pCOExportDestination->get();
 
-        if (destination >= numSamplers) {
+        if (destination >= m_iNumSamplers) {
             m_pCOExportDestination->set(1.0);
         } else {
             m_pCOExportDestination->set(destination+1.0);
@@ -200,12 +211,24 @@ void LoopRecordingManager::slotChangeExportDestination(double v) {
     }
 }
 
+void LoopRecordingManager::slotNumDecksChanged(double v) {
+    qDebug() << "LoopRecordingManager::slotNumDecksChanged";
+
+    m_iNumDecks = (int) v;
+}
+
+void LoopRecordingManager::slotNumSamplersChanged(double v) {
+    m_iNumSamplers = (int) v;
+
+    //qDebug() << "!!!!LoopRecordingManager::slotNumSamplersChanged num: " << m_iNumSamplers;
+}
+
 void LoopRecordingManager::startRecording() {
     //qDebug() << "LoopRecordingManager startRecording";
     
     m_iNumberOfBytesRecored = 0;
 
-    QString number_str = QString::number(m_loopNumber++);
+    QString number_str = QString::number(m_iLoopNumber++);
 
     // TODO(carl) do we really need this?
     //m_recordingFile = QString("%1_%2.%3")
@@ -213,7 +236,7 @@ void LoopRecordingManager::startRecording() {
         
     // Storing the absolutePath of the recording file without file extension
     m_recording_base_file = QString("%1/%2_%3_%4").arg(m_recordingDir,"loop",number_str,date_time_str);
-    //m_recording_base_file.append("/loop_" + m_loopNumber + "_" + date_time_str);
+    //m_recording_base_file.append("/loop_" + m_iLoopNumber + "_" + date_time_str);
     // appending file extension to get the filelocation
     m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
 
