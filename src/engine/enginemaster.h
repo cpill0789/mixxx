@@ -19,6 +19,7 @@
 #define ENGINEMASTER_H
 
 #include <QMap>
+#include <QtCore>
 
 #include "controlobject.h"
 #include "engine/engineobject.h"
@@ -41,6 +42,7 @@ class EngineVinylSoundEmu;
 class EngineSideChain;
 class SyncWorker;
 class EngineLoopRecorder;
+class EngineSync;
 
 class EngineMaster : public EngineObject, public AudioSource {
     Q_OBJECT
@@ -135,11 +137,20 @@ class EngineMaster : public EngineObject, public AudioSource {
     void mixChannels(unsigned int channelBitvector, unsigned int maxChannels,
                      CSAMPLE* pOutput, unsigned int iBufferSize, GainCalculator* pGainCalculator);
 
+    // Processes active channels. The master sync channel (if any) is processed
+    // first and all others are processed after. Sets the i'th bit of
+    // masterOutput and headphoneOutput if the i'th channel is enabled for the
+    // master output or headphone output, respectively.
+    void processChannels(unsigned int* masterOutput,
+                         unsigned int* headphoneOutput,
+                         int iBufferSize);
+
     QList<ChannelInfo*> m_channels;
 
     CSAMPLE *m_pMaster, *m_pHead, *m_pLoop;
 
     EngineWorkerScheduler *m_pWorkerScheduler;
+    EngineSync* m_pMasterSync;
 
     ControlObject* m_pMasterVolume;
     ControlObject* m_pHeadVolume;

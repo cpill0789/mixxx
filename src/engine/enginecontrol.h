@@ -63,9 +63,9 @@ class EngineControl : public QObject {
     // target.
     virtual void hintReader(QVector<Hint>* pHintList);
 
-    void setEngineMaster(EngineMaster* pEngineMaster);
+    virtual void setEngineMaster(EngineMaster* pEngineMaster);
     void setEngineBuffer(EngineBuffer* pEngineBuffer);
-    void setCurrentSample(const double dCurrentSample, const double dTotalSamples);
+    virtual void setCurrentSample(const double dCurrentSample, const double dTotalSamples);
     double getCurrentSample() const;
     double getTotalSamples() const;
 

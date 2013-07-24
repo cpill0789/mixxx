@@ -8,12 +8,14 @@
 
 #include "configobject.h"
 #include "engine/enginecontrol.h"
+#include "engine/enginesync.h"
 
 const int RATE_TEMP_STEP = 500;
 const int RATE_TEMP_STEP_SMALL = RATE_TEMP_STEP * 10.;
 const int RATE_SENSITIVITY_MIN = 100;
 const int RATE_SENSITIVITY_MAX = 2500;
 
+class BpmControl;
 class Rotary;
 class ControlTTRotary;
 class ControlObject;
@@ -30,6 +32,7 @@ public:
     RateControl(const char* _group, ConfigObject<ConfigValue>* _config);
     virtual ~RateControl();
 
+    void setBpmControl(BpmControl* bpmcontrol);
     // Must be called during each callback of the audio thread so that
     // RateControl has a chance to update itself.
     double process(const double dRate,
@@ -38,7 +41,7 @@ public:
                    const int bufferSamples);
     // Returns the current engine rate.
     double calculateRate(double baserate, bool paused, int iSamplesPerBuffer, bool* isScratching);
-    double getRawRate();
+    double getRawRate() const;
 
     // Set rate change when temp rate button is pressed
     static void setTemp(double v);
@@ -65,12 +68,15 @@ public:
     void slotControlRateTempUpSmall(double);
     void slotControlFastForward(double);
     void slotControlFastBack(double);
-    void slotControlVinyl(double);
-    void slotControlVinylScratching(double);
+    virtual void trackLoaded(TrackPointer pTrack);
+    virtual void trackUnloaded(TrackPointer pTrack);
+
+  private slots:
+    void slotSyncStateChanged(double);
 
   private:
-    double getJogFactor();
-    double getWheelFactor();
+    double getJogFactor() const;
+    double getWheelFactor() const;
 
     /** Set rate change of the temporary pitch rate */
     void setRateTemp(double v);
@@ -86,6 +92,7 @@ public:
     /** Values used when temp and perm rate buttons are pressed */
     static double m_dTemp, m_dTempSmall, m_dPerm, m_dPermSmall;
 
+    QString m_sGroup;
     ControlPushButton *buttonRateTempDown, *buttonRateTempDownSmall,
         *buttonRateTempUp, *buttonRateTempUpSmall;
     ControlPushButton *buttonRatePermDown, *buttonRatePermDownSmall,
@@ -104,9 +111,22 @@ public:
 
     ControlPushButton* m_pScratchToggle;
     ControlObject* m_pJog;
+    ControlObject* m_pVCEnabled;
+    ControlObject* m_pVCScratching;
     Rotary* m_pJogFilter;
 
     ControlObject *m_pSampleRate;
+
+    TrackPointer m_pTrack;
+
+    // For Master Sync
+    BpmControl* m_pBpmControl;
+    ControlObject* m_pSyncState;
+    int m_iSyncState;
+
+    /** The current loaded file's detected BPM */
+    ControlObject* m_pFileBpm;
+    double m_dFileBpm;
 
     // Enumerations which hold the state of the pitchbend buttons.
     // These enumerations can be used like a bitmask.
@@ -135,10 +155,6 @@ public:
         RATERAMP_RAMPBACK_SPEED,
         RATERAMP_RAMPBACK_PERIOD
     };
-
-    /** Is vinyl control enabled? **/
-    bool m_bVinylControlEnabled;
-    bool m_bVinylControlScratching;
 
     // The current rate ramping direction. Only holds the last button pressed.
     int m_ePbCurrent;
