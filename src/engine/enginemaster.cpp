@@ -351,6 +351,9 @@ void EngineMaster::processChannels(unsigned int* masterOutput,
     QList<ChannelInfo*>::iterator it = m_channels.begin();
     QList<ChannelInfo*>::iterator master_it = NULL;
 
+    float loop_source = m_pLoopSource->get();
+    SampleUtil::applyGain(m_pLoop, 0.0f, iBufferSize);
+
     // Find the Sync Master and process it first then process all the slaves
     // (and skip the master).
 
@@ -385,15 +388,36 @@ void EngineMaster::processChannels(unsigned int* masterOutput,
                 if (needsProcessing) {
                     pChannel->process(NULL, pChannelInfo->m_pBuffer, iBufferSize);
                 }
+
+                // Copy audio from individual inputs to loop recorder buffer.
+				QString group = pChannel->getGroup();
+				if (loop_source == INPUT_MICROPHONE && group == "[Microphone]") {
+					SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+				} else if (loop_source == INPUT_PT1 && group == "[Passthrough1]") {
+					SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+				} else if (loop_source == INPUT_PT2 && group == "[Passthrough2]") {
+					SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+				} else if (loop_source > INPUT_DECK_BASE && loop_source < INPUT_SAMPLER_BASE) {
+					// TODO: cast to int?
+					int deckNum = loop_source-INPUT_DECK_BASE;
+					QString num = QString::number(deckNum);
+					if (group == QString("[Channel%1]").arg(num)) {
+						SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+					}
+				} else if (loop_source > INPUT_SAMPLER_BASE) {
+					// TODO: cast to int?
+					int samplerNum = loop_source-INPUT_SAMPLER_BASE;
+					QString num = QString::number(samplerNum);
+					if (group == QString("[Sampler%1]").arg(num)) {
+						SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+					}
+				}
+
                 break;
             }
         }
     }
 
-    float loop_source = m_pLoopSource->get();
-    SampleUtil::applyGain(m_pLoop, 0.0f, iBufferSize);
-
-    Timer timer("EngineMaster::process channels");
     it = m_channels.begin();
 
     for (unsigned int channel_number = 0;
@@ -475,6 +499,8 @@ void EngineMaster::process(const CSAMPLE *, const CSAMPLE *pOut, const int iBuff
     const unsigned int maxChannels = 32;
     unsigned int masterOutput = 0;
     unsigned int headphoneOutput = 0;
+
+    float loop_source = m_pLoopSource->get();
 
     // Prepare each channel for output
     processChannels(&masterOutput, &headphoneOutput, iBufferSize);
