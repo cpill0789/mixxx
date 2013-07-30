@@ -123,8 +123,7 @@ class EngineMaster : public EngineObject, public AudioSource {
             const double orientationGain = EngineMaster::gainForOrientation(
                 pChannelInfo->m_pChannel->getOrientation(),
                 m_dLeftGain, m_dCenterGain, m_dRightGain);
-            const double gain = m_dVolume * channelVolume * orientationGain;
-            return gain;
+            return m_dVolume * channelVolume * orientationGain;
         }
 
         inline void setGains(double dVolume, double leftGain, double centerGain, double rightGain) {

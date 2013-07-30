@@ -183,8 +183,6 @@ const CSAMPLE* EngineMaster::getHeadphoneBuffer() const
     return m_pHead;
 }
 
-
-
 void EngineMaster::processChannels(unsigned int* masterOutput,
                                    unsigned int* headphoneOutput,
                                    int iBufferSize) {
@@ -451,8 +449,6 @@ void EngineMaster::addChannel(EngineChannel* pChannel) {
     m_channels.push_back(pChannelInfo);
     m_channelMasterGainCache.push_back(0);
     m_channelHeadphoneGainCache.push_back(0);
-
-    m_pMasterSync->addChannel(pChannel);
 
     EngineBuffer* pBuffer = pChannelInfo->m_pChannel->getEngineBuffer();
     if (pBuffer != NULL) {
