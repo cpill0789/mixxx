@@ -57,7 +57,7 @@ class EngineLoopRecorder : public QThread {
     // Allows sleeping until we have samples to process.
     QWaitCondition m_waitForSamples;
     
-    QByteArray m_Encoding;
+    QByteArray m_encoding;
     QString m_filename;
     QByteArray m_baTitle;
     QByteArray m_baAuthor;

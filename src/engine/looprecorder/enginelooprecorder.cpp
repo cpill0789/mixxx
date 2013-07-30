@@ -133,7 +133,7 @@ void EngineLoopRecorder::run() {
 }
 
 void EngineLoopRecorder::updateFromPreferences() {
-    m_Encoding = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Encoding")).toLatin1();
+    m_encoding = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Encoding")).toLatin1();
     m_filename = m_config->getValueString(ConfigKey(LOOP_RECORDING_PREF_KEY,"Path"));
     // TODO(carl):remove dummy strings and put something intelligent for these values.
     m_baTitle = QByteArray("No title");
@@ -163,7 +163,7 @@ bool EngineLoopRecorder::openFile() {
     m_sfInfo.samplerate = samplerate;
     m_sfInfo.channels = 2;
     
-    //if (m_Encoding == ENCODING_WAVE)
+    //if (m_encoding == ENCODING_WAVE)
         m_sfInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
     //else
     //    m_sfInfo.format = SF_FORMAT_AIFF | SF_FORMAT_PCM_16;
