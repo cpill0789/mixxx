@@ -264,7 +264,7 @@ void LoopRecordingManager::exportLoopToPlayer(QString group) {
     QString cur_date_time_str = formatDateTimeForFilename(QDateTime::currentDateTime());
 
     QString newFileLocation = QString("%1%2_%3.%4")
-    .arg(dir,"loop",cur_date_time_str, encodingType.toLower());
+        .arg(dir,"loop",cur_date_time_str, encodingType.toLower());
 
     if (!m_filesRecorded.isEmpty()) {
 
