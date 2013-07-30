@@ -302,7 +302,7 @@ bool LoopRecordingManager::saveLoop(QString newFileLocation) {
 
 void LoopRecordingManager::setRecordingDir() {
     QDir recordDir(m_pConfig->getValueString(
-                    ConfigKey("[Recording]", "Directory")).append("/temp"));
+                    ConfigKey("[Recording]", "Directory")).append(LOOP_RECORDING_DIR));
     // Note: the default ConfigKey for recordDir is set in DlgPrefRecord::DlgPrefRecord
     
     if (!recordDir.exists()) {

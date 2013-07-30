@@ -24,4 +24,6 @@
 #define INPUT_DECK_BASE 100.0f
 #define INPUT_SAMPLER_BASE 200.f
 
+#define LOOP_RECORDING_DIR "/temp"
+
 #endif
