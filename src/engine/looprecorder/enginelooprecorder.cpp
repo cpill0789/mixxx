@@ -71,6 +71,12 @@ void EngineLoopRecorder::run() {
     QThread::currentThread()->setObjectName(QString("EngineLoopRecorder"));
     
     while (!m_bStopThread) {
+
+        // Sleep until samples are available.
+        m_waitLock.lock();
+        m_waitForSamples.wait(&m_waitLock);
+        m_waitLock.unlock();
+
         int samples_read;
         while ((samples_read = m_sampleFifo.read(
                                                  m_pWorkBuffer, LOOP_BUFFER_SIZE))) {
@@ -124,11 +130,6 @@ void EngineLoopRecorder::run() {
         if (m_bStopThread) {
             return;
         }
-        
-        // Sleep until samples are available.
-        m_waitLock.lock();
-        m_waitForSamples.wait(&m_waitLock);
-        m_waitLock.unlock();
     }
 }
 
