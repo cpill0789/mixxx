@@ -53,7 +53,7 @@ EngineLoopRecorder::~EngineLoopRecorder() {
 }
 
 void EngineLoopRecorder::writeSamples(const CSAMPLE* newBuffer, int buffer_size) {
-    ScopedTimer t("EngineLoopRecorder:writeSamples");
+    ScopedTimer t("EngineLoopRecorder::writeSamples");
     int samples_written = m_sampleFifo.write(newBuffer, buffer_size);
     
     if (samples_written != buffer_size) {
