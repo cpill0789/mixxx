@@ -229,30 +229,6 @@ void EngineMaster::processChannels(unsigned int* masterOutput,
                     pChannel->process(NULL, pChannelInfo->m_pBuffer, iBufferSize);
                 }
 
-                // Copy audio from individual inputs to loop recorder buffer.
-				QString group = pChannel->getGroup();
-				if (loop_source == INPUT_MICROPHONE && group == "[Microphone]") {
-					SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-				} else if (loop_source == INPUT_PT1 && group == "[Passthrough1]") {
-					SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-				} else if (loop_source == INPUT_PT2 && group == "[Passthrough2]") {
-					SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-				} else if (loop_source > INPUT_DECK_BASE && loop_source < INPUT_SAMPLER_BASE) {
-					// TODO: cast to int?
-					int deckNum = loop_source-INPUT_DECK_BASE;
-					QString num = QString::number(deckNum);
-					if (group == QString("[Channel%1]").arg(num)) {
-						SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-					}
-				} else if (loop_source > INPUT_SAMPLER_BASE) {
-					// TODO: cast to int?
-					int samplerNum = loop_source-INPUT_SAMPLER_BASE;
-					QString num = QString::number(samplerNum);
-					if (group == QString("[Sampler%1]").arg(num)) {
-						SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-					}
-				}
-
                 break;
             }
         }
@@ -264,7 +240,31 @@ void EngineMaster::processChannels(unsigned int* masterOutput,
          it != m_channels.end(); ++it, ++channel_number) {
         ChannelInfo* pChannelInfo = *it;
         EngineChannel* pChannel = pChannelInfo->m_pChannel;
-
+        
+        // Copy audio from individual inputs to loop recorder buffer.
+        QString group = pChannel->getGroup();
+        if (loop_source == INPUT_MICROPHONE && group == "[Microphone]") {
+            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+        } else if (loop_source == INPUT_PT1 && group == "[Passthrough1]") {
+            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+        } else if (loop_source == INPUT_PT2 && group == "[Passthrough2]") {
+            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+        } else if (loop_source > INPUT_DECK_BASE && loop_source < INPUT_SAMPLER_BASE) {
+            // TODO: cast to int?
+            int deckNum = loop_source-INPUT_DECK_BASE;
+            QString num = QString::number(deckNum);
+            if (group == QString("[Channel%1]").arg(num)) {
+                SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+            }
+        } else if (loop_source > INPUT_SAMPLER_BASE) {
+            // TODO: cast to int?
+            int samplerNum = loop_source-INPUT_SAMPLER_BASE;
+            QString num = QString::number(samplerNum);
+            if (group == QString("[Sampler%1]").arg(num)) {
+                SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
+            }
+        }
+        
         // Skip the master since we already processed it.
         if (it == master_it) {
             continue;
@@ -292,32 +292,6 @@ void EngineMaster::processChannels(unsigned int* masterOutput,
         if (needsProcessing) {
             pChannel->process(NULL, pChannelInfo->m_pBuffer, iBufferSize);
         }
-
-
-        // Copy audio from individual inputs to loop recorder buffer.
-        QString group = pChannel->getGroup();
-        if (loop_source == INPUT_MICROPHONE && group == "[Microphone]") {
-            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-        } else if (loop_source == INPUT_PT1 && group == "[Passthrough1]") {
-            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-        } else if (loop_source == INPUT_PT2 && group == "[Passthrough2]") {
-            SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-        } else if (loop_source > INPUT_DECK_BASE && loop_source < INPUT_SAMPLER_BASE) {
-            // TODO: cast to int?
-            int deckNum = loop_source-INPUT_DECK_BASE;
-            QString num = QString::number(deckNum);
-            if (group == QString("[Channel%1]").arg(num)) {
-                SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-            }
-        } else if (loop_source > INPUT_SAMPLER_BASE) {
-            // TODO: cast to int?
-            int samplerNum = loop_source-INPUT_SAMPLER_BASE;
-            QString num = QString::number(samplerNum);
-            if (group == QString("[Sampler%1]").arg(num)) {
-                SampleUtil::copyWithGain(m_pLoop, pChannelInfo->m_pBuffer, 1.0, iBufferSize);
-            }
-        }
-        
     }
 }
 
