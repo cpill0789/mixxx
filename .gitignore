@@ -18,4 +18,3 @@ lib/*/lib/*.a
 mixxx
 mixxx-test
 res/qrc_mixxx.cc
-.DS_Store
