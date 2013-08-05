@@ -68,7 +68,11 @@ class LoopRecordingManager : public QObject
     ControlObjectThread* m_pNumDecks;
     ControlObjectThread* m_pNumSamplers;
     ControlObjectThread* m_pRecReady;
-    
+
+    ControlObjectThread* m_pLoopDeck1Play;
+    ControlObjectThread* m_pLoopDeck1Stop;
+    ControlObjectThread* m_pLoopDeck1Eject;
+
     ControlPushButton* m_pChangeExportDestination;
     ControlPushButton* m_pChangeLoopSource;
     ControlPushButton* m_pClearRecorder;

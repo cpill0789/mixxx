@@ -35,6 +35,10 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
     m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
     m_pRecReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
 
+    m_pLoopDeck1Play = new ControlObjectThread("[LoopRecorderDeck1]","play");
+    m_pLoopDeck1Stop = new ControlObjectThread("[LoopRecorderDeck1]","stop");
+    m_pLoopDeck1Eject = new ControlObjectThread("[LoopRecorderDeck1]","eject");
+
     m_pChangeExportDestination = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY,"change_export_destination"));
     m_pChangeLoopSource = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "change_loop_source"));
     m_pClearRecorder = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "clear_recorder"));
@@ -138,6 +142,8 @@ bool LoopRecordingManager::isLoopRecordingActive() {
 
 // Connected to EngineLoopRecorder.
 void LoopRecordingManager::slotClearRecorder() {
+    m_pLoopDeck1Stop->slotSet(1.);
+    m_pLoopDeck1Stop->slotSet(0.);
     foreach(QString location, m_filesRecorded) {
         qDebug() << "LoopRecordingManager::slotClearRecorder deleteing: " << location;
         QFile file(location);
