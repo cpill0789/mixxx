@@ -51,7 +51,9 @@ class LoopRecordingManager : public QObject
     void slotToggleClear(double v);
     void slotToggleExport(double v);
     void slotToggleLoopRecording(double v);
-    
+    void slotTogglePlay(double v);
+    void slotToggleStopPlayback(double v);
+
   private:
     void exportLoopToPlayer(QString group);
     QString formatDateTimeForFilename(QDateTime dateTime) const;

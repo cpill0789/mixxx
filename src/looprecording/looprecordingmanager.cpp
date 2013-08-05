@@ -259,6 +259,14 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
     }
 }
 
+void LoopRecordingManager::slotTogglePlay(double v) {
+
+}
+
+void LoopRecordingManager::slotToggleStopPlayback(double v) {
+    
+}
+
 void LoopRecordingManager::exportLoopToPlayer(QString group) {
     //qDebug() << "LoopRecordingManager::exportLoopToPlayer m_filesRecorded: " << m_filesRecorded;
 
