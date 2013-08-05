@@ -3,6 +3,8 @@
 
 #include "basetrackplayer.h"
 
+class ControlObjectThread;
+
 class LoopRecorderDeck : public BaseTrackPlayer {
     Q_OBJECT
   public:
@@ -12,6 +14,8 @@ class LoopRecorderDeck : public BaseTrackPlayer {
                 EngineChannel::ChannelOrientation defaultOrientation,
                 QString group);
     virtual ~LoopRecorderDeck();
+  private:
+    ControlObjectThread* m_pRepeat;
 };
 
 #endif /* LoopRecorderDeck_H */
