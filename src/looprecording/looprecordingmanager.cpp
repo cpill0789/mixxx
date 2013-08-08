@@ -148,6 +148,8 @@ void LoopRecordingManager::slotClearRecorder() {
 
     m_pTogglePlayback->set(0.0);
     stopLoopDeck();
+    clearLoopDeck();
+    
     foreach(QString location, m_filesRecorded) {
         qDebug() << "LoopRecordingManager::slotClearRecorder deleteing: " << location;
         QFile file(location);
@@ -271,6 +273,11 @@ void LoopRecordingManager::slotTogglePlayback(double v) {
     } else {
         stopLoopDeck();
     }
+}
+
+void LoopRecordingManager::clearLoopDeck() {
+    m_pLoopDeck1Eject->slotSet(1.0);
+    m_pLoopDeck1Eject->slotSet(0.0);
 }
 
 void LoopRecordingManager::exportLoopToPlayer(QString group) {
