@@ -109,11 +109,6 @@ void EngineLoopRecorder::run() {
                     qDebug("Setting loop record flag to: ON");
                     m_recReady->slotSet(LOOP_RECORD_ON);
                     emit(isLoopRecording(true)); //will notify the LoopRecordingManager
-
-                    // Since we just started recording, timeout and clear the metadata.
-                    //m_iMetaDataLife = kMetaDataLifeTimeout;
-                    m_pCurrentTrack = TrackPointer();
-
                 } else { // Maybe the encoder could not be initialized
                     qDebug("Setting loop record flag to: OFF");
                     m_recReady->slotSet(LOOP_RECORD_OFF);
@@ -145,6 +140,9 @@ void EngineLoopRecorder::updateFromPreferences() {
 }
 
 void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) {
+
+    // TODO(carl) Start recording to a buffer immediately before a file is opened,
+    // then flush to file once it is open.
 
     if (m_sndfile != NULL) {
         sf_write_float(m_sndfile, pBuffer, iBufferSize);
