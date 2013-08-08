@@ -31,6 +31,7 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
 
     m_pLoopPlayReady = new ControlObjectThread(m_pCOLoopPlayReady->getKey());
     m_pLoopSource = new ControlObjectThread(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_source"));
+    m_pMasterBPM = new ControlObjectThread("[Master]","sync_bpm");
     m_pNumDecks = new ControlObjectThread("[Master]","num_decks");
     m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
     m_pRecReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
@@ -256,7 +257,7 @@ void LoopRecordingManager::slotToggleExport(double v) {
 }
 
 void LoopRecordingManager::slotToggleLoopRecording(double v) {
-    //qDebug() << "LoopRecordingManager::slotToggleLoopRecording v: " << v;
+    qDebug() << "LoopRecordingManager::slotToggleLoopRecording BPM: " << m_pMasterBPM->get();
     if (v > 0.) {
         if (isLoopRecordingActive()) {
             stopRecording();
