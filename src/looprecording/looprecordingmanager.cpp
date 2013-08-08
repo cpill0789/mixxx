@@ -43,10 +43,13 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
     m_pChangeLoopSource = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "change_loop_source"));
     m_pClearRecorder = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "clear_recorder"));
     m_pExportLoop = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_loop"));
+    m_pTogglePlayback = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_playback"));
     m_pToggleLoopRecording = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "toggle_loop_recording"));
-            
+    
     connect(m_pToggleLoopRecording, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleLoopRecording(double)));
+    connect(m_pTogglePlayback, SIGNAL(valueChanged(double)),
+            this, SLOT(slotTogglePlayback(double)));
     connect(m_pClearRecorder, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleClear(double)));
     connect(m_pExportLoop, SIGNAL(valueChanged(double)),
@@ -259,8 +262,8 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
     }
 }
 
-void LoopRecordingManager::slotTogglePlay(double v) {
-
+void LoopRecordingManager::slotTogglePlayback(double v) {
+    qDebug() << "Toggle Playback: " << v;
 }
 
 void LoopRecordingManager::slotToggleStopPlayback(double v) {

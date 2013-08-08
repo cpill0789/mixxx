@@ -51,7 +51,7 @@ class LoopRecordingManager : public QObject
     void slotToggleClear(double v);
     void slotToggleExport(double v);
     void slotToggleLoopRecording(double v);
-    void slotTogglePlay(double v);
+    void slotTogglePlayback(double v);
     void slotToggleStopPlayback(double v);
 
   private:
@@ -80,6 +80,7 @@ class LoopRecordingManager : public QObject
     ControlPushButton* m_pClearRecorder;
     ControlPushButton* m_pExportLoop;
     ControlPushButton* m_pToggleLoopRecording;
+    ControlPushButton* m_pTogglePlayback;
 
     // Stores paths of all files recorded.
     QList<QString> m_filesRecorded;
