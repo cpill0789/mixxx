@@ -52,13 +52,14 @@ class LoopRecordingManager : public QObject
     void slotToggleExport(double v);
     void slotToggleLoopRecording(double v);
     void slotTogglePlayback(double v);
-    void slotToggleStopPlayback(double v);
 
   private:
     void exportLoopToPlayer(QString group);
     QString formatDateTimeForFilename(QDateTime dateTime) const;
+    void playLoopDeck();
     bool saveLoop(QString newFileLocation);
     void setRecordingDir();
+    void stopLoopDeck();
 
     ConfigObject<ConfigValue>* m_pConfig;
     

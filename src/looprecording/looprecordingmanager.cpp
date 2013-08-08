@@ -264,10 +264,11 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
 
 void LoopRecordingManager::slotTogglePlayback(double v) {
     qDebug() << "Toggle Playback: " << v;
-}
-
-void LoopRecordingManager::slotToggleStopPlayback(double v) {
-    
+    if (v > 0.0) {
+        playLoopDeck();
+    } else {
+        stopLoopDeck();
+    }
 }
 
 void LoopRecordingManager::exportLoopToPlayer(QString group) {
@@ -298,6 +299,10 @@ QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) cons
     // filenames so we can't use them anywhere.
     QString formatted = dateTime.toString("yyyy-MM-dd_hh'h'mm'm'ss's'");
     return formatted;
+}
+
+void LoopRecordingManager::playLoopDeck() {
+    m_pLoopDeck1Play->slotSet(1.0);
 }
 
 bool LoopRecordingManager::saveLoop(QString newFileLocation) {
@@ -331,4 +336,10 @@ void LoopRecordingManager::setRecordingDir() {
     }
     m_recordingDir = recordDir.absolutePath();
     qDebug() << "Loop Recordings folder set to" << m_recordingDir;
+}
+
+void LoopRecordingManager::stopLoopDeck() {
+    //m_pLoopDeck1Stop->slotSet(1.0);
+    //m_pLoopDeck1Stop->slotSet(0.0);
+    m_pLoopDeck1Play->slotSet(0.0);
 }
