@@ -29,7 +29,7 @@ class EngineLoopRecorder : public QThread {
     // closes the audio file
     void closeFile();
     void updateFromPreferences();
-    bool fileOpen();
+    bool isFileOpen();
     
   signals:
     // emitted to notify LoopRecordingManager

@@ -86,14 +86,14 @@ void EngineLoopRecorder::run() {
             // if recording is disabled
             if (currentRecStatus == LOOP_RECORD_OFF) {
                 //qDebug("Setting record flag to: OFF");
-                if (fileOpen()) {
+                if (isFileOpen()) {
                     closeFile();
                     emit(isLoopRecording(false));
                     emit(loadToLoopDeck());
                 }
 
             } else if (currentRecStatus == LOOP_RECORD_CLEAR) {
-                if (fileOpen()) {
+                if (isFileOpen()) {
                     closeFile();    //close file and free encoder
                     emit(isLoopRecording(false));
                 }
@@ -152,7 +152,7 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
     }
 }
 
-bool EngineLoopRecorder::fileOpen() {
+bool EngineLoopRecorder::isFileOpen() {
     // File must be initalized
     return (m_sndfile != NULL);
 }
@@ -191,7 +191,7 @@ bool EngineLoopRecorder::openFile() {
     }
     
     // check if file is really open
-    if (!fileOpen()) {
+    if (!isFileOpen()) {
         ErrorDialogProperties* props = ErrorDialogHandler::instance()->newDialogProperties();
         props->setType(DLG_WARNING);
         props->setTitle(tr("Loop Recording"));
