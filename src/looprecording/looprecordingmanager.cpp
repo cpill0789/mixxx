@@ -145,8 +145,9 @@ bool LoopRecordingManager::isLoopRecordingActive() {
 
 // Connected to EngineLoopRecorder.
 void LoopRecordingManager::slotClearRecorder() {
-    m_pLoopDeck1Stop->slotSet(1.);
-    m_pLoopDeck1Stop->slotSet(0.);
+
+    m_pTogglePlayback->set(0.0);
+    stopLoopDeck();
     foreach(QString location, m_filesRecorded) {
         qDebug() << "LoopRecordingManager::slotClearRecorder deleteing: " << location;
         QFile file(location);
@@ -172,6 +173,7 @@ void LoopRecordingManager::slotLoadToLoopDeck() {
         TrackPointer pTrackToPlay = TrackPointer(new TrackInfoObject(m_filesRecorded.last()), &QObject::deleteLater);
         // Signal to Player manager to load and play track.
         emit(loadToLoopDeck(pTrackToPlay, QString("[LoopRecorderDeck1]"), true));
+        m_pTogglePlayback->set(1.0);
     }
 }
 
