@@ -78,6 +78,8 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
     // Set default loop export value to Sampler1.
     m_pCOExportDestination->set(1.0);
 
+    m_pCOLoopLength->set(4.0);
+
     // Set encoding format for loops to WAV.
     // TODO(carl) create prefences option to change between WAV and AIFF.
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Encoding"),QString("WAV"));
