@@ -36,7 +36,7 @@ class LoopRecordingManager : public QObject
     void slotClearRecorder();
     void slotIsLoopRecording(bool);
     void slotLoadToLoopDeck();
-    void slotSamplesRecorded(int);
+    void slotCountSamplesRecorded(int);
 
   signals:
     void exportToPlayer(QString, QString);

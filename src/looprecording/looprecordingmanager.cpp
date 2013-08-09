@@ -96,7 +96,7 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
         connect(pLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
         connect(pLoopRecorder, SIGNAL(clearRecorder()),this, SLOT(slotClearRecorder()));
         connect(pLoopRecorder, SIGNAL(loadToLoopDeck()),this, SLOT(slotLoadToLoopDeck()));
-        connect(pLoopRecorder, SIGNAL(samplesRecorded(int)), this, SLOT(slotSamplesRecorded(int)));
+        connect(pLoopRecorder, SIGNAL(samplesRecorded(int)), this, SLOT(slotCountSamplesRecorded(int)));
     }
 }
 
@@ -141,6 +141,8 @@ void LoopRecordingManager::startRecording() {
     m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
 
     m_filesRecorded << m_recordingLocation;
+
+    m_iLoopLength = getLoopLength();
 
     // TODO(carl) is this thread safe?
     m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Path"), m_recordingLocation);
@@ -200,8 +202,12 @@ void LoopRecordingManager::slotLoadToLoopDeck() {
     }
 }
 
-void LoopRecordingManager::slotSamplesRecorded(int samples) {
+void LoopRecordingManager::slotCountSamplesRecorded(int samples) {
     m_iNumSamplesRecorded += samples;
+
+    if (m_iNumSamplesRecorded >= m_iLoopLength) {
+        stopRecording();
+    }
 }
 
 // Private Slots
