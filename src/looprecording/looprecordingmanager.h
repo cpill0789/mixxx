@@ -44,6 +44,7 @@ class LoopRecordingManager : public QObject
 
   private slots:
     void slotChangeExportDestination(double v);
+    void slotChangeLoopLength(double v);
     void slotChangeLoopSource(double v);
     void slotNumDecksChanged(double v);
     void slotNumSamplersChanged(double v);
@@ -65,6 +66,7 @@ class LoopRecordingManager : public QObject
     ConfigObject<ConfigValue>* m_pConfig;
     
     ControlObject* m_pCOExportDestination;
+    ControlObject* m_pCOLoopLength;
     ControlObject* m_pCOLoopPlayReady;
 
     ControlObjectThread* m_pLoopPlayReady;
@@ -79,6 +81,7 @@ class LoopRecordingManager : public QObject
     ControlObjectThread* m_pLoopDeck1Eject;
 
     ControlPushButton* m_pChangeExportDestination;
+    ControlPushButton* m_pChangeLoopLength;
     ControlPushButton* m_pChangeLoopSource;
     ControlPushButton* m_pClearRecorder;
     ControlPushButton* m_pExportLoop;

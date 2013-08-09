@@ -27,7 +27,9 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
         m_iNumSamplers(0) {
 
     m_pCOExportDestination = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_destination"));
+    m_pCOLoopLength = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_length"));
     m_pCOLoopPlayReady = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "play_status"));
+
 
     m_pLoopPlayReady = new ControlObjectThread(m_pCOLoopPlayReady->getKey());
     m_pLoopSource = new ControlObjectThread(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_source"));
@@ -41,6 +43,7 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
     m_pLoopDeck1Eject = new ControlObjectThread("[LoopRecorderDeck1]","eject");
 
     m_pChangeExportDestination = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY,"change_export_destination"));
+    m_pChangeLoopLength = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "change_loop_length"));
     m_pChangeLoopSource = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "change_loop_source"));
     m_pClearRecorder = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "clear_recorder"));
     m_pExportLoop = new ControlPushButton(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_loop"));
@@ -55,6 +58,8 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
             this, SLOT(slotToggleClear(double)));
     connect(m_pExportLoop, SIGNAL(valueChanged(double)),
             this, SLOT(slotToggleExport(double)));
+    connect(m_pChangeLoopLength, SIGNAL(valueChanged(double)),
+            this, SLOT(slotChangeLoopLength(double)));
     connect(m_pChangeLoopSource, SIGNAL(valueChanged(double)),
             this, SLOT(slotChangeLoopSource(double)));
     connect(m_pChangeExportDestination, SIGNAL(valueChanged(double)),
@@ -95,6 +100,7 @@ LoopRecordingManager::~LoopRecordingManager() {
     delete m_pToggleLoopRecording;
     delete m_pExportLoop;
     delete m_pClearRecorder;
+    delete m_pChangeLoopLength;
     delete m_pChangeLoopSource;
     delete m_pChangeExportDestination;
     delete m_pRecReady;
@@ -103,6 +109,7 @@ LoopRecordingManager::~LoopRecordingManager() {
     delete m_pLoopSource;
     delete m_pLoopPlayReady;
     delete m_pCOLoopPlayReady;
+    delete m_pCOLoopLength;
     delete m_pCOExportDestination;
 }
 
@@ -195,7 +202,11 @@ void LoopRecordingManager::slotChangeExportDestination(double v) {
     }
 }
 
-void LoopRecordingManager::slotChangeLoopSource(double v){
+void LoopRecordingManager::slotChangeLoopLength(double v) {
+
+}
+
+void LoopRecordingManager::slotChangeLoopSource(double v) {
     // Available sources: Master out, PFL out, microphone, passthrough1, passthrough2,
     // All main decks, all samplers.
     // Sources are defined in defs_looprecording.h
