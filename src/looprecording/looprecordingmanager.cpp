@@ -97,15 +97,20 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
 LoopRecordingManager::~LoopRecordingManager() {
     qDebug() << "~LoopRecordingManager";
     // TODO(carl) delete temporary loop recorder files.
+    delete m_pTogglePlayback;
     delete m_pToggleLoopRecording;
     delete m_pExportLoop;
     delete m_pClearRecorder;
-    delete m_pChangeLoopLength;
     delete m_pChangeLoopSource;
+    delete m_pChangeLoopLength;
     delete m_pChangeExportDestination;
+    delete m_pLoopDeck1Eject;
+    delete m_pLoopDeck1Stop;
+    delete m_pLoopDeck1Play;
     delete m_pRecReady;
     delete m_pNumSamplers;
     delete m_pNumDecks;
+    delete m_pMasterBPM;
     delete m_pLoopSource;
     delete m_pLoopPlayReady;
     delete m_pCOLoopPlayReady;
