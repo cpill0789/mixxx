@@ -350,7 +350,8 @@ quint64 LoopRecordingManager::getLoopLength() {
     int sampleRate = m_pSampleRate->get();
     int loopLength = (int)m_pCOLoopLength->get();
     float secondsPerBeat = 60/bpm;
-    quint64 length = loopLength * (quint64)(secondsPerBeat * sampleRate);
+    // TODO(carl) can we assume stereo output?
+    quint64 length = loopLength * (quint64)(secondsPerBeat * sampleRate) * 2;
 
     qDebug() << "!!!!!!!LoopRecordingManager::getloopLength sampleRate: " << sampleRate
              << " loopLength: " << loopLength << " secondsPerBeat: " << secondsPerBeat
