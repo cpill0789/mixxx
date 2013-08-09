@@ -24,7 +24,8 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
         m_isRecording(false),
         m_iLoopNumber(0),
         m_iNumDecks(0),
-        m_iNumSamplers(0) {
+        m_iNumSamplers(0),
+        m_iLoopLength(0) {
 
     m_pCOExportDestination = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_destination"));
     m_pCOLoopLength = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_length"));
@@ -280,6 +281,7 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
         if (isLoopRecordingActive()) {
             stopRecording();
         } else {
+            getLoopLength();
             startRecording();
         }
     }
@@ -327,6 +329,25 @@ QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) cons
     // filenames so we can't use them anywhere.
     QString formatted = dateTime.toString("yyyy-MM-dd_hh'h'mm'm'ss's'");
     return formatted;
+}
+
+quint64 LoopRecordingManager::getLoopLength() {
+    float bpm = m_pMasterBPM->get();
+    if (bpm == 0.0f) {
+        return 0;
+    }
+
+    // x beats * y sec/beat * z sample rate
+    int sampleRate = m_pSampleRate->get();
+    int loopLength = (int)m_pCOLoopLength->get();
+    float secondsPerBeat = 60/bpm;
+    quint64 length = loopLength * (quint64)(secondsPerBeat * sampleRate);
+
+    qDebug() << "!!!!!!!LoopRecordingManager::getloopLength sampleRate: " << sampleRate
+             << " loopLength: " << loopLength << " secondsPerBeat: " << secondsPerBeat
+             << " length: " << length;
+
+    return length;
 }
 
 void LoopRecordingManager::playLoopDeck() {

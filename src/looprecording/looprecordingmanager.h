@@ -58,6 +58,7 @@ class LoopRecordingManager : public QObject
     void clearLoopDeck();
     void exportLoopToPlayer(QString group);
     QString formatDateTimeForFilename(QDateTime dateTime) const;
+    quint64 getLoopLength();
     void playLoopDeck();
     bool saveLoop(QString newFileLocation);
     void setRecordingDir();
@@ -108,6 +109,8 @@ class LoopRecordingManager : public QObject
     unsigned int m_iLoopNumber;
     unsigned int m_iNumDecks;
     unsigned int m_iNumSamplers;
+
+    quint64 m_iLoopLength;
 };
 
 #endif // LOOPRECORDINGMANAGER_H
