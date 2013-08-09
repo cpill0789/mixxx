@@ -36,6 +36,7 @@ class LoopRecordingManager : public QObject
     void slotClearRecorder();
     void slotIsLoopRecording(bool);
     void slotLoadToLoopDeck();
+    void slotSamplesRecorded(int);
 
   signals:
     void exportToPlayer(QString, QString);
@@ -111,6 +112,7 @@ class LoopRecordingManager : public QObject
     unsigned int m_iNumSamplers;
 
     quint64 m_iLoopLength;
+    quint64 m_iNumSamplesRecorded;
 };
 
 #endif // LOOPRECORDINGMANAGER_H

@@ -146,7 +146,7 @@ void EngineLoopRecorder::process(const CSAMPLE* pBuffer, const int iBufferSize) 
 
     if (m_sndfile != NULL) {
         sf_write_float(m_sndfile, pBuffer, iBufferSize);
-        //emit(bytesRecorded(iBufferSize));
+        emit(samplesRecorded(iBufferSize));
     }
 }
 

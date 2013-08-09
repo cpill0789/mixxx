@@ -25,7 +25,8 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
         m_iLoopNumber(0),
         m_iNumDecks(0),
         m_iNumSamplers(0),
-        m_iLoopLength(0) {
+        m_iLoopLength(0),
+        m_iNumSamplesRecorded(0) {
 
     m_pCOExportDestination = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_destination"));
     m_pCOLoopLength = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_length"));
@@ -95,6 +96,7 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
         connect(pLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
         connect(pLoopRecorder, SIGNAL(clearRecorder()),this, SLOT(slotClearRecorder()));
         connect(pLoopRecorder, SIGNAL(loadToLoopDeck()),this, SLOT(slotLoadToLoopDeck()));
+        connect(pLoopRecorder, SIGNAL(samplesRecorded(int)), this, SLOT(slotSamplesRecorded(int)));
     }
 }
 
@@ -149,8 +151,9 @@ void LoopRecordingManager::startRecording() {
 
 void LoopRecordingManager::stopRecording()
 {
-    qDebug() << "LoopRecordingManager::stopRecording";
+    qDebug() << "LoopRecordingManager::stopRecording NumSamples: " << m_iNumSamplesRecorded;
     m_pRecReady->slotSet(LOOP_RECORD_OFF);
+    m_iNumSamplesRecorded = 0;
     m_recordingFile = "";
     m_recordingLocation = "";
 }
@@ -195,6 +198,10 @@ void LoopRecordingManager::slotLoadToLoopDeck() {
         emit(loadToLoopDeck(pTrackToPlay, QString("[LoopRecorderDeck1]"), true));
         m_pTogglePlayback->set(1.0);
     }
+}
+
+void LoopRecordingManager::slotSamplesRecorded(int samples) {
+    m_iNumSamplesRecorded += samples;
 }
 
 // Private Slots

@@ -32,8 +32,8 @@ class EngineLoopRecorder : public QThread {
     bool isFileOpen();
     
   signals:
-    // emitted to notify LoopRecordingManager
-    //void bytesRecorded(int);
+    // emitted to notify LoopRecordingManager of number of samples recorded
+    void samplesRecorded(int);
     void isLoopRecording(bool);
     void clearRecorder();
     void loadToLoopDeck();
