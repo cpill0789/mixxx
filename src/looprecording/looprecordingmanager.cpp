@@ -37,6 +37,7 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
     m_pNumDecks = new ControlObjectThread("[Master]","num_decks");
     m_pNumSamplers = new ControlObjectThread("[Master]","num_samplers");
     m_pRecReady = new ControlObjectThread(LOOP_RECORDING_PREF_KEY, "rec_status");
+    m_pSampleRate = new ControlObjectThread("[Master]", "samplerate");
 
     m_pLoopDeck1Play = new ControlObjectThread("[LoopRecorderDeck1]","play");
     m_pLoopDeck1Stop = new ControlObjectThread("[LoopRecorderDeck1]","stop");
@@ -107,6 +108,7 @@ LoopRecordingManager::~LoopRecordingManager() {
     delete m_pLoopDeck1Eject;
     delete m_pLoopDeck1Stop;
     delete m_pLoopDeck1Play;
+    delete m_pSampleRate;
     delete m_pRecReady;
     delete m_pNumSamplers;
     delete m_pNumDecks;
@@ -213,7 +215,7 @@ void LoopRecordingManager::slotChangeLoopLength(double v) {
 
 void LoopRecordingManager::slotChangeLoopSource(double v) {
     // Available sources: Master out, PFL out, microphone, passthrough1, passthrough2,
-    // All main decks, all samplers.
+    // all main decks, all samplers.
     // Sources are defined in defs_looprecording.h
 
     if (v > 0.) {
