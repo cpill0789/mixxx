@@ -205,7 +205,7 @@ void LoopRecordingManager::slotLoadToLoopDeck() {
 void LoopRecordingManager::slotCountSamplesRecorded(int samples) {
     m_iNumSamplesRecorded += samples;
 
-    if (m_iNumSamplesRecorded >= m_iLoopLength) {
+    if ((m_iLoopLength > 0) && (m_iNumSamplesRecorded >= m_iLoopLength)) {
         stopRecording();
     }
 }
