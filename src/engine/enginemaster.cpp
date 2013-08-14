@@ -67,8 +67,8 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
     // Master sync controller
     m_pMasterSync = new EngineSync(_config);
 	// TODO(owen): save / restore default bpm
-    ControlObject::getControl(ConfigKey("[Master]","sync_bpm"))->set(124.0);
-    ControlObject::getControl(ConfigKey("[Master]","rate"))->set(124.0);
+    ControlObject::getControl(ConfigKey("[Master]","sync_bpm"))->set(97.0);
+    ControlObject::getControl(ConfigKey("[Master]","rate"))->set(97.0);
 
 #ifdef __LADSPA__
     // LADSPA
