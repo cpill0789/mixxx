@@ -206,6 +206,7 @@ void LoopRecordingManager::slotCountSamplesRecorded(int samples) {
     m_iNumSamplesRecorded += samples;
 
     if ((m_iLoopLength > 0) && (m_iNumSamplesRecorded >= m_iLoopLength)) {
+        qDebug() << "!-!-!-! Stop recording: Loop Length: " << m_iLoopLength << " Samples: " << m_iNumSamplesRecorded;
         stopRecording();
     }
 }
@@ -379,9 +380,9 @@ quint64 LoopRecordingManager::getLoopLength() {
     // TODO(carl) can we assume stereo output?
     quint64 length = loopLength * (quint64)(secondsPerBeat * sampleRate) * 2;
 
-    qDebug() << "!!!!!!!LoopRecordingManager::getloopLength sampleRate: " << sampleRate
-             << " loopLength: " << loopLength << " secondsPerBeat: " << secondsPerBeat
-             << " length: " << length;
+//    qDebug() << "!!!!!!!LoopRecordingManager::getloopLength sampleRate: " << sampleRate
+//             << " loopLength: " << loopLength << " secondsPerBeat: " << secondsPerBeat
+//             << " length: " << length;
 
     return length;
 }
