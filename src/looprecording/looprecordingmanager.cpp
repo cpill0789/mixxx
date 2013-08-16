@@ -10,6 +10,7 @@
 #include "controlpushbutton.h"
 #include "engine/enginemaster.h"
 #include "engine/looprecorder/enginelooprecorder.h"
+#include "engine/looprecorder/loopwriter.h"
 #include "looprecording/defs_looprecording.h"
 #include "looprecording/looprecordingmanager.h"
 #include "trackinfoobject.h"
@@ -92,11 +93,18 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
             
     // Connect with EngineLoopRecorder
     EngineLoopRecorder* pLoopRecorder = pEngine->getLoopRecorder();
+    LoopWriter* pLoopWriter = pLoopRecorder->getLoopWriter();
+    if (pLoopWriter) {
+        //connect(pLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
+        //connect(pLoopRecorder, SIGNAL(clearRecorder()),this, SLOT(slotClearRecorder()));
+        //connect(pLoopRecorder, SIGNAL(loadToLoopDeck()),this, SLOT(slotLoadToLoopDeck()));
+        //connect(pLoopRecorder, SIGNAL(samplesRecorded(int)), this, SLOT(slotCountSamplesRecorded(int)));
+        connect(this, SIGNAL(startRecording(int)), pLoopWriter, SLOT(slotStartRecording(int)));
+    }
+    // Start thread for writing files.
     if (pLoopRecorder) {
-        connect(pLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
-        connect(pLoopRecorder, SIGNAL(clearRecorder()),this, SLOT(slotClearRecorder()));
-        connect(pLoopRecorder, SIGNAL(loadToLoopDeck()),this, SLOT(slotLoadToLoopDeck()));
-        connect(pLoopRecorder, SIGNAL(samplesRecorded(int)), this, SLOT(slotCountSamplesRecorded(int)));
+        qDebug() << "!~!~!~! LoopRecordingManager starting thread !~!~!~!";
+        pLoopRecorder->startThread();
     }
 }
 
@@ -315,10 +323,11 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
     qDebug() << "LoopRecordingManager::slotToggleLoopRecording BPM: " << m_pMasterBPM->get();
     if (v > 0.) {
         if (isLoopRecordingActive()) {
-            stopRecording();
+            //stopRecording();
         } else {
-            getLoopLength();
-            startRecording();
+            emit(startRecording(0));
+            //getLoopLength();
+            //startRecording();
         }
     }
 }

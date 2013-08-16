@@ -37,8 +37,8 @@ void LoopWriter::slotStartWriter() {
     qDebug() << "!~!~!~!~!~! Loop writer started !~!~!~!~!~!~!";
 }
 
-void LoopWriter::slotStartRecording(int) {
-
+void LoopWriter::slotStartRecording(int samples) {
+    qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << samples << " !~!~!~!~!~!~!";
 }
 
 void LoopWriter::slotStopRecording() {

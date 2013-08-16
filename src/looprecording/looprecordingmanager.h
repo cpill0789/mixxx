@@ -41,6 +41,7 @@ class LoopRecordingManager : public QObject {
     void exportToPlayer(QString, QString);
     void isLoopRecording(bool);
     void loadToLoopDeck(TrackPointer, QString, bool);
+    void startRecording(int);
 
   private slots:
     void slotChangeExportDestination(double v);

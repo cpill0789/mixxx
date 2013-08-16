@@ -22,15 +22,18 @@ class EngineLoopRecorder : public QObject {
   public:
     EngineLoopRecorder(ConfigObject<ConfigValue>* _config);
     virtual ~EngineLoopRecorder();
-    
+
+    // Should this be process instead?
     void writeSamples(const CSAMPLE* pBuffer, const int iBufferSize);
-        
-    // creates or opens an audio file
-//    bool openFile();
-    // closes the audio file
-//    void closeFile();
-//    void updateFromPreferences();
-//    bool isFileOpen();
+
+    // Moves the recorder object to the new thread and starts execution.
+    void startThread();
+
+    // Returns a pointer to the LoopWriter object.
+    // Used to connect signals and slots with the LoopRecordingManager.
+    LoopWriter* getLoopWriter() {
+        return m_pLoopWriter;
+    }
 
   signals:
     // emitted to notify LoopRecordingManager of number of samples recorded

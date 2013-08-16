@@ -26,16 +26,11 @@ EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
     LoopRecorderThread->setObjectName(QString("LoopRecorder"));
 
     // TODO(carl) make sure Thread exits properly.
-    //  Threading connection code adopted from: xxx
     //connect(m_pLoopWriter, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
     connect(LoopRecorderThread, SIGNAL(started()), m_pLoopWriter, SLOT(slotStartWriter()));
     connect(m_pLoopWriter, SIGNAL(finished()), LoopRecorderThread, SLOT(quit()));
     //connect(m_pLoopWriter, SIGNAL(finished()), m_pLoopWriter, SLOT(deleteLater()));
     connect(LoopRecorderThread, SIGNAL(finished()), LoopRecorderThread, SLOT(deleteLater()));
-
-    m_pLoopWriter->moveToThread(LoopRecorderThread);
-    LoopRecorderThread->start();
-
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
@@ -54,6 +49,12 @@ void EngineLoopRecorder::writeSamples(const CSAMPLE* pBuffer, const int iBufferS
 //        // Signal to the loop recorder that samples are available.
 //        //m_waitForSamples.wakeAll();
 //    }
+}
+
+void EngineLoopRecorder::startThread() {
+    qDebug() << "!~!~!~! EngineLoopRecorder::startThread() !~!~!~!";
+    m_pLoopWriter->moveToThread(LoopRecorderThread);
+    LoopRecorderThread->start();
 }
 
 //void EngineLoopRecorder::run() {
