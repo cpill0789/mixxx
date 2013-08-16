@@ -5,59 +5,55 @@
 #include "engine/looprecorder/enginelooprecorder.h"
 
 #include "configobject.h"
-#include "controlobject.h"
-#include "controlobjectthread.h"
+//#include "controlobject.h"
+//#include "controlobjectthread.h"
 #include "errordialoghandler.h"
-#include "playerinfo.h"
+//#include "playerinfo.h"
 #include "looprecording/defs_looprecording.h"
 #include "util/timer.h"
 #include "util/counter.h"
 #include "sampleutil.h"
+#include "engine/looprecorder/loopwriter.h"
 
 #define LOOP_BUFFER_SIZE 16384
 
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
-        : m_config(_config),
-        m_sampleFifo(LOOP_BUFFER_SIZE),
-        m_pWorkBuffer(SampleUtil::alloc(LOOP_BUFFER_SIZE)) {
-    
-//    m_recReadyCO = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
-//    m_recReady = new ControlObjectThread(m_recReadyCO->getKey());
+        : m_config(_config) {
 
-    //m_recReady = new ControlObjectThread(ConfigKey(LOOP_RECORDING_PREF_KEY, "rec_status"));
-    
-    m_samplerate = new ControlObjectThread("[Master]", "samplerate");
-    
-    //start(QThread::HighPriority);
+    m_pLoopWriter = new LoopWriter(_config);
+
+    LoopRecorderThread = new QThread;
+    LoopRecorderThread->setObjectName(QString("LoopRecorder"));
+
+    // TODO(carl) make sure Thread exits properly.
+    //  Threading connection code adopted from: xxx
+    //connect(m_pLoopWriter, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+    connect(LoopRecorderThread, SIGNAL(started()), m_pLoopWriter, SLOT(slotStartWriter()));
+    connect(m_pLoopWriter, SIGNAL(finished()), LoopRecorderThread, SLOT(quit()));
+    //connect(m_pLoopWriter, SIGNAL(finished()), m_pLoopWriter, SLOT(deleteLater()));
+    connect(LoopRecorderThread, SIGNAL(finished()), LoopRecorderThread, SLOT(deleteLater()));
+
+    m_pLoopWriter->moveToThread(LoopRecorderThread);
+    LoopRecorderThread->start();
+
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
-//    m_waitLock.lock();
-//    m_bStopThread = true;
-//    m_waitForSamples.wakeAll();
-//    m_waitLock.unlock();
-//    
-//    // Wait until the thread has finished.
-//    wait();
-//    
-//    delete m_recReady;
-//    delete m_recReadyCO;
-//    delete m_samplerate;
-//    SampleUtil::free(m_pWorkBuffer);
+    delete m_pLoopWriter;
 }
 
-void EngineLoopRecorder::writeSamples(const CSAMPLE* newBuffer, int buffer_size) {
+void EngineLoopRecorder::writeSamples(const CSAMPLE* pBuffer, const int iBufferSize) {
     ScopedTimer t("EngineLoopRecorder::writeSamples");
     //int samples_written = m_sampleFifo.write(newBuffer, buffer_size);
     
-    if (samples_written != buffer_size) {
-        Counter("EngineLoopRecorder::writeSamples buffer overrun").increment();
-    }
-    
-    if (m_sampleFifo.writeAvailable() < LOOP_BUFFER_SIZE/5) {
-        // Signal to the loop recorder that samples are available.
-        //m_waitForSamples.wakeAll();
-    }
+//    if (samples_written != buffer_size) {
+//        Counter("EngineLoopRecorder::writeSamples buffer overrun").increment();
+//    }
+//    
+//    if (m_sampleFifo.writeAvailable() < LOOP_BUFFER_SIZE/5) {
+//        // Signal to the loop recorder that samples are available.
+//        //m_waitForSamples.wakeAll();
+//    }
 }
 
 //void EngineLoopRecorder::run() {

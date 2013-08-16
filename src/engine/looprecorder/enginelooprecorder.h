@@ -13,8 +13,9 @@
 #include "util/fifo.h"
 
 class ConfigKey;
-class ControlObject;
-class ControlObjectThread;
+//class ControlObject;
+//class ControlObjectThread;
+class LoopWriter;
 
 class EngineLoopRecorder : public QObject {
     Q_OBJECT
@@ -45,30 +46,9 @@ class EngineLoopRecorder : public QObject {
     //int getActiveTracks();
     
     ConfigObject<ConfigValue>* m_config;
-    
-    FIFO<CSAMPLE> m_sampleFifo;
-    CSAMPLE* m_pWorkBuffer;
-    
-    // Provides thread safety around the wait condition below.
-    QMutex m_waitLock;
-    // Allows sleeping until we have samples to process.
-    QWaitCondition m_waitForSamples;
-    
-    QByteArray m_encoding;
-    QString m_filename;
-    QByteArray m_baTitle;
-    QByteArray m_baAuthor;
-    QByteArray m_baAlbum;
 
-    SF_INFO m_sfInfo;
-    
-    ControlObject* m_recReadyCO;
-    ControlObjectThread* m_recReady;
-    ControlObjectThread* m_samplerate;
-    
-    TrackPointer m_pCurrentTrack;
-    
-    bool m_bIsRecording;
+    QThread* LoopRecorderThread;
+    LoopWriter* m_pLoopWriter;
 };
 
 #endif
