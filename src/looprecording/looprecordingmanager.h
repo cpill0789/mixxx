@@ -19,8 +19,7 @@ class ControlObject;
 class ControlObjectThread;
 class TrackInfoObject;
 
-class LoopRecordingManager : public QObject
-{
+class LoopRecordingManager : public QObject {
     Q_OBJECT
   public:
     LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, EngineMaster* pEngine);
