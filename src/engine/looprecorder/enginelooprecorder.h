@@ -16,7 +16,7 @@ class ConfigKey;
 class ControlObject;
 class ControlObjectThread;
 
-class EngineLoopRecorder : public QThread {
+class EngineLoopRecorder : public QObject {
     Q_OBJECT
   public:
     EngineLoopRecorder(ConfigObject<ConfigValue>* _config);
@@ -25,12 +25,12 @@ class EngineLoopRecorder : public QThread {
     void writeSamples(const CSAMPLE* pBuffer, const int iBufferSize);
         
     // creates or opens an audio file
-    bool openFile();
+//    bool openFile();
     // closes the audio file
-    void closeFile();
-    void updateFromPreferences();
-    bool isFileOpen();
-    
+//    void closeFile();
+//    void updateFromPreferences();
+//    bool isFileOpen();
+
   signals:
     // emitted to notify LoopRecordingManager of number of samples recorded
     void samplesRecorded(int);
@@ -39,15 +39,12 @@ class EngineLoopRecorder : public QThread {
     void loadToLoopDeck();
     
   private:
-    void run();
-    
-    void process(const CSAMPLE* pBuffer, const int iBufferSize);
+//    void run();
+
+//    void process(const CSAMPLE* pBuffer, const int iBufferSize);
     //int getActiveTracks();
     
     ConfigObject<ConfigValue>* m_config;
-    
-    // Indicates that the thread should exit.
-    volatile bool m_bStopThread;
     
     FIFO<CSAMPLE> m_sampleFifo;
     CSAMPLE* m_pWorkBuffer;
@@ -62,8 +59,7 @@ class EngineLoopRecorder : public QThread {
     QByteArray m_baTitle;
     QByteArray m_baAuthor;
     QByteArray m_baAlbum;
-        
-    SNDFILE *m_sndfile;
+
     SF_INFO m_sfInfo;
     
     ControlObject* m_recReadyCO;
