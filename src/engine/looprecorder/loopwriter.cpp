@@ -35,6 +35,7 @@ void LoopWriter::slotSetPath(QString) {
 
 void LoopWriter::slotStartWriter() {
     qDebug() << "!~!~!~!~!~! Loop writer started !~!~!~!~!~!~!";
+    emit(writerStarted());
 }
 
 void LoopWriter::slotStartRecording(int samples) {

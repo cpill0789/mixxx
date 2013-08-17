@@ -41,7 +41,10 @@ class EngineLoopRecorder : public QObject {
     void isLoopRecording(bool);
     void clearRecorder();
     void loadToLoopDeck();
-    
+
+  private slots:
+    void slotWriterStarted();
+
   private:
 //    void run();
 
@@ -52,6 +55,8 @@ class EngineLoopRecorder : public QObject {
 
     QThread* LoopRecorderThread;
     LoopWriter* m_pLoopWriter;
+
+    bool m_bIsWriterReady;
 };
 
 #endif

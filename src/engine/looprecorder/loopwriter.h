@@ -28,6 +28,7 @@ class LoopWriter : public QObject {
   signals:
     void samplesRecorded(int);
     void finished();
+    void writerStarted();
 
   private:
 

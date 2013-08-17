@@ -12,13 +12,14 @@
 #include "looprecording/defs_looprecording.h"
 #include "util/timer.h"
 #include "util/counter.h"
-#include "sampleutil.h"
+//#include "sampleutil.h"
 #include "engine/looprecorder/loopwriter.h"
 
 #define LOOP_BUFFER_SIZE 16384
 
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
-        : m_config(_config) {
+        : m_config(_config),
+        m_bIsWriterReady(false) {
 
     m_pLoopWriter = new LoopWriter(_config);
 
@@ -28,9 +29,11 @@ EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
     // TODO(carl) make sure Thread exits properly.
     //connect(m_pLoopWriter, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
     connect(LoopRecorderThread, SIGNAL(started()), m_pLoopWriter, SLOT(slotStartWriter()));
+    connect(m_pLoopWriter, SIGNAL(writerStarted()), this, SLOT(slotWriterStarted()));
     connect(m_pLoopWriter, SIGNAL(finished()), LoopRecorderThread, SLOT(quit()));
     //connect(m_pLoopWriter, SIGNAL(finished()), m_pLoopWriter, SLOT(deleteLater()));
     connect(LoopRecorderThread, SIGNAL(finished()), LoopRecorderThread, SLOT(deleteLater()));
+
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
@@ -38,7 +41,7 @@ EngineLoopRecorder::~EngineLoopRecorder() {
 }
 
 void EngineLoopRecorder::writeSamples(const CSAMPLE* pBuffer, const int iBufferSize) {
-    ScopedTimer t("EngineLoopRecorder::writeSamples");
+    //ScopedTimer t("EngineLoopRecorder::writeSamples");
     //int samples_written = m_sampleFifo.write(newBuffer, buffer_size);
     
 //    if (samples_written != buffer_size) {
@@ -55,6 +58,11 @@ void EngineLoopRecorder::startThread() {
     qDebug() << "!~!~!~! EngineLoopRecorder::startThread() !~!~!~!";
     m_pLoopWriter->moveToThread(LoopRecorderThread);
     LoopRecorderThread->start();
+}
+
+void EngineLoopRecorder::slotWriterStarted() {
+    qDebug() << "!~!~!~! EngineLoopRecorder::slotWriterStarted() !~!~!~!";
+    m_bIsWriterReady = true;
 }
 
 //void EngineLoopRecorder::run() {
