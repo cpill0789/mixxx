@@ -24,6 +24,7 @@ class EngineLoopRecorder : public QObject {
     virtual ~EngineLoopRecorder();
 
     // Should this be process instead?
+    // Passes buffers to the LoopWriter object
     void writeSamples(const CSAMPLE* pBuffer, const int iBufferSize);
 
     // Moves the recorder object to the new thread and starts execution.
@@ -43,20 +44,15 @@ class EngineLoopRecorder : public QObject {
     void loadToLoopDeck();
 
   private slots:
-    void slotWriterStarted();
+    void slotThreadStarted();
 
   private:
-//    void run();
-
-//    void process(const CSAMPLE* pBuffer, const int iBufferSize);
-    //int getActiveTracks();
-    
     ConfigObject<ConfigValue>* m_config;
 
     QThread* LoopRecorderThread;
     LoopWriter* m_pLoopWriter;
 
-    bool m_bIsWriterReady;
+    bool m_bIsThreadReady;
 };
 
 #endif

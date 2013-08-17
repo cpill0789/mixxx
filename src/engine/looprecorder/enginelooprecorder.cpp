@@ -5,14 +5,10 @@
 #include "engine/looprecorder/enginelooprecorder.h"
 
 #include "configobject.h"
-//#include "controlobject.h"
-//#include "controlobjectthread.h"
 #include "errordialoghandler.h"
-//#include "playerinfo.h"
 #include "looprecording/defs_looprecording.h"
 #include "util/timer.h"
 #include "util/counter.h"
-//#include "sampleutil.h"
 #include "engine/looprecorder/loopwriter.h"
 
 #define LOOP_BUFFER_SIZE 16384
@@ -21,19 +17,16 @@ EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
         : m_config(_config),
         m_bIsWriterReady(false) {
 
-    m_pLoopWriter = new LoopWriter(_config);
+    m_pLoopWriter = new LoopWriter();
 
     LoopRecorderThread = new QThread;
     LoopRecorderThread->setObjectName(QString("LoopRecorder"));
 
-    // TODO(carl) make sure Thread exits properly.
-    //connect(m_pLoopWriter, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-    connect(LoopRecorderThread, SIGNAL(started()), m_pLoopWriter, SLOT(slotStartWriter()));
-    connect(m_pLoopWriter, SIGNAL(writerStarted()), this, SLOT(slotWriterStarted()));
-    connect(m_pLoopWriter, SIGNAL(finished()), LoopRecorderThread, SLOT(quit()));
-    //connect(m_pLoopWriter, SIGNAL(finished()), m_pLoopWriter, SLOT(deleteLater()));
-    connect(LoopRecorderThread, SIGNAL(finished()), LoopRecorderThread, SLOT(deleteLater()));
+    connect(LoopRecorderThread, SIGNAL(started()), m_pLoopWriter, SLOT(slotThreadStarted()));
 
+    // TODO(carl) make sure Thread exits properly.
+    connect(m_pLoopWriter, SIGNAL(finished()), LoopRecorderThread, SLOT(quit()));
+    connect(LoopRecorderThread, SIGNAL(finished()), LoopRecorderThread, SLOT(deleteLater()));
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
@@ -41,17 +34,11 @@ EngineLoopRecorder::~EngineLoopRecorder() {
 }
 
 void EngineLoopRecorder::writeSamples(const CSAMPLE* pBuffer, const int iBufferSize) {
-    //ScopedTimer t("EngineLoopRecorder::writeSamples");
-    //int samples_written = m_sampleFifo.write(newBuffer, buffer_size);
-    
-//    if (samples_written != buffer_size) {
-//        Counter("EngineLoopRecorder::writeSamples buffer overrun").increment();
-//    }
-//    
-//    if (m_sampleFifo.writeAvailable() < LOOP_BUFFER_SIZE/5) {
-//        // Signal to the loop recorder that samples are available.
-//        //m_waitForSamples.wakeAll();
-//    }
+    if(!m_bIsThreadReady) {
+        return;
+    }
+
+    m_pLoopWriter->process(pBuffer, iBufferSize);
 }
 
 void EngineLoopRecorder::startThread() {
@@ -60,9 +47,9 @@ void EngineLoopRecorder::startThread() {
     LoopRecorderThread->start();
 }
 
-void EngineLoopRecorder::slotWriterStarted() {
+void EngineLoopRecorder::slotThreadStarted() {
     qDebug() << "!~!~!~! EngineLoopRecorder::slotWriterStarted() !~!~!~!";
-    m_bIsWriterReady = true;
+    m_bIsThreadReady = true;
 }
 
 //void EngineLoopRecorder::run() {

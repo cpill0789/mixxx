@@ -7,44 +7,43 @@
 #include <QtCore>
 #include <sndfile.h>
 
-#include "configobject.h"
 #include "defs.h"
 #include "util/fifo.h"
 
 class LoopWriter : public QObject {
     Q_OBJECT
   public:
-    LoopWriter(ConfigObject<ConfigValue>* _config);
+    LoopWriter();
     virtual ~LoopWriter();
 
     void process(const CSAMPLE* pBuffer, const int iBufferSize);
 
   public slots:
-    void slotSetPath(QString);
     void slotStartRecording(int);
     void slotStopRecording();
-    void slotStartWriter();
 
   signals:
     void samplesRecorded(int);
     void finished();
-    void writerStarted();
+    void samplesAvailable();
+
+  private slots:
+    void slotProcessSamples();
 
   private:
+    void closeFile();
+    void recordBuffer();
+
 
     ConfigObject<ConfigValue>* m_pConfig;
 
     FIFO<CSAMPLE> m_sampleFifo;
     CSAMPLE* m_pWorkBuffer;
 
-    // Provides thread safety around the wait condition below.
-    QMutex m_waitLock;
-    // Allows sleeping until we have samples to process.
-    QWaitCondition m_waitForSamples;
-
-    bool m_isRecording;
-    QString m_path;
-
+    bool m_bIsRecording;
+    bool m_bIsFileAvailable;
+    unsigned int m_iLoopLength;
+    SNDFILE* m_pSndfile;
 };
 
 #endif
