@@ -9,9 +9,8 @@
 #include "looprecording/defs_looprecording.h"
 #include "engine/looprecorder/loopwriter.h"
 
-EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
-        : m_config(_config),
-        m_bIsThreadReady(false) {
+EngineLoopRecorder::EngineLoopRecorder()
+        : m_bIsThreadReady(false) {
 
     m_pLoopWriter = new LoopWriter();
 

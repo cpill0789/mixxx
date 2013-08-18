@@ -6,18 +6,15 @@
 #define ENGINELOOPRECORDER_H
 
 #include <QtCore>
-#include <sndfile.h>
 
-#include "configobject.h"
 #include "defs.h"
 
-class ConfigKey;
 class LoopWriter;
 
 class EngineLoopRecorder : public QObject {
     Q_OBJECT
   public:
-    EngineLoopRecorder(ConfigObject<ConfigValue>* _config);
+    EngineLoopRecorder();
     virtual ~EngineLoopRecorder();
 
     // Should this be process instead?
@@ -37,8 +34,6 @@ class EngineLoopRecorder : public QObject {
     void slotThreadStarted();
 
   private:
-    ConfigObject<ConfigValue>* m_config;
-
     QThread* LoopRecorderThread;
     LoopWriter* m_pLoopWriter;
 

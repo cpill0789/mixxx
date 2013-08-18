@@ -126,7 +126,7 @@ EngineMaster::EngineMaster(ConfigObject<ConfigValue> * _config,
 
     m_pLoopSource = new ControlObject(ConfigKey("[Loop_Recording]", "loop_source"));
 
-    m_pLoopRecorder = new EngineLoopRecorder(_config);
+    m_pLoopRecorder = new EngineLoopRecorder();
 }
 
 EngineMaster::~EngineMaster() {
