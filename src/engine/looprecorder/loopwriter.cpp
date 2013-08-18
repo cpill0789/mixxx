@@ -7,7 +7,6 @@
 #include "defs.h"
 #include "sampleutil.h"
 #include "util/counter.h"
-#include "controlobjectthread.h"
 
 #define LOOP_BUFFER_SIZE 16384
 #define WORK_BUFFER_SIZE 4096
@@ -22,15 +21,11 @@ LoopWriter::LoopWriter()
         //m_iLoopRemainder(0),
         m_iSamplesRecorded(0),
         m_pSndfile(NULL) {
-
-    m_pMasterAudioBufferSize = new ControlObjectThread(ConfigKey("[master]", "audio_buffer_size"));
-
     connect(this, SIGNAL(samplesAvailable()), this, SLOT(slotProcessSamples()));
 }
 
 LoopWriter::~LoopWriter() {
     qDebug() << "!~!~!~!~!~! Loop writer deleted !~!~!~!~!~!~!";
-    delete m_pMasterAudioBufferSize;
     SampleUtil::free(m_pWorkBuffer);
     emit(finished());
 }
@@ -73,11 +68,9 @@ void LoopWriter::slotStartRecording(int samples) {
 
     // TODO(carl): figure out extra padding needed.
     // I think the loops are getting shortened by the crossfade.
-    int iAudioBuffer = m_pMasterAudioBufferSize->get();
-    m_iLoopLength = samples + iAudioBuffer;
+    m_iLoopLength = samples;
     //m_iLoopRemainder = samples % LOOP_BUFFER_SIZE;
-        qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << samples
-                << " AB Size: " << iAudioBuffer << " !~!~!~!~!~!~!";
+        qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << m_iLoopLength << " !~!~!~!~!~!~!";
     //m_iLoopBreak = m_iLoopLength - m_iLoopRemainder;
     m_bIsRecording = true;
     emit(isRecording(true));

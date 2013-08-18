@@ -10,8 +10,6 @@
 #include "defs.h"
 #include "util/fifo.h"
 
-class ControlObjectThread;
-
 class LoopWriter : public QObject {
     Q_OBJECT
   public:
@@ -44,8 +42,6 @@ class LoopWriter : public QObject {
 
     FIFO<CSAMPLE> m_sampleFifo;
     CSAMPLE* m_pWorkBuffer;
-
-    ControlObjectThread* m_pMasterAudioBufferSize;
 
     bool m_bIsFileAvailable;
     bool m_bIsRecording;
