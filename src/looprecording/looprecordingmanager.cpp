@@ -337,7 +337,7 @@ quint64 LoopRecordingManager::getLoopLength() {
         return 0;
     }
 
-    // x beats * y sec/beat * z sample rate
+    // loop length in samples = x beats * y sec/beat * z sample rate
     int sampleRate = m_pSampleRate->get();
     int loopLength = (int)m_pCOLoopLength->get();
     float secondsPerBeat = 60/bpm;
