@@ -46,6 +46,11 @@ void LoopWriter::process(const CSAMPLE* pBuffer, const int iBufferSize) {
     }
 }
 
+void LoopWriter::slotClearWriter() {
+    slotStopRecording(false);
+    emit(clearRecorder());
+}
+
 void LoopWriter::slotSetFile(SNDFILE* pFile) {
     qDebug() << "!~!~!~!~!~! LoopWriter::slotSetFile";
 

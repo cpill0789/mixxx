@@ -33,6 +33,7 @@ class LoopRecordingManager : public QObject {
 //    void slotCountSamplesRecorded(int);
 
   signals:
+    void clearWriter();
     void exportToPlayer(QString, QString);
     void fileOpen(SNDFILE*);
 //    void isLoopRecording(bool);

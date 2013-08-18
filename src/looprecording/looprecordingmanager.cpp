@@ -96,8 +96,9 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
     LoopWriter* pLoopWriter = pLoopRecorder->getLoopWriter();
     if (pLoopWriter) {
         connect(pLoopWriter, SIGNAL(isRecording(bool)), this, SLOT(slotIsRecording(bool)));
-        //connect(pLoopWriter, SIGNAL(clearRecorder()), this, SLOT(slotClearRecorder()));
+        connect(pLoopWriter, SIGNAL(clearRecorder()), this, SLOT(slotClearRecorder()));
         connect(pLoopWriter, SIGNAL(loadAudio()), this, SLOT(slotLoadToLoopDeck()));
+        connect(this, SIGNAL(clearWriter()), pLoopWriter, SLOT(slotClearWriter()));
         connect(this, SIGNAL(startWriter(int)), pLoopWriter, SLOT(slotStartRecording(int)));
         connect(this, SIGNAL(stopWriter(bool)), pLoopWriter, SLOT(slotStopRecording(bool)));
         connect(this, SIGNAL(fileOpen(SNDFILE*)), pLoopWriter, SLOT(slotSetFile(SNDFILE*)));
@@ -259,7 +260,7 @@ void LoopRecordingManager::slotNumSamplersChanged(double v) {
 void LoopRecordingManager::slotToggleClear(double v) {
     //qDebug() << "LoopRecordingManager::slotClearRecorder v: " << v;
     if (v > 0.) {
-        //m_pRecReady->slotSet(LOOP_RECORD_CLEAR);
+        emit(clearWriter());
         m_pToggleLoopRecording->set(0.);
     }
 }

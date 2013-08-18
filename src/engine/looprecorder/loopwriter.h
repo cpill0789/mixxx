@@ -19,11 +19,14 @@ class LoopWriter : public QObject {
     void process(const CSAMPLE* pBuffer, const int iBufferSize);
 
   public slots:
+    void slotClearWriter();
+    void slotSetFile(SNDFILE*);
     void slotStartRecording(int);
     void slotStopRecording(bool);
-    void slotSetFile(SNDFILE*);
+
 
   signals:
+    void clearRecorder();
     void finished();
     void isRecording(bool);
     void samplesAvailable();
