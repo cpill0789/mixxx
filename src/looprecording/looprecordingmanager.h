@@ -4,7 +4,7 @@
 #include <QDesktopServices>
 #include <QDateTime>
 #include <QObject>
-
+#include <sndfile.h>
 
 #include "configobject.h"
 #include "controlobject.h"
@@ -39,9 +39,11 @@ class LoopRecordingManager : public QObject {
 
   signals:
     void exportToPlayer(QString, QString);
+    void fileOpen(SNDFILE*);
     void isLoopRecording(bool);
     void loadToLoopDeck(TrackPointer, QString, bool);
-    void startRecording(int);
+    void startWriter(int);
+    void stopWriter();
 
   private slots:
     void slotChangeExportDestination(double v);
@@ -60,6 +62,7 @@ class LoopRecordingManager : public QObject {
     void exportLoopToPlayer(QString group);
     QString formatDateTimeForFilename(QDateTime dateTime) const;
     quint64 getLoopLength();
+    SNDFILE* openSndFile(QString);
     void playLoopDeck();
     bool saveLoop(QString newFileLocation);
     void setRecordingDir();

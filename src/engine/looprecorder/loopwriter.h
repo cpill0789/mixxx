@@ -21,6 +21,7 @@ class LoopWriter : public QObject {
   public slots:
     void slotStartRecording(int);
     void slotStopRecording();
+    void slotSetFile(SNDFILE*);
 
   signals:
     void samplesRecorded(int);
@@ -32,16 +33,13 @@ class LoopWriter : public QObject {
 
   private:
     void closeFile();
-    void recordBuffer();
-
-
-    ConfigObject<ConfigValue>* m_pConfig;
+    void writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize);
 
     FIFO<CSAMPLE> m_sampleFifo;
     CSAMPLE* m_pWorkBuffer;
 
-    bool m_bIsRecording;
     bool m_bIsFileAvailable;
+    bool m_bIsRecording;
     unsigned int m_iLoopLength;
     SNDFILE* m_pSndfile;
 };

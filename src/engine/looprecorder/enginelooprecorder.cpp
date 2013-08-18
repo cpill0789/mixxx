@@ -7,22 +7,20 @@
 #include "configobject.h"
 #include "errordialoghandler.h"
 #include "looprecording/defs_looprecording.h"
-#include "util/timer.h"
-#include "util/counter.h"
 #include "engine/looprecorder/loopwriter.h"
 
 #define LOOP_BUFFER_SIZE 16384
 
 EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
         : m_config(_config),
-        m_bIsWriterReady(false) {
+        m_bIsThreadReady(false) {
 
     m_pLoopWriter = new LoopWriter();
 
     LoopRecorderThread = new QThread;
     LoopRecorderThread->setObjectName(QString("LoopRecorder"));
 
-    connect(LoopRecorderThread, SIGNAL(started()), m_pLoopWriter, SLOT(slotThreadStarted()));
+    connect(LoopRecorderThread, SIGNAL(started()), this, SLOT(slotThreadStarted()));
 
     // TODO(carl) make sure Thread exits properly.
     connect(m_pLoopWriter, SIGNAL(finished()), LoopRecorderThread, SLOT(quit()));
@@ -30,7 +28,7 @@ EngineLoopRecorder::EngineLoopRecorder(ConfigObject<ConfigValue>* _config)
 }
 
 EngineLoopRecorder::~EngineLoopRecorder() {
-    delete m_pLoopWriter;
+    m_pLoopWriter->deleteLater();
 }
 
 void EngineLoopRecorder::writeSamples(const CSAMPLE* pBuffer, const int iBufferSize) {
@@ -48,7 +46,7 @@ void EngineLoopRecorder::startThread() {
 }
 
 void EngineLoopRecorder::slotThreadStarted() {
-    qDebug() << "!~!~!~! EngineLoopRecorder::slotWriterStarted() !~!~!~!";
+    qDebug() << "!~!~!~! EngineLoopRecorder::slotThreadStarted() !~!~!~!";
     m_bIsThreadReady = true;
 }
 

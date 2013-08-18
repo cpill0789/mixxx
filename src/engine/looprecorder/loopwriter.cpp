@@ -6,6 +6,7 @@
 
 #include "defs.h"
 #include "sampleutil.h"
+#include "util/counter.h"
 
 #define LOOP_BUFFER_SIZE 16384
 
@@ -26,21 +27,26 @@ LoopWriter::~LoopWriter() {
 }
 
 void LoopWriter::process(const CSAMPLE* pBuffer, const int iBufferSize) {
+    //qDebug() << "!~!~!~!~!~! LoopWriter::process !~!~!~!~!~!~!";
     //ScopedTimer t("EngineLoopRecorder::writeSamples");
-    int samples_written = m_sampleFifo.write(newBuffer, buffer_size);
+    int samples_written = m_sampleFifo.write(pBuffer, iBufferSize);
 
-    if (samples_written != buffer_size) {
-        Counter("EngineLoopRecorder::writeSamples buffer overrun").increment();
+    if (samples_written != iBufferSize) {
+        // Should this check overrun vs underrun?
+        qDebug() << "!~!~!~!~!~! LoopWriter::process Buffer Overrun";
+        Counter("LoopWriter::process buffer overrun").increment();
     }
 
     if (m_sampleFifo.writeAvailable() < LOOP_BUFFER_SIZE/5) {
-        Signal to the loop recorder that samples are available.
+        // Signal to the loop recorder that samples are available.
         emit(samplesAvailable());
     }
 }
 
 void LoopWriter::slotSetFile(SNDFILE* pFile) {
-    if (!m_bIsFileOpen) {
+    qDebug() << "!~!~!~!~!~! LoopWriter::slotSetFile";
+
+    if (!m_bIsFileAvailable) {
         if (pFile != NULL) {
             m_pSndfile = pFile;
             m_bIsFileAvailable = true;
@@ -56,19 +62,17 @@ void LoopWriter::slotStartRecording(int samples) {
 
 void LoopWriter::slotStopRecording() {
     m_bIsRecording = false;
-    else {
-        // TODO(carl) check if temp buffers are open and clear them.
+    // TODO(carl) check if temp buffers are open and clear them.
 
-        if (m_bIsFileAvailable) {
-            closeFile();
-        }
+    if (m_bIsFileAvailable) {
+        closeFile();
     }
-
 }
 
 void LoopWriter::slotProcessSamples() {
+    //qDebug() << "!~!~!~!~!~! LoopWriter::slotProcessSamples !~!~!~!~!~!~!";
     int samples_read;
-    while ((samples_read = m_sampleFifo.read(m_pWorkBuffer, LOOP_BUFFER_SIZE))) {
+    if ((samples_read = m_sampleFifo.read(m_pWorkBuffer, LOOP_BUFFER_SIZE))) {
 
         // States for recording:
         // 1. not recording
@@ -79,19 +83,26 @@ void LoopWriter::slotProcessSamples() {
         if (m_bIsRecording) {
             writeBuffer(m_pWorkBuffer, samples_read);
         }
+
+        // More samples may be available, so we post another event.
+        emit(samplesAvailable());
     }
 }
 
 void LoopWriter::closeFile() {
+    qDebug() << "!~!~!~!~!~! LoopWriter::closeFile !~!~!~!~!~!~!";
     if(m_pSndfile != NULL) {
+        m_bIsFileAvailable = false;
         sf_close(m_pSndfile);
         // is this NULL assignment necessary?
         m_pSndfile = NULL;
+
     }
 }
 
 void LoopWriter::writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
-    if (m_bIsFileOpen) {
+    qDebug() << "!~!~!~!~!~! LoopWriter::writeBuffer !~!~!~!~!~!~!";
+    if (m_bIsFileAvailable) {
         // TODO(carl) check for buffers to flush
         sf_write_float(m_pSndfile, pBuffer, iBufferSize);
     } else {

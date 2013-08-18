@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QFile>
 #include <QMutex>
+#include <sndfile.h>
 
 #include "controlpushbutton.h"
 #include "engine/enginemaster.h"
@@ -99,7 +100,9 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
         //connect(pLoopRecorder, SIGNAL(clearRecorder()),this, SLOT(slotClearRecorder()));
         //connect(pLoopRecorder, SIGNAL(loadToLoopDeck()),this, SLOT(slotLoadToLoopDeck()));
         //connect(pLoopRecorder, SIGNAL(samplesRecorded(int)), this, SLOT(slotCountSamplesRecorded(int)));
-        connect(this, SIGNAL(startRecording(int)), pLoopWriter, SLOT(slotStartRecording(int)));
+        connect(this, SIGNAL(startWriter(int)), pLoopWriter, SLOT(slotStartRecording(int)));
+        connect(this, SIGNAL(stopWriter()), pLoopWriter, SLOT(slotStopRecording()));
+        connect(this, SIGNAL(fileOpen(SNDFILE*)), pLoopWriter, SLOT(slotSetFile(SNDFILE*)));
     }
     // Start thread for writing files.
     if (pLoopRecorder) {
@@ -134,7 +137,11 @@ LoopRecordingManager::~LoopRecordingManager() {
 }
 
 void LoopRecordingManager::startRecording() {
-    //qDebug() << "LoopRecordingManager startRecording";
+    qDebug() << "LoopRecordingManager startRecording";
+
+    m_iLoopLength = getLoopLength();
+    emit(startWriter(m_iLoopLength));
+    m_isRecording = true;
 
     QString number_str = QString::number(m_iLoopNumber++);
 
@@ -148,21 +155,22 @@ void LoopRecordingManager::startRecording() {
     // appending file extension to get the filelocation
     m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
 
-    m_filesRecorded << m_recordingLocation;
-
-    m_iLoopLength = getLoopLength();
-
-    // TODO(carl) is this thread safe?
-    m_pConfig->set(ConfigKey(LOOP_RECORDING_PREF_KEY, "Path"), m_recordingLocation);
-    m_pRecReady->slotSet(LOOP_RECORD_READY);
-
-    //qDebug() << "startRecording Location: " << m_recordingLocation;
+    SNDFILE* pSndFile = openSndFile(m_recordingLocation);
+    if (pSndFile != NULL) {
+        emit fileOpen(pSndFile);
+        // add to file registry
+        m_filesRecorded << m_recordingLocation;
+    } else {
+        // error message and stop recording.
+    }
 }
 
 void LoopRecordingManager::stopRecording()
 {
-    qDebug() << "LoopRecordingManager::stopRecording NumSamples: " << m_iNumSamplesRecorded;
-    m_pRecReady->slotSet(LOOP_RECORD_OFF);
+    //qDebug() << "LoopRecordingManager::stopRecording NumSamples: " << m_iNumSamplesRecorded;
+    qDebug() << "LoopRecordingManager::stopRecording";
+    emit(stopWriter());
+    m_isRecording = false;
     m_iNumSamplesRecorded = 0;
     m_recordingFile = "";
     m_recordingLocation = "";
@@ -323,11 +331,11 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
     qDebug() << "LoopRecordingManager::slotToggleLoopRecording BPM: " << m_pMasterBPM->get();
     if (v > 0.) {
         if (isLoopRecordingActive()) {
-            //stopRecording();
+            stopRecording();
         } else {
-            emit(startRecording(0));
+            //emit(startRecording(0));
             //getLoopLength();
-            //startRecording();
+            startRecording();
         }
     }
 }
@@ -394,6 +402,49 @@ quint64 LoopRecordingManager::getLoopLength() {
 //             << " length: " << length;
 
     return length;
+}
+
+SNDFILE* LoopRecordingManager::openSndFile(QString filePath) {
+    qDebug() << "LoopRecordingManager::openSndFile path: " << filePath;
+    unsigned long samplerate = m_pSampleRate->get();
+
+    // set sfInfo
+    SF_INFO sfInfo;
+    sfInfo.samplerate = samplerate;
+    sfInfo.channels = 2;
+
+    sfInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+
+    SNDFILE* pSndFile = sf_open(filePath.toLocal8Bit(), SFM_WRITE, &sfInfo);
+    if (pSndFile) {
+        sf_command(pSndFile, SFC_SET_NORM_FLOAT, NULL, SF_FALSE) ;
+//        //set meta data
+//        int ret;
+//
+//        ret = sf_set_string(m_sndfile, SF_STR_TITLE, m_baTitle.data());
+//        if(ret != 0)
+//            qDebug("libsndfile: %s", sf_error_number(ret));
+//
+//        ret = sf_set_string(m_sndfile, SF_STR_ARTIST, m_baAuthor.data());
+//        if(ret != 0)
+//            qDebug("libsndfile: %s", sf_error_number(ret));
+//
+//        ret = sf_set_string(m_sndfile, SF_STR_COMMENT, m_baAlbum.data());
+//        if(ret != 0)
+//            qDebug("libsndfile: %s", sf_error_number(ret));
+
+    }
+//
+//    // check if file is really open
+//    if (!isFileOpen()) {
+//        ErrorDialogProperties* props = ErrorDialogHandler::instance()->newDialogProperties();
+//        props->setType(DLG_WARNING);
+//        props->setTitle(tr("Loop Recording"));
+//        props->setText(tr("<html>Could not create audio file for loop recording!<p><br>Maybe you do not have enough free disk space or file permissions.</html>"));
+//        ErrorDialogHandler::instance()->requestErrorDialog(props);
+//        return false;
+//    }
+    return pSndFile;
 }
 
 void LoopRecordingManager::playLoopDeck() {
