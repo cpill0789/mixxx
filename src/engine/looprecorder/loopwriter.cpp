@@ -41,7 +41,7 @@ void LoopWriter::process(const CSAMPLE* pBuffer, const int iBufferSize) {
         Counter("LoopWriter::process buffer overrun").increment();
     }
 
-    if (m_sampleFifo.writeAvailable() < LOOP_BUFFER_SIZE/5) {
+    if (m_sampleFifo.writeAvailable() < LOOP_BUFFER_SIZE/4) {
         // Signal to the loop recorder that samples are available.
         emit(samplesAvailable());
     }
@@ -152,6 +152,7 @@ void LoopWriter::writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
         }
     } else {
         // TODO(carl) write to temporary buffer.
+        qDebug() << "!~!~!~!~!~! LoopWriter::writeBuffer Buffer dropped !~!~!~!~!~!~!";
     }
 
 }
