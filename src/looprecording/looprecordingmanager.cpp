@@ -329,21 +329,21 @@ QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) cons
 }
 
 unsigned int LoopRecordingManager::getLoopLength() {
-    float bpm = m_pMasterBPM->get();
-    if (bpm == 0.0f) {
+    double bpm = m_pMasterBPM->get();
+    if (bpm == 0.) {
         return 0;
     }
 
-    // loop length in samples = x beats * y sec/beat * z sample rate
-    int loopLength = (int)m_pCOLoopLength->get();
-    float sampleRate = m_pSampleRate->get();
-    float secondsPerBeat = 60.0f/bpm;
+    // loop length in samples = x beats * y sec/beat * z sample rate * 2 channels
+    double loopLength = m_pCOLoopLength->get();
+    double sampleRate = m_pSampleRate->get();
+    //float secondsPerBeat = 60.0f/bpm;
 
-    unsigned int length = loopLength * (secondsPerBeat * sampleRate) * 2;
+    unsigned int length = (unsigned int)((loopLength * 60. * sampleRate * 2.)/bpm);
 
-//    qDebug() << "!!!!!!!LoopRecordingManager::getloopLength sampleRate: " << sampleRate
-//             << " loopLength: " << loopLength << " secondsPerBeat: " << secondsPerBeat
-//             << " length: " << length;
+    qDebug() << "!!!!!!!LoopRecordingManager::getloopLength sampleRate: " << sampleRate
+             << " loopLength: " << loopLength << " bpm: " << bpm
+             << " length: " << length;
 
     return length;
 }
