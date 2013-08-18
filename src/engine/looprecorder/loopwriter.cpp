@@ -15,8 +15,10 @@ LoopWriter::LoopWriter()
         m_pWorkBuffer(SampleUtil::alloc(LOOP_BUFFER_SIZE)),
         m_bIsFileAvailable(false),
         m_bIsRecording(false),
+        m_iLoopBreak(0),
         m_iLoopLength(0),
         m_iLoopRemainder(0),
+        m_iSamplesRecorded(0),
         m_pSndfile(NULL) {
     connect(this, SIGNAL(samplesAvailable()), this, SLOT(slotProcessSamples()));
 }
@@ -56,15 +58,24 @@ void LoopWriter::slotSetFile(SNDFILE* pFile) {
 }
 
 void LoopWriter::slotStartRecording(int samples) {
+    m_iSamplesRecorded = 0;
     m_iLoopLength = samples;
     m_iLoopRemainder = samples % LOOP_BUFFER_SIZE;
         qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << samples << " Remainder: " << m_iLoopRemainder << " !~!~!~!~!~!~!";
+    m_iLoopBreak = m_iLoopLength - m_iLoopRemainder;
     m_bIsRecording = true;
 }
 
 void LoopWriter::slotStopRecording() {
+    qDebug() << "!~!~!~!~!~! LoopWriter::slotStopRecording Samples Recorded: " << m_iSamplesRecorded << " !~!~!~!~!~!~!";
+
     m_bIsRecording = false;
     // TODO(carl) check if temp buffers are open and clear them.
+
+    m_iLoopBreak = 0;
+    m_iLoopLength = 0;
+    m_iLoopRemainder = 0;
+    m_iSamplesRecorded = 0;
 
     if (m_bIsFileAvailable) {
         closeFile();
@@ -103,10 +114,19 @@ void LoopWriter::closeFile() {
 }
 
 void LoopWriter::writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
-    //qDebug() << "!~!~!~!~!~! LoopWriter::writeBuffer !~!~!~!~!~!~!";
+    
     if (m_bIsFileAvailable) {
         // TODO(carl) check for buffers to flush
-        sf_write_float(m_pSndfile, pBuffer, iBufferSize);
+
+        if ((m_iLoopLength > 0) && (m_iSamplesRecorded == m_iLoopBreak)) {
+            // Trim loop to exact length specified.
+            sf_write_float(m_pSndfile, pBuffer, m_iLoopRemainder);
+            slotStopRecording();
+        } else {
+            sf_write_float(m_pSndfile, pBuffer, iBufferSize);
+            m_iSamplesRecorded += iBufferSize;
+            qDebug() << "!~!~!~!~!~! Samples Recorded: " << m_iSamplesRecorded<<  " !~!~!~!~!~!~!";
+        }
     } else {
         // TODO(carl) write to temporary buffer.
     }
