@@ -9,12 +9,9 @@
 #include <sndfile.h>
 
 #include "configobject.h"
-#include "trackinfoobject.h"
-#include "util/fifo.h"
+#include "defs.h"
 
 class ConfigKey;
-//class ControlObject;
-//class ControlObjectThread;
 class LoopWriter;
 
 class EngineLoopRecorder : public QObject {
@@ -35,13 +32,6 @@ class EngineLoopRecorder : public QObject {
     LoopWriter* getLoopWriter() {
         return m_pLoopWriter;
     }
-
-  signals:
-    // emitted to notify LoopRecordingManager of number of samples recorded
-    void samplesRecorded(int);
-    void isLoopRecording(bool);
-    //void clearRecorder();
-    //void loadToLoopDeck();
 
   private slots:
     void slotThreadStarted();
