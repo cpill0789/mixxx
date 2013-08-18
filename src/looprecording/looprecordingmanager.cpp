@@ -24,10 +24,10 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
         m_recordingFile(""),
         m_recordingLocation(""),
         m_isRecording(false),
+        m_iLoopLength(0),
         m_iLoopNumber(0),
         m_iNumDecks(0),
-        m_iNumSamplers(0),
-        m_iLoopLength(0) {
+        m_iNumSamplers(0) {
 
     m_pCOExportDestination = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_destination"));
     m_pCOLoopLength = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_length"));
@@ -279,8 +279,6 @@ void LoopRecordingManager::slotToggleLoopRecording(double v) {
         if (m_isRecording) {
             stopRecording();
         } else {
-            //emit(startRecording(0));
-            //getLoopLength();
             startRecording();
         }
     }
@@ -330,18 +328,18 @@ QString LoopRecordingManager::formatDateTimeForFilename(QDateTime dateTime) cons
     return formatted;
 }
 
-quint64 LoopRecordingManager::getLoopLength() {
+unsigned int LoopRecordingManager::getLoopLength() {
     float bpm = m_pMasterBPM->get();
     if (bpm == 0.0f) {
         return 0;
     }
 
     // loop length in samples = x beats * y sec/beat * z sample rate
-    int sampleRate = m_pSampleRate->get();
     int loopLength = (int)m_pCOLoopLength->get();
-    float secondsPerBeat = 60/bpm;
-    // TODO(carl) can we assume stereo output?
-    quint64 length = loopLength * (quint64)(secondsPerBeat * sampleRate) * 2;
+    float sampleRate = m_pSampleRate->get();
+    float secondsPerBeat = 60.0f/bpm;
+
+    unsigned int length = loopLength * (secondsPerBeat * sampleRate) * 2;
 
 //    qDebug() << "!!!!!!!LoopRecordingManager::getloopLength sampleRate: " << sampleRate
 //             << " loopLength: " << loopLength << " secondsPerBeat: " << secondsPerBeat
@@ -364,23 +362,8 @@ SNDFILE* LoopRecordingManager::openSndFile(QString filePath) {
     SNDFILE* pSndFile = sf_open(filePath.toLocal8Bit(), SFM_WRITE, &sfInfo);
     if (pSndFile) {
         sf_command(pSndFile, SFC_SET_NORM_FLOAT, NULL, SF_FALSE) ;
-//        //set meta data
-//        int ret;
-//
-//        ret = sf_set_string(m_sndfile, SF_STR_TITLE, m_baTitle.data());
-//        if(ret != 0)
-//            qDebug("libsndfile: %s", sf_error_number(ret));
-//
-//        ret = sf_set_string(m_sndfile, SF_STR_ARTIST, m_baAuthor.data());
-//        if(ret != 0)
-//            qDebug("libsndfile: %s", sf_error_number(ret));
-//
-//        ret = sf_set_string(m_sndfile, SF_STR_COMMENT, m_baAlbum.data());
-//        if(ret != 0)
-//            qDebug("libsndfile: %s", sf_error_number(ret));
-
     }
-//
+    // TODO(carl) graceful error handling. 
 //    // check if file is really open
 //    if (!isFileOpen()) {
 //        ErrorDialogProperties* props = ErrorDialogHandler::instance()->newDialogProperties();
