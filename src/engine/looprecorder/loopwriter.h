@@ -40,9 +40,9 @@ class LoopWriter : public QObject {
 
     bool m_bIsFileAvailable;
     bool m_bIsRecording;
-    unsigned int m_iLoopBreak;
+    //unsigned int m_iLoopBreak;
     unsigned int m_iLoopLength;
-    unsigned int m_iLoopRemainder;
+    //unsigned int m_iLoopRemainder;
     quint64 m_iSamplesRecorded;
     SNDFILE* m_pSndfile;
 };
