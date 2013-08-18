@@ -24,13 +24,8 @@ class LoopRecordingManager : public QObject {
   public:
     LoopRecordingManager(ConfigObject<ConfigValue>* pConfig, EngineMaster* pEngine);
     virtual ~LoopRecordingManager();
-    
-    // This will try to start recording. If successful, slotIsRecording will be
-    // called and a signal isRecording will be emitted.
-    void startRecording();
-    void stopRecording();
-    bool isLoopRecordingActive();
-    
+//    bool isLoopRecordingActive();
+
   public slots:
     void slotClearRecorder();
     void slotIsLoopRecording(bool);
@@ -51,7 +46,6 @@ class LoopRecordingManager : public QObject {
     void slotChangeLoopSource(double v);
     void slotNumDecksChanged(double v);
     void slotNumSamplersChanged(double v);
-    void slotSetLoopRecording(bool recording);
     void slotToggleClear(double v);
     void slotToggleExport(double v);
     void slotToggleLoopRecording(double v);
@@ -66,6 +60,8 @@ class LoopRecordingManager : public QObject {
     void playLoopDeck();
     bool saveLoop(QString newFileLocation);
     void setRecordingDir();
+    void startRecording();
+    void stopRecording();
     void stopLoopDeck();
 
     ConfigObject<ConfigValue>* m_pConfig;

@@ -136,50 +136,6 @@ LoopRecordingManager::~LoopRecordingManager() {
     delete m_pCOExportDestination;
 }
 
-void LoopRecordingManager::startRecording() {
-    qDebug() << "LoopRecordingManager startRecording";
-
-    m_iLoopLength = getLoopLength();
-    emit(startWriter(m_iLoopLength));
-    m_isRecording = true;
-
-    QString number_str = QString::number(m_iLoopNumber++);
-
-    // TODO(carl) do we really need this?
-    //m_recordingFile = QString("%1_%2.%3")
-    //.arg("loop",date_time_str, encodingType.toLower());
-
-    // Storing the absolutePath of the recording file without file extension
-    m_recording_base_file = QString("%1/%2_%3_%4").arg(m_recordingDir,"loop",number_str,date_time_str);
-    //m_recording_base_file.append("/loop_" + m_iLoopNumber + "_" + date_time_str);
-    // appending file extension to get the filelocation
-    m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
-
-    SNDFILE* pSndFile = openSndFile(m_recordingLocation);
-    if (pSndFile != NULL) {
-        emit fileOpen(pSndFile);
-        // add to file registry
-        m_filesRecorded << m_recordingLocation;
-    } else {
-        // error message and stop recording.
-    }
-}
-
-void LoopRecordingManager::stopRecording()
-{
-    //qDebug() << "LoopRecordingManager::stopRecording NumSamples: " << m_iNumSamplesRecorded;
-    qDebug() << "LoopRecordingManager::stopRecording";
-    emit(stopWriter());
-    m_isRecording = false;
-    m_iNumSamplesRecorded = 0;
-    m_recordingFile = "";
-    m_recordingLocation = "";
-}
-
-bool LoopRecordingManager::isLoopRecordingActive() {
-    return m_isRecording;
-}
-
 // Public Slots
 
 // Connected to EngineLoopRecorder.
@@ -302,15 +258,6 @@ void LoopRecordingManager::slotNumSamplersChanged(double v) {
     //qDebug() << "!!!!LoopRecordingManager::slotNumSamplersChanged num: " << m_iNumSamplers;
 }
 
-void LoopRecordingManager::slotSetLoopRecording(bool recording) {
-    //qDebug() << "LoopRecordingManager slotSetLoopRecording";
-    if (recording && !isLoopRecordingActive()) {
-        startRecording();
-    } else if (!recording && isLoopRecordingActive()) {
-        stopRecording();
-    }
-}
-
 void LoopRecordingManager::slotToggleClear(double v) {
     //qDebug() << "LoopRecordingManager::slotClearRecorder v: " << v;
     if (v > 0.) {
@@ -328,9 +275,9 @@ void LoopRecordingManager::slotToggleExport(double v) {
 }
 
 void LoopRecordingManager::slotToggleLoopRecording(double v) {
-    qDebug() << "LoopRecordingManager::slotToggleLoopRecording BPM: " << m_pMasterBPM->get();
     if (v > 0.) {
-        if (isLoopRecordingActive()) {
+        //qDebug() << "LoopRecordingManager::slotToggleLoopRecording BPM: " << m_pMasterBPM->get();
+        if (m_isRecording) {
             stopRecording();
         } else {
             //emit(startRecording(0));
@@ -482,6 +429,46 @@ void LoopRecordingManager::setRecordingDir() {
     }
     m_recordingDir = recordDir.absolutePath();
     qDebug() << "Loop Recordings folder set to" << m_recordingDir;
+}
+
+void LoopRecordingManager::startRecording() {
+    qDebug() << "LoopRecordingManager startRecording";
+
+    m_iLoopLength = getLoopLength();
+    emit(startWriter(m_iLoopLength));
+    m_isRecording = true;
+
+    QString number_str = QString::number(m_iLoopNumber++);
+
+    // TODO(carl) do we really need this?
+    //m_recordingFile = QString("%1_%2.%3")
+    //.arg("loop",date_time_str, encodingType.toLower());
+
+    // Storing the absolutePath of the recording file without file extension
+    m_recording_base_file = QString("%1/%2_%3_%4").arg(m_recordingDir,"loop",number_str,date_time_str);
+    //m_recording_base_file.append("/loop_" + m_iLoopNumber + "_" + date_time_str);
+    // appending file extension to get the filelocation
+    m_recordingLocation = m_recording_base_file + "."+ encodingType.toLower();
+
+    SNDFILE* pSndFile = openSndFile(m_recordingLocation);
+    if (pSndFile != NULL) {
+        emit fileOpen(pSndFile);
+        // add to file registry
+        m_filesRecorded << m_recordingLocation;
+    } else {
+        // error message and stop recording.
+    }
+}
+
+void LoopRecordingManager::stopRecording()
+{
+    //qDebug() << "LoopRecordingManager::stopRecording NumSamples: " << m_iNumSamplesRecorded;
+    qDebug() << "LoopRecordingManager::stopRecording";
+    emit(stopWriter());
+    m_isRecording = false;
+    m_iNumSamplesRecorded = 0;
+    m_recordingFile = "";
+    m_recordingLocation = "";
 }
 
 void LoopRecordingManager::stopLoopDeck() {
