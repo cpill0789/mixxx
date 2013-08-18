@@ -20,13 +20,15 @@ class LoopWriter : public QObject {
 
   public slots:
     void slotStartRecording(int);
-    void slotStopRecording();
+    void slotStopRecording(bool);
     void slotSetFile(SNDFILE*);
 
   signals:
-    void samplesRecorded(int);
     void finished();
+    void isRecording(bool);
     void samplesAvailable();
+    void samplesRecorded(int);
+    void loadAudio();
 
   private slots:
     void slotProcessSamples();

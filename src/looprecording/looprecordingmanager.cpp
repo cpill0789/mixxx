@@ -27,8 +27,7 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
         m_iLoopNumber(0),
         m_iNumDecks(0),
         m_iNumSamplers(0),
-        m_iLoopLength(0),
-        m_iNumSamplesRecorded(0) {
+        m_iLoopLength(0) {
 
     m_pCOExportDestination = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "export_destination"));
     m_pCOLoopLength = new ControlObject(ConfigKey(LOOP_RECORDING_PREF_KEY, "loop_length"));
@@ -96,12 +95,11 @@ LoopRecordingManager::LoopRecordingManager(ConfigObject<ConfigValue>* pConfig,
     EngineLoopRecorder* pLoopRecorder = pEngine->getLoopRecorder();
     LoopWriter* pLoopWriter = pLoopRecorder->getLoopWriter();
     if (pLoopWriter) {
-        //connect(pLoopRecorder, SIGNAL(isLoopRecording(bool)),this, SLOT(slotIsLoopRecording(bool)));
-        //connect(pLoopRecorder, SIGNAL(clearRecorder()),this, SLOT(slotClearRecorder()));
-        //connect(pLoopRecorder, SIGNAL(loadToLoopDeck()),this, SLOT(slotLoadToLoopDeck()));
-        //connect(pLoopRecorder, SIGNAL(samplesRecorded(int)), this, SLOT(slotCountSamplesRecorded(int)));
+        connect(pLoopWriter, SIGNAL(isRecording(bool)), this, SLOT(slotIsRecording(bool)));
+        //connect(pLoopWriter, SIGNAL(clearRecorder()), this, SLOT(slotClearRecorder()));
+        connect(pLoopWriter, SIGNAL(loadAudio()), this, SLOT(slotLoadToLoopDeck()));
         connect(this, SIGNAL(startWriter(int)), pLoopWriter, SLOT(slotStartRecording(int)));
-        connect(this, SIGNAL(stopWriter()), pLoopWriter, SLOT(slotStopRecording()));
+        connect(this, SIGNAL(stopWriter(bool)), pLoopWriter, SLOT(slotStopRecording(bool)));
         connect(this, SIGNAL(fileOpen(SNDFILE*)), pLoopWriter, SLOT(slotSetFile(SNDFILE*)));
     }
     // Start thread for writing files.
@@ -156,10 +154,10 @@ void LoopRecordingManager::slotClearRecorder() {
     m_filesRecorded.clear();
 }
 
-void LoopRecordingManager::slotIsLoopRecording(bool isRecordingActive) {
+void LoopRecordingManager::slotIsRecording(bool isRecordingActive) {
 
     m_isRecording = isRecordingActive;
-    emit(isLoopRecording(isRecordingActive));
+    //emit(isLoopRecording(isRecordingActive));
 }
 
 // Connected to EngineLoopRecorder.
@@ -174,14 +172,14 @@ void LoopRecordingManager::slotLoadToLoopDeck() {
     }
 }
 
-void LoopRecordingManager::slotCountSamplesRecorded(int samples) {
-    m_iNumSamplesRecorded += samples;
-
-    if ((m_iLoopLength > 0) && (m_iNumSamplesRecorded >= m_iLoopLength)) {
-        qDebug() << "!-!-!-! Stop recording: Loop Length: " << m_iLoopLength << " Samples: " << m_iNumSamplesRecorded;
-        stopRecording();
-    }
-}
+//void LoopRecordingManager::slotCountSamplesRecorded(int samples) {
+//    m_iNumSamplesRecorded += samples;
+//
+//    if ((m_iLoopLength > 0) && (m_iNumSamplesRecorded >= m_iLoopLength)) {
+//        qDebug() << "!-!-!-! Stop recording: Loop Length: " << m_iLoopLength << " Samples: " << m_iNumSamplesRecorded;
+//        stopRecording();
+//    }
+//}
 
 // Private Slots
 
@@ -261,7 +259,7 @@ void LoopRecordingManager::slotNumSamplersChanged(double v) {
 void LoopRecordingManager::slotToggleClear(double v) {
     //qDebug() << "LoopRecordingManager::slotClearRecorder v: " << v;
     if (v > 0.) {
-        m_pRecReady->slotSet(LOOP_RECORD_CLEAR);
+        //m_pRecReady->slotSet(LOOP_RECORD_CLEAR);
         m_pToggleLoopRecording->set(0.);
     }
 }
@@ -436,7 +434,7 @@ void LoopRecordingManager::startRecording() {
 
     m_iLoopLength = getLoopLength();
     emit(startWriter(m_iLoopLength));
-    m_isRecording = true;
+    //m_isRecording = true;
 
     QString number_str = QString::number(m_iLoopNumber++);
 
@@ -464,9 +462,8 @@ void LoopRecordingManager::stopRecording()
 {
     //qDebug() << "LoopRecordingManager::stopRecording NumSamples: " << m_iNumSamplesRecorded;
     qDebug() << "LoopRecordingManager::stopRecording";
-    emit(stopWriter());
-    m_isRecording = false;
-    m_iNumSamplesRecorded = 0;
+    emit(stopWriter(true));
+    //m_iNumSamplesRecorded = 0;
     m_recordingFile = "";
     m_recordingLocation = "";
 }

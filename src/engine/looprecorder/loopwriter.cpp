@@ -64,12 +64,14 @@ void LoopWriter::slotStartRecording(int samples) {
         qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << samples << " !~!~!~!~!~!~!";
     //m_iLoopBreak = m_iLoopLength - m_iLoopRemainder;
     m_bIsRecording = true;
+    emit(isRecording(true));
 }
 
-void LoopWriter::slotStopRecording() {
+void LoopWriter::slotStopRecording(bool playLoop) {
     qDebug() << "!~!~!~!~!~! LoopWriter::slotStopRecording Samples Recorded: " << m_iSamplesRecorded << " !~!~!~!~!~!~!";
 
     m_bIsRecording = false;
+    emit(isRecording(false));
     // TODO(carl) check if temp buffers are open and clear them.
 
     //m_iLoopBreak = 0;
@@ -79,6 +81,10 @@ void LoopWriter::slotStopRecording() {
 
     if (m_bIsFileAvailable) {
         closeFile();
+    }
+
+    if (playLoop) {
+        emit(loadAudio());
     }
 }
 
@@ -109,7 +115,6 @@ void LoopWriter::closeFile() {
         sf_close(m_pSndfile);
         // is this NULL assignment necessary?
         m_pSndfile = NULL;
-
     }
 }
 
@@ -126,7 +131,7 @@ void LoopWriter::writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
                 // Trim loop to exact length specified.
                 sf_write_float(m_pSndfile, pBuffer, iLoopRemainder);
                 m_iSamplesRecorded += iLoopRemainder;
-                slotStopRecording();
+                slotStopRecording(true);
 
             } else {
                 sf_write_float(m_pSndfile, pBuffer, iBufferSize);

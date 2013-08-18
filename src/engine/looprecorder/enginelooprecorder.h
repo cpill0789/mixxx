@@ -40,8 +40,8 @@ class EngineLoopRecorder : public QObject {
     // emitted to notify LoopRecordingManager of number of samples recorded
     void samplesRecorded(int);
     void isLoopRecording(bool);
-    void clearRecorder();
-    void loadToLoopDeck();
+    //void clearRecorder();
+    //void loadToLoopDeck();
 
   private slots:
     void slotThreadStarted();
