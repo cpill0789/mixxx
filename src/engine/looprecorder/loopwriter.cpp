@@ -73,9 +73,11 @@ void LoopWriter::slotStartRecording(int samples) {
 
     // TODO(carl): figure out extra padding needed.
     // I think the loops are getting shortened by the crossfade.
-    m_iLoopLength = samples + m_pMasterAudioBufferSize->get();
+    int iAudioBuffer = m_pMasterAudioBufferSize->get();
+    m_iLoopLength = samples + iAudioBuffer;
     //m_iLoopRemainder = samples % LOOP_BUFFER_SIZE;
-        qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << samples << " !~!~!~!~!~!~!";
+        qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << samples
+                << " AB Size: " << iAudioBuffer << " !~!~!~!~!~!~!";
     //m_iLoopBreak = m_iLoopLength - m_iLoopRemainder;
     m_bIsRecording = true;
     emit(isRecording(true));
@@ -146,17 +148,18 @@ void LoopWriter::writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
                 unsigned int iRemainder = m_iLoopLength - m_iSamplesRecorded;
                 sf_write_float(m_pSndfile, pBuffer, iRemainder);
                 m_iSamplesRecorded += iRemainder;
-                qDebug() << "!~!~!~!~!~! Samples Recorded: " << m_iSamplesRecorded<<  " !~!~!~!~!~!~!";
+                qDebug() << "!~!~!~!~!~! Samples Recorded: " << m_iSamplesRecorded
+                        << "Remainder: " << iRemainder << " !~!~!~!~!~!~!";
                 slotStopRecording(true);
             } else {
                 sf_write_float(m_pSndfile, pBuffer, iBufferSize);
                 m_iSamplesRecorded += iBufferSize;
-                qDebug() << "!~!~!~!~!~! Samples Recorded: " << m_iSamplesRecorded<<  " !~!~!~!~!~!~!";
+                qDebug() << "!~!~!~!~!~! Samples Recorded: " << m_iSamplesRecorded <<  " !~!~!~!~!~!~!";
             }
         } else {
             sf_write_float(m_pSndfile, pBuffer, iBufferSize);
             m_iSamplesRecorded += iBufferSize;
-            qDebug() << "!~!~!~!~!~! Samples Recorded: " << m_iSamplesRecorded<<  " !~!~!~!~!~!~!";
+            qDebug() << "!~!~!~!~!~! Samples Recorded: " << m_iSamplesRecorded <<  " !~!~!~!~!~!~!";
         }
     } else {
         // TODO(carl) write to temporary buffer.
