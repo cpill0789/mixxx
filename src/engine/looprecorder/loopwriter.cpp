@@ -9,10 +9,11 @@
 #include "util/counter.h"
 
 #define LOOP_BUFFER_SIZE 16384
+#define WORK_BUFFER_SIZE 4096
 
 LoopWriter::LoopWriter()
         : m_sampleFifo(LOOP_BUFFER_SIZE),
-        m_pWorkBuffer(SampleUtil::alloc(LOOP_BUFFER_SIZE)),
+        m_pWorkBuffer(SampleUtil::alloc(WORK_BUFFER_SIZE)),
         m_bIsFileAvailable(false),
         m_bIsRecording(false),
         //m_iLoopBreak(0),
@@ -95,8 +96,8 @@ void LoopWriter::slotStopRecording(bool playLoop) {
 
 void LoopWriter::slotProcessSamples() {
     //qDebug() << "!~!~!~!~!~! LoopWriter::slotProcessSamples !~!~!~!~!~!~!";
-    int samples_read;
-    if ((samples_read = m_sampleFifo.read(m_pWorkBuffer, LOOP_BUFFER_SIZE))) {
+    int iSamplesRead;
+    if ((iSamplesRead = m_sampleFifo.read(m_pWorkBuffer, WORK_BUFFER_SIZE))) {
 
         // States for recording:
         // 1. not recording
@@ -105,7 +106,7 @@ void LoopWriter::slotProcessSamples() {
         // 4. Stopping recording (closing file, sending to deck)
 
         if (m_bIsRecording) {
-            writeBuffer(m_pWorkBuffer, samples_read);
+            writeBuffer(m_pWorkBuffer, iSamplesRead);
         }
 
         // More samples may be available, so we signal for another event.
