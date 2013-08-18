@@ -69,7 +69,7 @@ void LoopWriter::slotStartRecording(int samples) {
     // TODO(carl): figure out extra padding needed.
     // I think the loops are getting shortened by the crossfade.
     m_iLoopLength = samples;
-    m_iBreakPoint = m_iLoopLength - (m_iLoopLength % WORK_BUFFER_SIZE);
+    m_iBreakPoint = m_iLoopLength - WORK_BUFFER_SIZE;
 
     qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << m_iLoopLength <<
                 "Break: " << m_iBreakPoint << " !~!~!~!~!~!~!";
