@@ -127,24 +127,23 @@ void LoopWriter::closeFile() {
 void LoopWriter::writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
     
     if (m_bIsFileAvailable) {
+
+        unsigned int iBreakPoint = m_iLoopLength - (m_iLoopLength % WORK_BUFFER_SIZE);
+
         // TODO(carl) check for buffers to flush
-        if (m_iLoopLength > 0) {
+        if ((m_iLoopLength > 0) && (m_iSamplesRecorded >= iBreakPoint)) {
 
-            int iLoopRemainder = m_iLoopLength % iBufferSize;
-
-            if (m_iSamplesRecorded == (m_iLoopLength - iLoopRemainder)) {
-
+            if (m_iSamplesRecorded + iBufferSize >= m_iLoopLength) {
                 // Trim loop to exact length specified.
-                sf_write_float(m_pSndfile, pBuffer, iLoopRemainder);
-                m_iSamplesRecorded += iLoopRemainder;
+                unsigned int iRemainder = m_iLoopLength - m_iSamplesRecorded;
+                sf_write_float(m_pSndfile, pBuffer, iRemainder);
+                m_iSamplesRecorded += iRemainder;
                 slotStopRecording(true);
-
             } else {
                 sf_write_float(m_pSndfile, pBuffer, iBufferSize);
                 m_iSamplesRecorded += iBufferSize;
                 qDebug() << "!~!~!~!~!~! Samples Recorded: " << m_iSamplesRecorded<<  " !~!~!~!~!~!~!";
             }
-
         } else {
             sf_write_float(m_pSndfile, pBuffer, iBufferSize);
             m_iSamplesRecorded += iBufferSize;
