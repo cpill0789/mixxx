@@ -16,7 +16,7 @@ LoopWriter::LoopWriter()
         m_pWorkBuffer(SampleUtil::alloc(WORK_BUFFER_SIZE)),
         m_bIsFileAvailable(false),
         m_bIsRecording(false),
-        //m_iLoopBreak(0),
+        m_iBreakPoint(0),
         m_iLoopLength(0),
         //m_iLoopRemainder(0),
         m_iSamplesRecorded(0),
@@ -69,9 +69,10 @@ void LoopWriter::slotStartRecording(int samples) {
     // TODO(carl): figure out extra padding needed.
     // I think the loops are getting shortened by the crossfade.
     m_iLoopLength = samples;
-    //m_iLoopRemainder = samples % LOOP_BUFFER_SIZE;
-        qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << m_iLoopLength << " !~!~!~!~!~!~!";
-    //m_iLoopBreak = m_iLoopLength - m_iLoopRemainder;
+    m_iBreakPoint = m_iLoopLength - (m_iLoopLength % WORK_BUFFER_SIZE);
+
+    qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << m_iLoopLength <<
+                "Break: " << m_iBreakPoint << " !~!~!~!~!~!~!";
     m_bIsRecording = true;
     emit(isRecording(true));
 }
@@ -83,7 +84,7 @@ void LoopWriter::slotStopRecording(bool playLoop) {
     emit(isRecording(false));
     // TODO(carl) check if temp buffers are open and clear them.
 
-    //m_iLoopBreak = 0;
+    m_iBreakPoint = 0;
     m_iLoopLength = 0;
     //m_iLoopRemainder = 0;
     m_iSamplesRecorded = 0;
@@ -131,10 +132,8 @@ void LoopWriter::writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
     
     if (m_bIsFileAvailable) {
 
-        unsigned int iBreakPoint = m_iLoopLength - (m_iLoopLength % WORK_BUFFER_SIZE);
-
         // TODO(carl) check for buffers to flush
-        if ((m_iLoopLength > 0) && (m_iSamplesRecorded >= iBreakPoint)) {
+        if ((m_iLoopLength > 0) && (m_iSamplesRecorded >= m_iBreakPoint)) {
             qDebug () << "Passed breakpoint.";
             if ((m_iSamplesRecorded + iBufferSize) >= m_iLoopLength) {
                 // Trim loop to exact length specified.
