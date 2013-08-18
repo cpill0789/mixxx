@@ -16,6 +16,7 @@ LoopWriter::LoopWriter()
         m_bIsFileAvailable(false),
         m_bIsRecording(false),
         m_iLoopLength(0),
+        m_iLoopRemainder(0),
         m_pSndfile(NULL) {
     connect(this, SIGNAL(samplesAvailable()), this, SLOT(slotProcessSamples()));
 }
@@ -55,8 +56,9 @@ void LoopWriter::slotSetFile(SNDFILE* pFile) {
 }
 
 void LoopWriter::slotStartRecording(int samples) {
-    qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << samples << " !~!~!~!~!~!~!";
     m_iLoopLength = samples;
+    m_iLoopRemainder = samples % LOOP_BUFFER_SIZE;
+        qDebug() << "!~!~!~!~!~! LoopWriter::slotStartRecording Length: " << samples << " Remainder: " << m_iLoopRemainder << " !~!~!~!~!~!~!";
     m_bIsRecording = true;
 }
 
@@ -84,7 +86,7 @@ void LoopWriter::slotProcessSamples() {
             writeBuffer(m_pWorkBuffer, samples_read);
         }
 
-        // More samples may be available, so we post another event.
+        // More samples may be available, so we signal for another event.
         emit(samplesAvailable());
     }
 }
@@ -101,7 +103,7 @@ void LoopWriter::closeFile() {
 }
 
 void LoopWriter::writeBuffer(const CSAMPLE* pBuffer, const int iBufferSize) {
-    qDebug() << "!~!~!~!~!~! LoopWriter::writeBuffer !~!~!~!~!~!~!";
+    //qDebug() << "!~!~!~!~!~! LoopWriter::writeBuffer !~!~!~!~!~!~!";
     if (m_bIsFileAvailable) {
         // TODO(carl) check for buffers to flush
         sf_write_float(m_pSndfile, pBuffer, iBufferSize);

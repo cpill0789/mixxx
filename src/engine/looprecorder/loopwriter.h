@@ -41,6 +41,7 @@ class LoopWriter : public QObject {
     bool m_bIsFileAvailable;
     bool m_bIsRecording;
     unsigned int m_iLoopLength;
+    unsigned int m_iLoopRemainder;
     SNDFILE* m_pSndfile;
 };
 
