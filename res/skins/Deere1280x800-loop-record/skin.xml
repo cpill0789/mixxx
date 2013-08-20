@@ -109,52 +109,6 @@
          <Children>
             <!--
              **********************************************
-             Text- Track Title
-             **********************************************
-             -->
-            <Text>
-                <TooltipId>text</TooltipId>
-                <Style>QLabel { font: bold 13px/15px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
-                    background-color: transparent; color: #3087BF; text-align: left; padding-left: 1px; }
-                </Style>
-                <Group>[Loop_Recording]</Group>
-                <Pos>5,3</Pos>
-                <Size>205f,21</Size>
-            </Text>
-            <!-- Alternative "TITLE ONLY" display
-             <TrackProperty>
-             <TooltipId>track_title</TooltipId>
-             <Style>QLabel { font: bold 14px/16px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
-             background-color: transparent; color: #3087BF; text-align: left; padding-left: 1px; }
-             </Style>
-             <Property>title</Property>
-             <Group>[Loop_Recording]</Group>
-             <Pos>4,4</Pos>
-             <Size>258f,20</Size>
-             </TrackProperty>
-             -->
-
-            <!--
-             **********************************************
-             Text- BPM number display
-             **********************************************
-         
-            <NumberBpm>
-                <TooltipId>visual_bpm</TooltipId>
-                <Style>QLabel { font: bold 13px/15px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
-                    background-color: transparent; color: #3087BF; text-align: left;padding-left: 1px; }
-                </Style>
-                <Group>[Loop_Recording]</Group>
-                <Pos>211,3</Pos>
-                <Size>55,21</Size>
-                <Alignment>right</Alignment>
-                <Connection>
-                    <ConfigKey>[Loop_Recording],visual_bpm</ConfigKey>
-                </Connection>
-            </NumberBpm>
-             -->
-            <!--
-             **********************************************
              RotaryFader- Gain
              **********************************************
              -->
@@ -174,20 +128,6 @@
               Selected Audio Input 
               **********************************************
               -->
-             
-            <Number>
-                <TooltipId>loop_selected_input</TooltipId>
-                <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
-                    background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
-                </Style>
-                <Pos>30,35</Pos>
-                <Size>50,23</Size>
-                 <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
-                 <Alignment>left</Alignment>
-                 <Connection>
-                     <ConfigKey>[Loop_Recording],loop_source</ConfigKey>
-                 </Connection>
-             </Number>
 
              <PushButton>
                  <TooltipId>change_source</TooltipId>
@@ -205,7 +145,19 @@
                      <ButtonState>LeftButton</ButtonState>
                  </Connection>
              </PushButton>
-
+             <Number>
+                 <TooltipId>loop_selected_input</TooltipId>
+                 <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
+                     background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
+                 </Style>
+                 <Pos>25,35</Pos>
+                 <Size>50,23</Size>
+                 <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
+                 <Alignment>left</Alignment>
+                 <Connection>
+                     <ConfigKey>[Loop_Recording],loop_source</ConfigKey>
+                 </Connection>
+             </Number>
              <!--
              **********************************************
              Select loop export location
@@ -220,7 +172,7 @@
                      <Pressed>btn_pitch_up1_overdown.png</Pressed>
                      <Unpressed>btn_pitch_up1.png</Unpressed>
                  </State>
-                 <Pos>100,35</Pos>
+                 <Pos>85,35</Pos>
                  <Connection>
                      <ConfigKey>[Loop_Recording],change_export_destination</ConfigKey>
                      <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
@@ -233,7 +185,7 @@
                  <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
                      background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
                  </Style>
-                 <Pos>115,35</Pos>
+                 <Pos>100,35</Pos>
                  <Size>50,23</Size>
                  <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
                  <Alignment>left</Alignment>
@@ -243,42 +195,41 @@
              </Number>
 
              <!--
-             **********************************************
-             Visual- Volume peak indicator
-             **********************************************
+              **********************************************
+              Select loop length
+              **********************************************
+              -->
+             <PushButton>
+                 <TooltipId>change_export</TooltipId>
+                 <Style></Style>
+                 <NumberStates>1</NumberStates>
+                 <State>
+                     <Number>0</Number>
+                     <Pressed>btn_pitch_up1_overdown.png</Pressed>
+                     <Unpressed>btn_pitch_up1.png</Unpressed>
+                 </State>
+                 <Pos>160,35</Pos>
+                 <Connection>
+                     <ConfigKey>[Loop_Recording],change_loop_length</ConfigKey>
+                     <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
+                     <ButtonState>LeftButton</ButtonState>
+                 </Connection>
+             </PushButton>
 
-            <StatusLight>
-                <TooltipId>PeakIndicator</TooltipId>
-                <Style></Style>
-                <PathStatusLight>btn_clipping_sampler_over.png</PathStatusLight>
-                <PathBack>btn_clipping_sampler.png</PathBack>
-                <Pos>267,3</Pos>
-                <Connection>
-                    <ConfigKey>[Loop_Recording],PeakIndicator</ConfigKey>
-                </Connection>
-            </StatusLight>
-             -->
-            <!--
-             **********************************************
-             Visual - Volume level display
-             **********************************************
-             
-            <VuMeter>
-                <TooltipId>channel_VuMeter</TooltipId>
-                <Style></Style>
-                <PathVu>btn_volume_display_sampler_over.png</PathVu>
-                <PathBack>btn_volume_display_sampler.png</PathBack>
-                <Pos>267,24</Pos>
-                <Horizontal>false</Horizontal>
-                <PeakHoldSize>5</PeakHoldSize>
-                <PeakHoldTime>500</PeakHoldTime>
-                <PeakFallTime>50</PeakFallTime>
-                <PeakFallStep>2</PeakFallStep>
-                <Connection>
-                    <ConfigKey>[Loop_Recording],VuMeter</ConfigKey>
-                </Connection>
-            </VuMeter>
-             -->
+             <Number>
+                 <TooltipId>loop_selected_input</TooltipId>
+                 <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
+                     background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
+                 </Style>
+                 <Pos>175,35</Pos>
+                 <Size>50,23</Size>
+                 <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
+                 <Alignment>left</Alignment>
+                 <Connection>
+                     <ConfigKey>[Loop_Recording],loop_length</ConfigKey>
+                 </Connection>
+             </Number>
+
             <!--
              ****************************************
              Button - Record Loop
@@ -412,63 +363,6 @@
                     <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
                     <ButtonState>LeftButton</ButtonState>
                     <ConnectValueToWidget>false</ConnectValueToWidget>
-                </Connection>
-            </PushButton>
-            
-            <!--
-             **********************************************
-             Button- Mix Orientation (Routing)
-             **********************************************
-             -->
-            <PushButton>
-                <TooltipId>orientation</TooltipId>
-                <Style></Style>
-                <NumberStates>3</NumberStates>
-                <State>
-                    <Number>0</Number>
-                    <Pressed>btn_orientation_sampler_left_over.png</Pressed>
-                    <Unpressed>btn_orientation_sampler_left_over.png</Unpressed>
-                </State>
-                <State>
-                    <Number>1</Number>
-                    <Pressed>btn_orientation_sampler_master.png</Pressed>
-                    <Unpressed>btn_orientation_sampler_master.png</Unpressed>
-                </State>
-                <State>
-                    <Number>2</Number>
-                    <Pressed>btn_orientation_sampler_right_over.png</Pressed>
-                    <Unpressed>btn_orientation_sampler_right_over.png</Unpressed>
-                </State>
-                <Pos>217,28</Pos>
-                <Connection>
-                    <ConfigKey>[Loop_Recording],orientation</ConfigKey>
-                    <EmitOnDownPress>true</EmitOnDownPress>
-                    <ButtonState>LeftButton</ButtonState>
-                </Connection>
-            </PushButton>
-            
-            <!--
-             **********************************************
-             Button- Key lock
-             **********************************************
-             -->
-            <PushButton>
-                <TooltipId>keylock</TooltipId>
-                <Style></Style>
-                <NumberStates>2</NumberStates>
-                <State>
-                    <Number>0</Number>
-                    <Pressed>btn_keylock_sampler.png</Pressed>
-                    <Unpressed>btn_keylock_sampler.png</Unpressed>
-                </State>
-                <State>
-                    <Number>1</Number>
-                    <Pressed>btn_keylock_sampler_over.png</Pressed>
-                    <Unpressed>btn_keylock_sampler_over.png</Unpressed>
-                </State>
-                <Pos>241,28</Pos>
-                <Connection>
-                    <ConfigKey>[Loop_Recording],keylock</ConfigKey>
                 </Connection>
             </PushButton>
         </Children>
