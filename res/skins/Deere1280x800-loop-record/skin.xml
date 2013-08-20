@@ -51,10 +51,10 @@
 	-->
 
 	<manifest>
-	<title>Deere1280x800-sync</title>
+	<title>Deere1280x800-loop-record</title>
 	<author>jus</author>
 	<version>1.11.0.16</version>
-	<description>A 2-deck split-waveform skin with 4 samplers. Includes master sync and loop recording capabilities.</description>
+	<description>A 2-deck split-waveform skin with 4 samplers. Includes loop recording capabilities.</description>
 	<language>en</language>
 	<license>Creative Commons Attribution, Share-Alike 3.0 Unported</license>
 	<attributes>
@@ -3318,46 +3318,6 @@
 						<Alignment>center</Alignment>
 					</NumberRate>
 
-                    <!-- Master Sync BPM -->
-                    <PushButton>
-                        <TooltipId>sync_master</TooltipId>
-                        <Style></Style>
-                        <NumberStates>2</NumberStates>
-                        <State>
-                            <Number>0</Number>
-                            <Pressed>btn_mastersync_master_on.png</Pressed>
-                            <Unpressed>btn_mastersync_master_off.png</Unpressed>
-                        </State>
-                        <State>
-                            <Number>1</Number>
-                            <Pressed>btn_mastersync_master_on.png</Pressed>
-                            <Unpressed>btn_mastersync_master_on.png</Unpressed>
-                        </State>
-                        <Pos>4,4</Pos>
-                        <Connection>
-                            <ConfigKey>[Master],sync_master</ConfigKey>
-                            <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
-                            <ButtonState>LeftButton</ButtonState>
-                        </Connection>
-                    </PushButton>
-                    <!--
-                     **********************************************
-                     Text- BPM number display
-                     **********************************************
-                     -->
-                    <NumberBpm>
-                        <TooltipId>visual_bpm</TooltipId>
-                        <Style>QLabel { font: bold 18px/21px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
-                            background-color: transparent; color: #EECE33; text-align: left;padding-left: 1px; }
-                        </Style>
-                        <Channel>1</Channel>
-                        <Pos>50,0</Pos>
-                        <Size>30,33</Size>
-                        <Connection>
-                            <ConfigKey>[Master],sync_bpm</ConfigKey>
-                        </Connection>
-                    </NumberBpm>
-
 					<!--
 					**********************************************
 					Slider- Channel Volume
@@ -4553,52 +4513,7 @@
 				<Size>315f,23</Size>
 			</TrackProperty>
 
-            <!-- Master -->
-	        <PushButton>
-			    <TooltipId>sync_master</TooltipId>
-			    <Style></Style>
-			    <NumberStates>2</NumberStates>
-			    <State>
-				    <Number>0</Number>
-				    <Pressed>btn_mastersync_master_on.png</Pressed>
-				    <Unpressed>btn_mastersync_master_off.png</Unpressed>
-			    </State>
-			    <State>
-				    <Number>1</Number>
-				    <Pressed>btn_mastersync_master_on.png</Pressed>
-				    <Unpressed>btn_mastersync_master_on.png</Unpressed>
-			    </State>
-			    <Pos>200,0</Pos>
-			    <Connection>
-				    <ConfigKey>[Channel1],sync_master</ConfigKey>
-				    <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
-				    <ButtonState>LeftButton</ButtonState>
-			    </Connection>
-		    </PushButton>
-		    <!-- Slave -->
-	        <PushButton>
-			    <TooltipId>sync_slave</TooltipId>
-			    <Style></Style>
-			    <NumberStates>2</NumberStates>
-			    <State>
-				    <Number>0</Number>
-				    <Pressed>btn_mastersync_slave_on.png</Pressed>
-				    <Unpressed>btn_mastersync_slave_off.png</Unpressed>
-			    </State>
-			    <State>
-				    <Number>1</Number>
-				    <Pressed>btn_mastersync_slave_on.png</Pressed>
-				    <Unpressed>btn_mastersync_slave_on.png</Unpressed>
-			    </State>
-			    <Pos>200,16</Pos>
-			    <Connection>
-				    <ConfigKey>[Channel1],sync_slave</ConfigKey>
-				    <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
-				    <ButtonState>LeftButton</ButtonState>
-			    </Connection>
-		    </PushButton>
-
-			<!--
+            <!--
 			**********************************************
 			Text- Track Artist
 			**********************************************
@@ -5711,52 +5626,6 @@
 				<Pos>0,26</Pos>
 				<Size>290f,23</Size>
 			</TrackProperty>
-
-            <!-- Master -->
-	        <PushButton>
-			    <TooltipId>sync_master</TooltipId>
-			    <Style></Style>
-			    <NumberStates>2</NumberStates>
-			    <State>
-				    <Number>0</Number>
-				    <Pressed>btn_mastersync_master_on.png</Pressed>
-				    <Unpressed>btn_mastersync_master_off.png</Unpressed>
-			    </State>
-			    <State>
-				    <Number>1</Number>
-				    <Pressed>btn_mastersync_master_on.png</Pressed>
-				    <Unpressed>btn_mastersync_master_on.png</Unpressed>
-			    </State>
-			    <Pos>200,0</Pos>
-			    <Connection>
-				    <ConfigKey>[Channel2],sync_master</ConfigKey>
-				    <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
-				    <ButtonState>LeftButton</ButtonState>
-			    </Connection>
-		    </PushButton>
-		    <!-- Slave -->
-	        <PushButton>
-			    <TooltipId>sync_slave</TooltipId>
-			    <Style></Style>
-			    <NumberStates>2</NumberStates>
-			    <State>
-				    <Number>0</Number>
-				    <Pressed>btn_mastersync_slave_on.png</Pressed>
-				    <Unpressed>btn_mastersync_slave_off.png</Unpressed>
-			    </State>
-			    <State>
-				    <Number>1</Number>
-				    <Pressed>btn_mastersync_slave_on.png</Pressed>
-				    <Unpressed>btn_mastersync_slave_on.png</Unpressed>
-			    </State>
-			    <Pos>200,16</Pos>
-			    <Connection>
-				    <ConfigKey>[Channel2],sync_slave</ConfigKey>
-				    <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
-				    <ButtonState>LeftButton</ButtonState>
-			    </Connection>
-		    </PushButton>
-
 
 			<!--
 			**********************************************
