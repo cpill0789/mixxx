@@ -147,11 +147,11 @@
              </PushButton>
              <LoopSource>
                  <TooltipId>loop_selected_input</TooltipId>
-                 <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
+                 <Style>QLabel { font: 10px/12px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
                      background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
                  </Style>
-                 <Pos>30,35</Pos>
-                 <Size>50,23</Size>
+                 <Pos>35,35</Pos>
+                 <Size>75,23</Size>
                  <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
                  <Alignment>left</Alignment>
                  <Connection>
@@ -172,7 +172,7 @@
                      <Pressed>btn_pitch_up1_overdown.png</Pressed>
                      <Unpressed>btn_pitch_up1.png</Unpressed>
                  </State>
-                 <Pos>85,35</Pos>
+                 <Pos>100,35</Pos>
                  <Connection>
                      <ConfigKey>[Loop_Recording],change_export_destination</ConfigKey>
                      <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
