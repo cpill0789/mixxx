@@ -172,7 +172,7 @@
                      <Pressed>btn_pitch_up1_overdown.png</Pressed>
                      <Unpressed>btn_pitch_up1.png</Unpressed>
                  </State>
-                 <Pos>100,35</Pos>
+                 <Pos>100,10</Pos>
                  <Connection>
                      <ConfigKey>[Loop_Recording],change_export_destination</ConfigKey>
                      <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
@@ -183,9 +183,9 @@
              <Number>
                  <TooltipId>loop_selected_input</TooltipId>
                  <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
-                     background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
+                     background-color: transparent; color: #0099FF; text-align: left; }
                  </Style>
-                 <Pos>100,35</Pos>
+                 <Pos>130,10</Pos>
                  <Size>50,23</Size>
                  <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
                  <Alignment>left</Alignment>
@@ -200,7 +200,7 @@
               **********************************************
               -->
              <PushButton>
-                 <TooltipId>change_export</TooltipId>
+                 <TooltipId>change_length</TooltipId>
                  <Style></Style>
                  <NumberStates>1</NumberStates>
                  <State>
@@ -208,7 +208,7 @@
                      <Pressed>btn_pitch_up1_overdown.png</Pressed>
                      <Unpressed>btn_pitch_up1.png</Unpressed>
                  </State>
-                 <Pos>160,35</Pos>
+                 <Pos>100,35</Pos>
                  <Connection>
                      <ConfigKey>[Loop_Recording],change_loop_length</ConfigKey>
                      <EmitOnPressAndRelease>true</EmitOnPressAndRelease>
@@ -217,12 +217,12 @@
              </PushButton>
 
              <Number>
-                 <TooltipId>loop_selected_input</TooltipId>
+                 <TooltipId>loop_length</TooltipId>
                  <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
-                     background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
+                     background-color: transparent; color: #0099FF; text-align: left; }
                  </Style>
-                 <Pos>175,35</Pos>
-                 <Size>50,23</Size>
+                 <Pos>125,35</Pos>
+                 <Size>55,23</Size>
                  <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
                  <Alignment>left</Alignment>
                  <Connection>
