@@ -180,10 +180,11 @@
                  </Connection>
              </PushButton>
              
-             <Number>
-                 <TooltipId>loop_selected_input</TooltipId>
-                 <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
+             <LoopExport>
+                 <TooltipId>loop_export_location</TooltipId>
+                 <Style>QLabel { font: 10px/12px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
                      background-color: transparent; color: #0099FF; text-align: left; }
+
                  </Style>
                  <Pos>130,10</Pos>
                  <Size>50,23</Size>
@@ -192,7 +193,7 @@
                  <Connection>
                      <ConfigKey>[Loop_Recording],export_destination</ConfigKey>
                  </Connection>
-             </Number>
+             </LoopExport>
 
              <!--
               **********************************************
@@ -218,7 +219,7 @@
 
              <Number>
                  <TooltipId>loop_length</TooltipId>
-                 <Style>QLabel { font: bold 16px/18px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
+                 <Style>QLabel { font: 10px/12px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
                      background-color: transparent; color: #0099FF; text-align: left; }
                  </Style>
                  <Pos>125,35</Pos>
@@ -229,6 +230,16 @@
                      <ConfigKey>[Loop_Recording],loop_length</ConfigKey>
                  </Connection>
              </Number>
+
+             <Label>
+                 <Style>QLabel { font: 10px/12px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
+                     background-color: transparent; color: #0099FF; text-align: left; }
+
+                 </Style>
+                 <Pos>160,35</Pos>
+                 <Size>55,23</Size>
+                 <Text>beats</Text>
+             </Label>
 
             <!--
              ****************************************
