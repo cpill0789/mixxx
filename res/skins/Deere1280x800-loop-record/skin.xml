@@ -145,7 +145,7 @@
                      <ButtonState>LeftButton</ButtonState>
                  </Connection>
              </PushButton>
-             <LoopSource>
+             <LoopRecorderText>
                  <TooltipId>loop_selected_input</TooltipId>
                  <Style>QLabel { font: 10px/12px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
                      background-color: transparent; color: #0099FF; text-align: left;padding-left: 1px; }
@@ -155,7 +155,7 @@
                  <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
                  <Alignment>left</Alignment>
                  <Property>source</Property>
-             </LoopSource>
+             </LoopRecorderText>
              <!--
              **********************************************
              Select loop export location
@@ -178,7 +178,7 @@
                  </Connection>
              </PushButton>
              
-             <LoopExport>
+             <LoopRecorderText>
                  <TooltipId>loop_export_location</TooltipId>
                  <Style>QLabel { font: 10px/12px Lucida Grande, Lucida Sans Unicode, Arial, Verdana, sans-serif;
                      background-color: transparent; color: #0099FF; text-align: left; }
@@ -188,10 +188,8 @@
                  <Size>50,23</Size>
                  <!--CSS alignments not respected see bug lp:605530 , lets call <Alignment>-->
                  <Alignment>left</Alignment>
-                 <Connection>
-                     <ConfigKey>[Loop_Recording],export_destination</ConfigKey>
-                 </Connection>
-             </LoopExport>
+                 <Property>destination</Property>
+             </LoopRecorderText>
 
              <!--
               **********************************************
